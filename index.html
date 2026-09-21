@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cash Energy | Ahorro Inteligente en Luz y Gas para Empresas y Hogares</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #ffffff;
+      color: #0f172a;
+    }
+    .hero-glow {
+      background: radial-gradient(circle at 50% 10%, rgba(16, 185, 129, 0.08) 0%, rgba(248, 250, 252, 0.5) 50%, #ffffff 100%);
+    }
+    .card-shadow {
+      box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.07), 0 0 1px 1px rgba(15, 23, 42, 0.05);
+    }
+    .tab-btn.active {
+      background-color: #ffffff;
+      color: #047857;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 32px -8px rgba(15, 23, 42, 0.08);
+    }
+  </style>
+</head>
+<body class="bg-white text-slate-800 antialiased min-h-screen flex flex-col selection:bg-emerald-100 selection:text-emerald-900">
+
+  <!-- ================= TOP NOTIFICATION BAR ================= -->
+  <div class="bg-slate-900 text-slate-300 text-xs py-2 px-4 border-b border-slate-800">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+      <div class="flex items-center space-x-2">
+        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-400 text-slate-950 uppercase tracking-wide">Nuevo</span>
+        <span>Campaña Trimestral 2026: Bonos de Bienvenida de hasta 1.000 € en efectivo para negocios y pymes.</span>
+      </div>
+      <div class="flex items-center space-x-4 text-[11px]">
+        <span class="text-emerald-400 font-semibold flex items-center">
+          <svg class="w-3.5 h-3.5 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+          Garantía de Ahorro CNMC
+        </span>
+        <a href="tel:900000000" class="hover:text-white font-medium">📞 Atención Empresas: 900 834 220</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MAIN NAVBAR ================= -->
+  <header class="bg-white/95 backdrop-blur-md sticky top-0 z-50 border-b border-slate-100 px-6 py-4">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      
+      <!-- LOGO -->
+      <div class="flex items-center space-x-3 cursor-pointer">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-slate-900 to-slate-800 flex items-center justify-center shadow-md border border-slate-200">
+          <svg class="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        </div>
+        <div>
+          <div class="text-xl font-extrabold tracking-tight text-slate-900 leading-none">
+            CASH<span class="text-emerald-600">ENERGY</span>
+          </div>
+          <span class="text-[10px] font-bold uppercase tracking-widest text-slate-600 block mt-0.5">Gestión Energética & Capital</span>
+        </div>
+      </div>
+
+      <!-- NAVIGATION LINKS -->
+      <nav class="hidden lg:flex items-center space-x-8 text-sm font-semibold text-slate-600">
+        <a href="#simulador" class="text-emerald-600 hover:text-emerald-700 transition">Calculador & Bono</a>
+        <a href="#empresas" class="hover:text-slate-900 transition">Negocios & Pymes</a>
+        <a href="#franquicias" class="hover:text-slate-900 transition">Grandes Cuentas</a>
+        <a href="#cae" class="hover:text-slate-900 transition flex items-center space-x-1">
+          <span>Certificados CAE</span>
+          <span class="px-1.5 py-0.2 bg-emerald-100 text-emerald-800 text-[10px] rounded font-bold">Subvención</span>
+        </a>
+        <a href="#como-funciona" class="hover:text-slate-900 transition">Cómo Funciona</a>
+      </nav>
+
+      <!-- CTA BUTTONS -->
+      <div class="flex items-center space-x-3">
+        <a href="https://wa.me/" target="_blank" class="hidden sm:inline-flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50 border border-slate-200 transition">
+          <svg class="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766 0-3.18-2.587-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.007c.106.005.249-.04.39.298.144.347.491 1.2.534 1.288.043.088.072.19.014.305-.058.115-.087.187-.173.289l-.26.308c-.087.086-.178.18-.077.354.102.174.451.745.969 1.206.666.593 1.228.777 1.402.864.174.087.275.072.376-.044.101-.116.433-.506.549-.68.116-.174.232-.145.39-.087s1.011.477 1.184.564.289.13.332.203c.044.072.044.419-.1.824z"/></svg>
+          <span>WhatsApp Rápido</span>
+        </a>
+        <a href="#simulador" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm hover:shadow transition flex items-center space-x-1.5">
+          <span>Subir Factura</span>
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= HERO SECTION SPLIT ================= -->
+  <section class="hero-glow pt-10 pb-16 md:pt-16 md:pb-24 border-b border-slate-100">
+    <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+      
+      <!-- LEFT COLUMN: VALUE PROPOSITION -->
+      <div class="lg:col-span-6 space-y-6 text-center lg:text-left">
+        <div class="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>LA NUEVA FORMA DE CONTRATAR ENERGÍA</span>
+        </div>
+
+        <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-tight leading-[1.15]">
+          Paga menos por la luz y recibe un <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-600">Bono de Bienvenida</span> directo en tu cuenta.
+        </h1>
+
+        <p class="text-base sm:text-lg text-slate-600 leading-relaxed max-w-xl mx-auto lg:mx-0">
+          Auditamos tu factura con las comercializadoras mayoristas líderes de España. Si optimizamos tu tarifa, compartimos la comisión contigo en <strong>dinero en efectivo</strong>. Sin trámites engorrosos ni papeleos.
+        </p>
+
+        <!-- TRUST BADGES -->
+        <div class="pt-4 border-t border-slate-100 grid grid-cols-3 gap-4 max-w-lg mx-auto lg:mx-0">
+          <div>
+            <p class="text-2xl font-extrabold text-slate-900">0 €</p>
+            <p class="text-xs text-slate-600 font-medium">Estudio sin coste</p>
+          </div>
+          <div>
+            <p class="text-2xl font-extrabold text-emerald-600">Hasta 38%</p>
+            <p class="text-xs text-slate-600 font-medium">Ahorro anual medio</p>
+          </div>
+          <div>
+            <p class="text-2xl font-extrabold text-amber-500">100% Cash</p>
+            <p class="text-xs text-slate-600 font-medium">Bono sin letra pequeña</p>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-center lg:justify-start space-x-3 text-xs text-slate-600 pt-2">
+          <div class="flex -space-x-2 overflow-hidden">
+            <div class="inline-block h-7 w-7 rounded-full ring-2 ring-white bg-slate-200 flex items-center justify-center font-bold text-slate-600 text-[10px]">MC</div>
+            <div class="inline-block h-7 w-7 rounded-full ring-2 ring-white bg-emerald-100 flex items-center justify-center font-bold text-emerald-800 text-[10px]">BK</div>
+            <div class="inline-block h-7 w-7 rounded-full ring-2 ring-white bg-amber-100 flex items-center justify-center font-bold text-amber-800 text-[10px]">RH</div>
+          </div>
+          <p>Más de <strong>450 empresas y locales</strong> optimizados este año.</p>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN: THE INTERACTIVE HIGH-CONVERTING FUNNEL -->
+      <div class="lg:col-span-6" id="simulador">
+        <div class="bg-white rounded-3xl p-6 sm:p-8 card-shadow border border-slate-100 relative">
+          
+          <!-- FUNNEL HEADER -->
+          <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-6">
+            <div>
+              <span class="text-xs font-bold text-emerald-600 uppercase tracking-wider">Simulador Inteligente</span>
+              <h2 class="text-lg font-extrabold text-slate-900">Calcula tu Ahorro y Bono en 30 seg</h2>
+            </div>
+            <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 text-xs font-semibold" id="step-indicator">Paso 1 de 3</span>
+          </div>
+
+          <!-- STEP PROGRESS BAR -->
+          <div class="w-full bg-slate-100 h-1.5 rounded-full mb-6 overflow-hidden">
+            <div id="progress-bar" class="bg-emerald-500 h-full w-1/3 transition-all duration-300"></div>
+          </div>
+
+          <!-- ================= FUNNEL STEP 1 ================= -->
+          <div id="step-1" class="space-y-4">
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">1. Selecciona tu tipo de suministro:</label>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <!-- OPCION NEGOCIO -->
+              <div onclick="selectSupplyType('negocio')" class="supply-card p-4 rounded-2xl border-2 border-slate-200 hover:border-emerald-500 bg-slate-50/50 hover:bg-white cursor-pointer transition text-center group">
+                <div class="w-11 h-11 mx-auto rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center mb-3 group-hover:scale-105 transition">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                </div>
+                <h3 class="font-bold text-slate-900 text-sm">Negocio / Local</h3>
+                <p class="text-[11px] text-slate-600 mt-1">Comercios, despachos, bares</p>
+                <span class="inline-block mt-2 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">Bono: 150€ - 350€</span>
+              </div>
+
+              <!-- OPCION EMPRESA/FRANQUICIA -->
+              <div onclick="selectSupplyType('empresa')" class="supply-card p-4 rounded-2xl border-2 border-slate-200 hover:border-emerald-500 bg-slate-50/50 hover:bg-white cursor-pointer transition text-center group relative">
+                <span class="absolute -top-2 right-2 bg-amber-500 text-white text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full shadow-sm">Top Bono</span>
+                <div class="w-11 h-11 mx-auto rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center mb-3 group-hover:scale-105 transition">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                </div>
+                <h3 class="font-bold text-slate-900 text-sm">Pyme o Cadena</h3>
+                <p class="text-[11px] text-slate-600 mt-1">Franquicias, hoteles, naves</p>
+                <span class="inline-block mt-2 text-[10px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full">Bono: Hasta 1.000€</span>
+              </div>
+
+              <!-- OPCION HOGAR -->
+              <div onclick="selectSupplyType('hogar')" class="supply-card p-4 rounded-2xl border-2 border-slate-200 hover:border-emerald-500 bg-slate-50/50 hover:bg-white cursor-pointer transition text-center group">
+                <div class="w-11 h-11 mx-auto rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center mb-3 group-hover:scale-105 transition">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                </div>
+                <h3 class="font-bold text-slate-900 text-sm">Hogar / Chalet</h3>
+                <p class="text-[11px] text-slate-600 mt-1">Viviendas individuales</p>
+                <span class="inline-block mt-2 text-[10px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full">Bono: 50€ - 100€</span>
+              </div>
+            </div>
+
+            <div class="text-center pt-2">
+              <span class="text-xs text-slate-600">Haz clic en una opción para avanzar al siguiente paso</span>
+            </div>
+          </div>
+
+          <!-- ================= FUNNEL STEP 2 ================= -->
+          <div id="step-2" class="hidden space-y-5">
+            <div class="text-left">
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">2. Sube tu factura o dinos tu gasto mensual:</label>
+              <p class="text-xs text-slate-600">No necesitas buscar números complejos; el sistema lee tu CUPS y tarifas directamente.</p>
+            </div>
+
+            <!-- CLEAN DROPZONE -->
+            <div onclick="triggerFileInput()" class="border-2 border-dashed border-emerald-300 hover:border-emerald-500 bg-emerald-50/40 rounded-2xl p-6 text-center cursor-pointer transition group">
+              <input type="file" id="file-input" class="hidden" accept=".pdf,image/*" onchange="handleFileSelected(event)">
+              <div class="w-12 h-12 mx-auto rounded-full bg-white shadow-sm flex items-center justify-center text-emerald-600 mb-2 group-hover:scale-110 transition">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+              </div>
+              <p class="text-xs sm:text-sm font-bold text-slate-900">Arrastra aquí tu factura (PDF o foto) o pulsa para subirla</p>
+              <p class="text-[11px] text-slate-600 mt-1">Acepta cualquier compañía (Endesa, Iberdrola, Naturgy, etc.)</p>
+              
+              <div id="file-status" class="hidden mt-3 inline-flex items-center space-x-2 px-3 py-1 rounded-lg bg-emerald-600 text-white text-xs font-semibold shadow">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                <span id="file-name-display">factura_subida.pdf</span>
+              </div>
+            </div>
+
+            <!-- ALTERNATIVE ESTIMATION BUTTONS -->
+            <div>
+              <span class="text-[11px] font-bold text-slate-600 uppercase tracking-wider block mb-2">¿No la tienes a mano? Gasto mensual aproximado:</span>
+              <div class="grid grid-cols-3 gap-2">
+                <button type="button" onclick="selectSpend('<150')" class="spend-btn py-2 px-3 rounded-xl border border-slate-200 bg-slate-50 hover:bg-white text-xs font-bold text-slate-700 hover:border-emerald-500 transition">Menos de 150 €</button>
+                <button type="button" onclick="selectSpend('150-500')" class="spend-btn py-2 px-3 rounded-xl border border-emerald-500 bg-emerald-50 text-xs font-bold text-emerald-800 transition">150 € - 500 €</button>
+                <button type="button" onclick="selectSpend('>500')" class="spend-btn py-2 px-3 rounded-xl border border-slate-200 bg-slate-50 hover:bg-white text-xs font-bold text-slate-700 hover:border-emerald-500 transition">+ 500 € (Pyme)</button>
+              </div>
+            </div>
+
+            <!-- CAE OPPORTUNITY CHECKBOX -->
+            <div class="p-3.5 rounded-xl bg-amber-50/70 border border-amber-200 flex items-start space-x-3">
+              <input type="checkbox" id="cae-check" class="mt-0.5 w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500">
+              <div>
+                <label for="cae-check" class="text-xs font-bold text-slate-900 cursor-pointer">¿Tienes placas solares o cambiaste climatización en el último año?</label>
+                <p class="text-[11px] text-slate-600 mt-0.5">Podrías tener derecho a un cobro adicional directo gracias a los Certificados de Ahorro Energético (CAE).</p>
+              </div>
+            </div>
+
+            <div class="flex justify-between items-center pt-2">
+              <button type="button" onclick="goToStep(1)" class="text-xs font-bold text-slate-600 hover:text-slate-900">← Atrás</button>
+              <button type="button" onclick="goToStep(3)" class="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm hover:shadow transition flex items-center space-x-1">
+                <span>Ver Mi Estudio & Bono</span>
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- ================= FUNNEL STEP 3 ================= -->
+          <div id="step-3" class="hidden space-y-5">
+            <div class="text-left">
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">3. ¿Dónde te enviamos la comparativa y el bono?</label>
+              <p class="text-xs text-slate-600">Te enviamos el informe detallado con el ahorro exacto por WhatsApp o correo.</p>
+            </div>
+
+            <form onsubmit="processLead(event)" class="space-y-3.5">
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Nombre o Empresa</label>
+                <input type="text" id="lead-name" required placeholder="Ej. Giovanni / Restaurante El Faro" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-sm focus:bg-white focus:border-emerald-500 focus:outline-none transition">
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Teléfono Móvil / WhatsApp (Para recibir el estudio)</label>
+                <input type="tel" id="lead-phone" required placeholder="Ej. 612 345 678" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-sm focus:bg-white focus:border-emerald-500 focus:outline-none transition">
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Correo Electrónico (Opcional)</label>
+                <input type="email" id="lead-email" placeholder="tuempresa@dominio.com" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-sm focus:bg-white focus:border-emerald-500 focus:outline-none transition">
+              </div>
+
+              <button type="submit" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-extrabold text-sm shadow-md hover:shadow-lg transition transform active:scale-98 flex items-center justify-center space-x-2">
+                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                <span>CALCULAR MI AHORRO + BONO EN EFECTIVO</span>
+              </button>
+            </form>
+
+            <!-- RESULTS BOX (ANIMATED ON SUBMIT) -->
+            <div id="simulation-result" class="hidden mt-6 p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-4">
+              <div class="text-center pb-2 border-b border-slate-200">
+                <span class="inline-block px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold mb-1">
+                  ✓ Auditoría de Factura Completada
+                </span>
+                <h3 class="text-base font-extrabold text-slate-900">Propuesta de Optimización Estimada</h3>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-center">
+                <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm">
+                  <span class="text-[11px] font-bold text-slate-600 uppercase">Ahorro Anual</span>
+                  <p class="text-xl font-extrabold text-emerald-600 mt-0.5" id="res-ahorro">1.480 €</p>
+                  <span class="text-[10px] text-slate-600">Media de mercado</span>
+                </div>
+                <div class="bg-amber-50/70 p-3.5 rounded-xl border border-amber-200 shadow-sm relative">
+                  <span class="text-[11px] font-bold text-amber-800 uppercase">Bono en Efectivo</span>
+                  <p class="text-xl font-extrabold text-amber-600 mt-0.5" id="res-bono">350 €</p>
+                  <span class="text-[10px] text-amber-700 font-semibold">Directo en tu cuenta</span>
+                </div>
+                <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm">
+                  <span class="text-[11px] font-bold text-slate-600 uppercase">Plus CAE Ahorro</span>
+                  <p class="text-xl font-extrabold text-teal-600 mt-0.5" id="res-cae">+ 620 €</p>
+                  <span class="text-[10px] text-slate-600">Por eficiencia</span>
+                </div>
+              </div>
+
+              <p class="text-xs text-center text-slate-600 font-medium">
+                Un asesor te llamará en menos de 15 minutos para formalizar el bono y aplicarte las mejores tarifas mayoristas.
+              </p>
+            </div>
+
+            <div class="text-center">
+              <button type="button" onclick="goToStep(2)" class="text-xs font-bold text-slate-600 hover:text-slate-900">← Cambiar factura o datos</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= WHY CASH ENERGY IS DIFFERENT ================= -->
+  <section class="py-16 bg-slate-50 border-b border-slate-100" id="como-funciona">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center max-w-2xl mx-auto mb-12">
+        <span class="text-xs font-bold text-emerald-600 uppercase tracking-widest">Diferenciación Real</span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mt-1">
+          ¿Por qué todo el mundo se está pasando a Cash Energy?
+        </h2>
+        <p class="text-slate-600 text-sm mt-3">
+          Las comercializadoras convencionales se quedan todo el beneficio. Nosotros automatizamos la gestión y te devolvemos el dinero.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        
+        <!-- CARD 1 -->
+        <div class="bg-white p-8 rounded-2xl border border-slate-200/80 shadow-sm feature-card transition">
+          <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-lg mb-5">
+            1
+          </div>
+          <h3 class="text-lg font-bold text-slate-900 mb-2">Bono de Bienvenida Real</h3>
+          <p class="text-sm text-slate-600 leading-relaxed">
+            Repartimos la comisión que pagan las energéticas directamente contigo. En suministros de empresa, recibes hasta 1.000 € en tu cuenta corriente al activar el contrato.
+          </p>
+        </div>
+
+        <!-- CARD 2 -->
+        <div class="bg-white p-8 rounded-2xl border border-slate-200/80 shadow-sm feature-card transition">
+          <div class="w-12 h-12 rounded-xl bg-teal-100 text-teal-700 flex items-center justify-center font-bold text-lg mb-5">
+            2
+          </div>
+          <h3 class="text-lg font-bold text-slate-900 mb-2">Monetización de CAEs</h3>
+          <p class="text-sm text-slate-600 leading-relaxed">
+            Si instalaste fotovoltaica, aerotermia o aislamiento térmico, gestionamos tus Certificados de Ahorro Energético (RD 36/2023) para que cobres por la energía que dejaste de gastar.
+          </p>
+        </div>
+
+        <!-- CARD 3 -->
+        <div class="bg-white p-8 rounded-2xl border border-slate-200/80 shadow-sm feature-card transition">
+          <div class="w-12 h-12 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-lg mb-5">
+            3
+          </div>
+          <h3 class="text-lg font-bold text-slate-900 mb-2">Auditoría Mayorista Continua</h3>
+          <p class="text-sm text-slate-600 leading-relaxed">
+            No estamos casados con una sola eléctrica. Conectamos con Several, Candela, Bea y las comercializadoras del mercado para garantizarte siempre el precio más competitivo del mercado.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= TESTIMONIALS / PROOF ================= -->
+  <section class="py-16 bg-white border-b border-slate-100">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="bg-slate-900 rounded-3xl p-8 sm:p-12 text-white text-center sm:text-left grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <div class="lg:col-span-8 space-y-3">
+          <span class="text-xs font-bold text-emerald-400 uppercase tracking-widest">¿Eres Franquiciado o Administrador de Fincas?</span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">
+            Ofrecemos Acuerdos de Colaboración al 50% de Comisión
+          </h2>
+          <p class="text-slate-300 text-sm max-w-2xl leading-relaxed">
+            Si gestionas un grupo de 10, 20 o más suministros comerciales (restaurantes, locales o comunidades), creamos un plan a medida donde compartimos el 50% del margen total generado de forma recurrente.
+          </p>
+        </div>
+        <div class="lg:col-span-4 text-center lg:text-right">
+          <a href="https://wa.me/" target="_blank" class="inline-flex items-center space-x-2 px-6 py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-sm shadow-lg transition">
+            <span>Hablar con Zelmar & Giovanni</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= FAQS ACCORDION (AUDAX STYLE, BUT CLEAN) ================= -->
+  <section class="py-16 bg-slate-50">
+    <div class="max-w-4xl mx-auto px-6">
+      <div class="text-center mb-10">
+        <h2 class="text-2xl font-extrabold text-slate-900">Preguntas Frecuentes</h2>
+        <p class="text-sm text-slate-600 mt-1">Todo lo que necesitas saber antes de subir tu factura.</p>
+      </div>
+
+      <div class="space-y-3">
+        <details class="group bg-white p-5 rounded-2xl border border-slate-200/80 cursor-pointer">
+          <summary class="flex justify-between items-center font-bold text-slate-900 text-sm list-none">
+            <span>¿Cuándo y cómo recibo el Bono de Bienvenida en efectivo?</span>
+            <span class="text-emerald-600 transition group-open:rotate-180">▼</span>
+          </summary>
+          <p class="text-xs text-slate-600 mt-3 leading-relaxed">
+            El bono se liquida directamente por transferencia bancaria una vez que la distribuidora activa el nuevo contrato de luz o gas. Es un pago en efectivo acordado con total transparencia y reflejado en tu acuerdo de servicio.
+          </p>
+        </details>
+
+        <details class="group bg-white p-5 rounded-2xl border border-slate-200/80 cursor-pointer">
+          <summary class="flex justify-between items-center font-bold text-slate-900 text-sm list-none">
+            <span>¿Hay algún corte en el suministro eléctrico al cambiar de compañía?</span>
+            <span class="text-emerald-600 transition group-open:rotate-180">▼</span>
+          </summary>
+          <p class="text-xs text-slate-600 mt-3 leading-relaxed">
+            Jamás. Por ley de la Comisión Nacional de los Mercados y la Competencia (CNMC), el cambio de comercializadora es puramente administrativo. La electricidad y el contador siguen siendo los mismos; solo cambia el precio que pagas y las condiciones de cobro.
+          </p>
+        </details>
+
+        <details class="group bg-white p-5 rounded-2xl border border-slate-200/80 cursor-pointer">
+          <summary class="flex justify-between items-center font-bold text-slate-900 text-sm list-none">
+            <span>¿Qué son los Certificados CAE y cuánto dinero puedo cobrar?</span>
+            <span class="text-emerald-600 transition group-open:rotate-180">▼</span>
+          </summary>
+          <p class="text-xs text-slate-600 mt-3 leading-relaxed">
+            Los Certificados de Ahorro Energético (CAE) son un mecanismo legal por el cual las grandes comercializadoras están obligadas a pagar por las mejoras de eficiencia que tú realices (cambio a LED, aerotermia, placas solares, variadores de frecuencia). Nosotros tramitamos el expediente completo para que cobres esa contraprestación en euros directos.
+          </p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="bg-white border-t border-slate-200 py-10 text-xs text-slate-600">
+    <div class="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center space-x-2">
+        <div class="w-6 h-6 rounded-lg bg-slate-900 flex items-center justify-center font-bold text-emerald-400 text-xs">CE</div>
+        <span class="font-bold text-slate-900">CASH ENERGY</span>
+        <span class="text-slate-600">| © 2026 Todos los derechos reservados.</span>
+      </div>
+      <div class="flex space-x-6">
+        <a href="#" class="hover:text-slate-900">Aviso Legal</a>
+        <a href="#" class="hover:text-slate-900">Política de Privacidad</a>
+        <a href="#" class="hover:text-slate-900">Cumplimiento CNMC</a>
+        <a href="#" class="hover:text-slate-900">Contacto</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ================= JAVASCRIPT ENGINE ================= -->
+  <script>
+    let selectedType = 'negocio';
+    let selectedSpendVal = '150-500';
+
+    function selectSupplyType(type) {
+      selectedType = type;
+      goToStep(2);
+    }
+
+    function selectSpend(val) {
+      selectedSpendVal = val;
+      const btns = document.querySelectorAll('.spend-btn');
+      btns.forEach(b => {
+        b.classList.remove('border-emerald-500', 'bg-emerald-50', 'text-emerald-800');
+        b.classList.add('border-slate-200', 'bg-slate-50', 'text-slate-700');
+      });
+      event.target.classList.remove('border-slate-200', 'bg-slate-50', 'text-slate-700');
+      event.target.classList.add('border-emerald-500', 'bg-emerald-50', 'text-emerald-800');
+    }
+
+    function triggerFileInput() {
+      document.getElementById('file-input').click();
+    }
+
+    function handleFileSelected(e) {
+      const file = e.target.files[0];
+      if (file) {
+        document.getElementById('file-status').classList.remove('hidden');
+        document.getElementById('file-name-display').innerText = file.name;
+      }
+    }
+
+    function goToStep(step) {
+      document.getElementById('step-1').classList.add('hidden');
+      document.getElementById('step-2').classList.add('hidden');
+      document.getElementById('step-3').classList.add('hidden');
+
+      const ind = document.getElementById('step-indicator');
+      const prog = document.getElementById('progress-bar');
+
+      if (step === 1) {
+        document.getElementById('step-1').classList.remove('hidden');
+        ind.innerText = "Paso 1 de 3";
+        prog.style.width = "33%";
+      } else if (step === 2) {
+        document.getElementById('step-2').classList.remove('hidden');
+        ind.innerText = "Paso 2 de 3";
+        prog.style.width = "66%";
+      } else if (step === 3) {
+        document.getElementById('step-3').classList.remove('hidden');
+        ind.innerText = "Paso 3 de 3";
+        prog.style.width = "100%";
+      }
+    }
+
+    function processLead(e) {
+      e.preventDefault();
+      const btn = e.target.querySelector('button[type="submit"]');
+      btn.innerHTML = `
+        <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+        <span>Auditando en bases de datos mayoristas...</span>
+      `;
+      btn.disabled = true;
+
+      setTimeout(() => {
+        btn.classList.add('hidden');
+        const resDiv = document.getElementById('simulation-result');
+        resDiv.classList.remove('hidden');
+
+        if (selectedType === 'empresa') {
+          document.getElementById('res-ahorro').innerText = '4.320 € /año';
+          document.getElementById('res-bono').innerText = '900 €';
+          document.getElementById('res-cae').innerText = '+ 1.850 €';
+        } else if (selectedType === 'hogar') {
+          document.getElementById('res-ahorro').innerText = '340 € /año';
+          document.getElementById('res-bono').innerText = '60 €';
+          document.getElementById('res-cae').innerText = '+ 200 €';
+        }
+
+        resDiv.scrollIntoView({ behavior: 'smooth' });
+      }, 1000);
+    }
+  </script>
+</body>
+</html>
