@@ -4,14 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CASH ENERGY | Gestión Energética, Capital & Tecnología</title>
-  <meta name="description" content="Plataforma de optimización energética de alta gama. Devolución de comisiones en efectivo de hasta 1.000 € y monetización de Certificados de Ahorro Energético (CAEs).">
+  <meta name="description" content="Plataforma de optimización de costes energéticos, devolución de comisiones en efectivo de hasta 1.000 € y monetización de Certificados de Ahorro Energético (CAEs).">
   
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Google Fonts: Syne (Tipografía 3 Vanguardia Luxury) + Plus Jakarta Sans + JetBrains Mono -->
+  <!-- Google Fonts: Plus Jakarta Sans (Tipografía 3 Elegida por Giovanni) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
     body {
@@ -21,25 +21,23 @@
       overflow-x: hidden;
     }
 
-    /* Tipografía 3: Syne en todos los títulos de alto impacto */
-    h1, h2, h3, .font-heading, .brand-title {
-      font-family: 'Syne', sans-serif !important;
-      font-weight: 800 !important;
-      letter-spacing: -0.015em;
+    h1, h2, h3, .font-heading {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      letter-spacing: -0.025em;
     }
     
     /* Hero with HIGH-VISIBILITY Architectural Photography: Skyscraper & City clearly visible */
     .hero-light-cinematic {
       background: 
-        linear-gradient(90deg, rgba(255, 255, 255, 0.65) 0%, rgba(255, 255, 255, 0.40) 50%, rgba(255, 255, 255, 0.12) 100%),
-        linear-gradient(180deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.35) 60%, rgba(255, 255, 255, 0.92) 100%),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.68) 0%, rgba(255, 255, 255, 0.42) 50%, rgba(255, 255, 255, 0.15) 100%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0.38) 60%, rgba(255, 255, 255, 0.92) 100%),
         url('hero_bg.jpg') center/cover no-repeat;
     }
 
     /* Section 2: DIFERENCIACIÓN WITH HIGH-VISIBILITY SOLAR CAMPUS PHOTOGRAPHY */
     .diff-light-cinematic {
       background: 
-        linear-gradient(180deg, rgba(255, 255, 255, 0.90) 0%, rgba(255, 255, 255, 0.76) 50%, rgba(255, 255, 255, 0.92) 100%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.90) 0%, rgba(255, 255, 255, 0.78) 50%, rgba(255, 255, 255, 0.92) 100%),
         url('diff_bg.jpg') center/cover no-repeat;
     }
 
@@ -62,17 +60,53 @@
       box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.12), 0 0 30px -5px rgba(212, 175, 55, 0.18);
     }
 
-    .supply-card.active {
-      border-color: #059669 !important;
-      background-color: #ECFDF5 !important;
+    /* Barra de deslizar interactiva (Slider) */
+    input[type=range] {
+      -webkit-appearance: none;
+      background: transparent;
+      width: 100%;
     }
-
-    .spend-btn.active {
-      border-color: #D4AF37 !important;
-      background: linear-gradient(135deg, #ECC968, #D4AF37) !important;
-      color: #0A1128 !important;
-      font-weight: 800 !important;
-      box-shadow: 0 4px 12px rgba(212, 175, 55, 0.35);
+    input[type=range]:focus {
+      outline: none;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      height: 24px;
+      width: 24px;
+      border-radius: 50%;
+      background: #D4AF37;
+      cursor: pointer;
+      border: 3px solid #FFFFFF;
+      box-shadow: 0 2px 10px rgba(212, 175, 55, 0.7);
+      margin-top: -9px;
+      transition: transform 0.15s ease, background 0.15s ease;
+    }
+    input[type=range]::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+      background: #ECC968;
+    }
+    input[type=range]::-moz-range-thumb {
+      height: 24px;
+      width: 24px;
+      border-radius: 50%;
+      background: #D4AF37;
+      cursor: pointer;
+      border: 3px solid #FFFFFF;
+      box-shadow: 0 2px 10px rgba(212, 175, 55, 0.7);
+    }
+    input[type=range]::-webkit-slider-runnable-track {
+      width: 100%;
+      height: 6px;
+      cursor: pointer;
+      background: #CBD5E1;
+      border-radius: 9999px;
+    }
+    input[type=range]::-moz-range-track {
+      width: 100%;
+      height: 6px;
+      cursor: pointer;
+      background: #CBD5E1;
+      border-radius: 9999px;
     }
   </style>
 </head>
@@ -113,7 +147,7 @@
           <img src="logo_navy.jpg" alt="Cash Energy Logo" class="w-full h-full object-cover" onerror="this.src='https://hugoguevara1474-blip.github.io/cash-energy-web/logo_navy.jpg'">
         </div>
         <div>
-          <div class="text-xl font-extrabold tracking-tight text-slate-900 leading-none brand-title">
+          <div class="text-xl font-extrabold tracking-tight text-slate-900 leading-none">
             CASH<span class="text-emerald-600">ENERGY</span>
           </div>
           <span class="text-[9px] font-bold uppercase tracking-[0.25em] text-slate-600 block mt-1">Energy · Capital · Technology</span>
@@ -211,7 +245,7 @@
 
       </div>
 
-      <!-- RIGHT COLUMN: EL SIMULADOR INTELIGENTE ORIGINAL 100% OPERATIVO -->
+      <!-- RIGHT COLUMN: SIMULADOR CON LA BARRA DE DESLIZAR (SLIDER) MATEMÁTICA -->
       <div class="lg:col-span-6" id="simulador">
         <div class="card-clean-luxury p-6 sm:p-8 rounded-3xl relative overflow-hidden">
           
@@ -221,153 +255,148 @@
           </div>
 
           <div class="relative z-10 space-y-6">
-            <!-- Header del Funnel -->
+            <!-- Terminal Header Badge -->
             <div class="flex items-center justify-between pb-4 border-b border-slate-100">
-              <div>
-                <span class="text-xs font-bold text-emerald-600 uppercase tracking-wider">Simulador Inteligente 2026</span>
-                <h2 class="text-lg font-extrabold text-slate-900">Calcula tu Ahorro y Bono en Efectivo</h2>
+              <div class="flex items-center space-x-2">
+                <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+                <span class="text-xs font-bold text-slate-800 tracking-wider uppercase font-mono">Simulador de Ahorro & Bono 2026</span>
               </div>
-              <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-semibold font-mono" id="step-indicator">Paso 1 de 3</span>
+              <span class="text-[11px] font-mono font-bold text-amber-800 bg-amber-100 px-3 py-1 rounded-full border border-amber-300">
+                Paso <span id="step-number">1</span> de 3
+              </span>
             </div>
 
-            <!-- Barra de Progreso -->
+            <!-- Progress Line -->
             <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
-              <div id="progress-bar" class="bg-gradient-to-r from-amber-400 to-emerald-500 h-full w-1/3 transition-all duration-300"></div>
+              <div id="progress-bar" class="bg-gradient-to-r from-amber-400 to-emerald-500 h-full w-1/3 transition-all duration-500"></div>
             </div>
 
-            <!-- ================= PASO 1: SELECCIONA SUMINISTRO ================= -->
-            <div id="step-1" class="space-y-4">
-              <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">1. Selecciona tu tipo de suministro:</label>
-              
-              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <!-- NEGOCIO -->
-                <div onclick="selectSupplyType('negocio')" id="card-negocio" class="supply-card p-4 rounded-2xl border-2 border-emerald-500 bg-emerald-50/70 hover:bg-emerald-50 cursor-pointer transition text-center shadow-sm">
-                  <div class="w-10 h-10 mx-auto rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center mb-2 font-bold">🏢</div>
-                  <h3 class="font-bold text-slate-900 text-xs">Negocio / Local</h3>
-                  <p class="text-[10px] text-slate-500 mt-0.5">Comercio, oficinas</p>
-                  <span class="inline-block mt-2 text-[10px] font-extrabold text-emerald-800 bg-white px-2 py-0.5 rounded-full border border-emerald-200">Bono: 150€ - 350€</span>
-                </div>
-
-                <!-- EMPRESA / FRANQUICIA -->
-                <div onclick="selectSupplyType('empresa')" id="card-empresa" class="supply-card p-4 rounded-2xl border-2 border-slate-200 hover:border-emerald-500 bg-white cursor-pointer transition text-center shadow-sm">
-                  <div class="w-10 h-10 mx-auto rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center mb-2 font-bold">🏭</div>
-                  <h3 class="font-bold text-slate-900 text-xs">Empresa / Franquicia</h3>
-                  <p class="text-[10px] text-slate-500 mt-0.5">Industria, cadenas</p>
-                  <span class="inline-block mt-2 text-[10px] font-extrabold text-amber-800 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">Bono: hasta 1.000€</span>
-                </div>
-
-                <!-- HOGAR -->
-                <div onclick="selectSupplyType('hogar')" id="card-hogar" class="supply-card p-4 rounded-2xl border-2 border-slate-200 hover:border-emerald-500 bg-white cursor-pointer transition text-center shadow-sm">
-                  <div class="w-10 h-10 mx-auto rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center mb-2 font-bold">🏡</div>
-                  <h3 class="font-bold text-slate-900 text-xs">Hogar / Particular</h3>
-                  <p class="text-[10px] text-slate-500 mt-0.5">Viviendas, familias</p>
-                  <span class="inline-block mt-2 text-[10px] font-extrabold text-slate-700 bg-slate-100 px-2 py-0.5 rounded-full border border-slate-200">Bono: 30€ - 80€</span>
+            <!-- ================= STEP 1: SELECTOR DE PERFIL Y BARRA DE DESLIZAR ================= -->
+            <div id="step-1" class="space-y-5">
+              <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">1. Tipo de Suministro</label>
+                <div class="grid grid-cols-2 gap-3">
+                  <button type="button" id="tab-empresa" onclick="setProfile('empresa')" class="p-3.5 rounded-2xl border-2 border-emerald-600 bg-white text-slate-900 font-extrabold text-xs sm:text-sm flex flex-col items-center justify-center space-y-1 transition shadow-sm cursor-pointer">
+                    <span>🏢 Empresa / Negocio</span>
+                    <span class="text-[10px] text-emerald-700 font-medium">Tarifas 3.0TD / 6.X TD</span>
+                  </button>
+                  <button type="button" id="tab-hogar" onclick="setProfile('hogar')" class="p-3.5 rounded-2xl border-2 border-slate-200 bg-slate-50 text-slate-500 font-extrabold text-xs sm:text-sm flex flex-col items-center justify-center space-y-1 hover:border-slate-300 transition cursor-pointer">
+                    <span>🏡 Residencial / Hogar</span>
+                    <span class="text-[10px] text-slate-500 font-normal">Tarifa 2.0TD</span>
+                  </button>
                 </div>
               </div>
 
-              <!-- LIVE ESTIMATION PREVIEW IN STEP 1 -->
-              <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 grid grid-cols-3 gap-2 text-center mt-3">
-                <div>
-                  <div class="text-[9px] text-slate-500 uppercase font-semibold">Ahorro Anual</div>
-                  <div class="text-sm font-extrabold font-mono text-emerald-600" id="step1-ahorro">1.480 €</div>
+              <!-- BARRA DE DESLIZAR QUE CALCULA EN TIEMPO REAL -->
+              <div class="space-y-3 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-bold text-slate-700">Gasto Mensual en Electricidad</span>
+                  <span id="slider-val-display" class="text-lg font-extrabold font-mono text-amber-700">1.200 € / mes</span>
                 </div>
-                <div>
-                  <div class="text-[9px] text-slate-500 uppercase font-semibold">Bono Bienvenida</div>
-                  <div class="text-sm font-extrabold font-mono text-amber-600" id="step1-bono">350 €</div>
-                </div>
-                <div>
-                  <div class="text-[9px] text-slate-500 uppercase font-semibold">Bono CAE</div>
-                  <div class="text-sm font-extrabold font-mono text-teal-700" id="step1-cae">+ 450 €</div>
+                <input type="range" id="spend-slider" min="200" max="10000" step="100" value="1200" oninput="updateCalculation()" class="w-full">
+                <div class="flex justify-between text-[10px] text-slate-500 font-mono">
+                  <span id="slider-min-lbl">200 €</span>
+                  <span id="slider-max-lbl">10.000 €+</span>
                 </div>
               </div>
 
-              <button type="button" onclick="goToStep(2)" class="w-full py-3.5 rounded-2xl text-white font-extrabold text-xs sm:text-sm tracking-wide shadow-md hover:shadow-lg transition flex items-center justify-center space-x-2 cursor-pointer" style="background: linear-gradient(135deg, #059669, #047857);">
-                <span>Continuar al Paso 2</span>
+              <!-- RESULTADOS MATEMÁTICOS EN DIRECTO AL DESLIZAR LA BARRA -->
+              <div class="grid grid-cols-3 gap-2 text-center bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm">
+                <div>
+                  <div class="text-[10px] text-slate-500 uppercase font-semibold">Ahorro Anual</div>
+                  <div class="text-sm sm:text-base font-extrabold font-mono text-emerald-600" id="live-ahorro">3.168 €</div>
+                </div>
+                <div>
+                  <div class="text-[10px] text-slate-500 uppercase font-semibold">Bono Directo</div>
+                  <div class="text-sm sm:text-base font-extrabold font-mono text-amber-600" id="live-bono">540 €</div>
+                </div>
+                <div>
+                  <div class="text-[10px] text-slate-500 uppercase font-semibold">Bono CAE</div>
+                  <div class="text-sm sm:text-base font-extrabold font-mono text-teal-700" id="live-cae">+ 1.320 €</div>
+                </div>
+              </div>
+
+              <button type="button" onclick="goToStep(2)" class="w-full py-4 rounded-2xl text-white font-extrabold text-sm tracking-wide shadow-md hover:shadow-lg transition flex items-center justify-center space-x-2 cursor-pointer" style="background: linear-gradient(135deg, #059669, #047857);">
+                <span>Continuar con mi Factura</span>
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
               </button>
             </div>
 
-            <!-- ================= PASO 2: BOTONES MATEMATICOS DE GASTO & FACTURA ================= -->
+            <!-- ================= STEP 2: DROPZONE & OCR SCAN HUD ================= -->
             <div id="step-2" class="hidden space-y-5">
-              
-              <!-- BOTONES MATEMÁTICOS DE GASTO MENSUAL -->
-              <div>
-                <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">2. ¿Cuánto pagas de luz al mes aproximadamente?</label>
-                <div class="grid grid-cols-3 gap-2">
-                  <button type="button" onclick="selectSpend('<150')" id="btn-spend-1" class="spend-btn py-3 px-2 rounded-xl border border-slate-200 bg-slate-50 hover:bg-white text-xs font-bold text-slate-700 transition cursor-pointer">
-                    &lt; 150 € / mes
-                  </button>
-                  <button type="button" onclick="selectSpend('150-500')" id="btn-spend-2" class="spend-btn active py-3 px-2 rounded-xl border text-xs font-extrabold transition cursor-pointer">
-                    150 € - 500 €
-                  </button>
-                  <button type="button" onclick="selectSpend('>500')" id="btn-spend-3" class="spend-btn py-3 px-2 rounded-xl border border-slate-200 bg-slate-50 hover:bg-white text-xs font-bold text-slate-700 transition cursor-pointer">
-                    &gt; 500 € / mes
-                  </button>
-                </div>
+              <div class="text-left">
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">2. Sube una foto o PDF de tu Factura</label>
+                <p class="text-xs text-slate-500 leading-relaxed">
+                  Necesitamos el código CUPS y la potencia para comparar exactamente con Several, Candela y el mercado mayorista.
+                </p>
               </div>
 
-              <!-- CONTADOR MATEMATICO DINÁMICO TRAS CLIC EN BOTONES -->
-              <div class="bg-emerald-50/70 p-3.5 rounded-2xl border border-emerald-200 grid grid-cols-3 gap-2 text-center">
-                <div>
-                  <div class="text-[9px] text-emerald-800 uppercase font-semibold">Ahorro Estimado</div>
-                  <div class="text-base font-extrabold font-mono text-emerald-700" id="math-ahorro">1.480 €/año</div>
+              <div id="dropzone" onclick="document.getElementById('file-input').click()" class="border-2 border-dashed border-slate-300 hover:border-amber-500 bg-slate-50 p-6 rounded-2xl text-center cursor-pointer transition group">
+                <input type="file" id="file-input" class="hidden" accept=".pdf,image/*" onchange="handleFileSelected(event)">
+                <div class="w-12 h-12 rounded-xl bg-white border border-slate-200 text-amber-600 group-hover:text-amber-700 flex items-center justify-center mx-auto mb-3 transition shadow-sm">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
                 </div>
-                <div>
-                  <div class="text-[9px] text-emerald-800 uppercase font-semibold">Bono Inmediato</div>
-                  <div class="text-base font-extrabold font-mono text-amber-700" id="math-bono">350 €</div>
-                </div>
-                <div>
-                  <div class="text-[9px] text-emerald-800 uppercase font-semibold">Monetización CAE</div>
-                  <div class="text-base font-extrabold font-mono text-teal-800" id="math-cae">+ 450 €</div>
-                </div>
+                <div class="text-xs font-bold text-slate-800">Arrastra tu factura aquí o <span class="text-amber-700 underline">haz clic para examinar</span></div>
+                <div class="text-[10px] text-slate-500 mt-1" id="file-status-text">Formatos admitidos: PDF, JPG, PNG (máx. 15 MB)</div>
               </div>
 
-              <!-- DROPZONE DE FACTURA -->
-              <div>
-                <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">Adjunta tu factura (opcional para cálculo exacto):</label>
-                <div onclick="triggerFileInput()" class="border-2 border-dashed border-slate-300 hover:border-amber-500 bg-slate-50 p-5 rounded-2xl text-center cursor-pointer transition">
-                  <input type="file" id="file-input" class="hidden" accept=".pdf,image/*" onchange="handleFileSelected(event)">
-                  <div class="w-10 h-10 rounded-xl bg-white border border-slate-200 text-amber-600 flex items-center justify-center mx-auto mb-2 shadow-sm">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
-                  </div>
-                  <div class="text-xs font-bold text-slate-800">Arrastra tu factura aquí o <span class="text-amber-700 underline">examina en tu equipo</span></div>
-                  <div class="text-[10px] text-slate-500 mt-0.5" id="file-name-display">PDF, JPG o PNG</div>
+              <div id="file-display" class="hidden bg-emerald-50 p-3 rounded-xl border border-emerald-200 flex items-center justify-between text-xs">
+                <div class="flex items-center space-x-2 text-emerald-800">
+                  <svg class="w-4 h-4 text-emerald-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                  <span id="file-name-text" class="font-mono font-bold truncate max-w-[200px]">factura.pdf</span>
                 </div>
+                <span class="text-[10px] text-emerald-700 font-mono">Listo para auditar</span>
               </div>
 
-              <div class="flex space-x-3 pt-2">
-                <button type="button" onclick="goToStep(1)" class="w-1/3 py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer">
+              <label class="flex items-start space-x-3 p-3 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer hover:border-slate-300 transition">
+                <input type="checkbox" id="cae-check" class="mt-0.5 w-4 h-4 rounded text-emerald-600 border-slate-300 focus:ring-emerald-500">
+                <span class="text-xs text-slate-700 leading-snug">
+                  Tengo o planeo instalar <strong class="text-slate-900">placas solares, aerotermia o aislamiento</strong> (solicitar monetización de CAEs en metálico).
+                </span>
+              </label>
+
+              <div class="flex space-x-3">
+                <button type="button" onclick="goToStep(1)" class="w-1/3 py-3.5 rounded-2xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer">
                   Atrás
                 </button>
-                <button type="button" onclick="goToStep(3)" class="w-2/3 py-3 rounded-2xl text-slate-900 font-extrabold text-xs tracking-wide shadow-md transition flex items-center justify-center space-x-2 cursor-pointer" style="background: linear-gradient(135deg, #D4AF37, #ECC968);">
-                  <span>Ver Oferta & Bono</span>
+                <button type="button" onclick="executeAuditScan()" id="btn-scan" class="w-2/3 py-3.5 rounded-2xl text-slate-900 font-extrabold text-xs tracking-wide shadow-md transition flex items-center justify-center space-x-2 cursor-pointer" style="background: linear-gradient(135deg, #D4AF37, #ECC968);">
+                  <span>Auditar en Mayorista</span>
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                 </button>
               </div>
 
+              <div id="scan-hud" class="hidden bg-slate-900 text-white p-4 rounded-xl border border-emerald-500/40 text-left space-y-2 font-mono text-[11px]">
+                <div class="flex items-center justify-between text-emerald-400">
+                  <span id="hud-status-text">Conectando con OMIE y Several...</span>
+                  <span id="hud-percent">35%</span>
+                </div>
+                <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                  <div id="hud-bar" class="bg-emerald-400 h-full w-[35%] transition-all duration-300"></div>
+                </div>
+              </div>
             </div>
 
-            <!-- ================= PASO 3: RESULTADOS Y CIERRE POR WHATSAPP ================= -->
+            <!-- ================= STEP 3: RESULTS & WHATSAPP CLOSER ================= -->
             <div id="step-3" class="hidden space-y-5 text-left">
               <div class="text-center space-y-1">
                 <span class="inline-flex items-center px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 text-[11px] font-bold">
                   ✓ Auditoría Preliminar Conforme
                 </span>
-                <h3 class="text-lg font-extrabold text-slate-900">Tu Bono en Efectivo está Confirmado</h3>
+                <h3 class="text-lg font-extrabold text-slate-900">Tu Oferta de Ahorro & Bono Está Lista</h3>
               </div>
 
               <div class="grid grid-cols-3 gap-2 bg-slate-50 p-4 rounded-2xl border border-slate-200 text-center">
                 <div>
                   <div class="text-[10px] text-slate-500 uppercase font-bold">Ahorro Anual</div>
-                  <div class="text-base sm:text-lg font-extrabold text-emerald-600 font-mono" id="res-ahorro">1.480 €/año</div>
+                  <div class="text-base sm:text-lg font-extrabold text-emerald-600 font-mono" id="final-ahorro">3.168 €</div>
                 </div>
                 <div>
                   <div class="text-[10px] text-slate-500 uppercase font-bold">Bono Inmediato</div>
-                  <div class="text-base sm:text-lg font-extrabold text-amber-700 font-mono" id="res-bono">350 €</div>
+                  <div class="text-base sm:text-lg font-extrabold text-amber-700 font-mono" id="final-bono">540 €</div>
                 </div>
                 <div>
                   <div class="text-[10px] text-slate-500 uppercase font-bold">Bono CAE</div>
-                  <div class="text-base sm:text-lg font-extrabold text-teal-700 font-mono" id="res-cae">+ 450 €</div>
+                  <div class="text-base sm:text-lg font-extrabold text-teal-700 font-mono" id="final-cae">+ 1.320 €</div>
                 </div>
               </div>
 
@@ -382,21 +411,15 @@
                 </div>
               </div>
 
-              <div class="flex space-x-3">
-                <button type="button" onclick="goToStep(2)" class="w-1/4 py-3.5 rounded-2xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer">
-                  Atrás
-                </button>
-                <button type="button" onclick="sendToWhatsApp()" class="w-3/4 py-3.5 rounded-2xl text-white font-extrabold text-sm tracking-wide shadow-lg hover:shadow-emerald-600/30 transition flex items-center justify-center space-x-2 cursor-pointer" style="background: linear-gradient(135deg, #059669, #047857);">
-                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766 0-3.18-2.587-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.007c.106.005.249-.04.39.298.144.347.491 1.2.534 1.288.043.088.072.19.014.305-.058.115-.087.187-.173.289l-.26.308c-.087.086-.178.18-.077.354.102.174.451.745.969 1.206.666.593 1.228.777 1.402.864.174.087.275.072.376-.044.101-.116.433-.506.549-.68.116-.174.232-.145.39-.087s1.011.477 1.184.564.289.13.332.203c.044.072.044.419-.1.824z"/></svg>
-                  <span>Reclamar mi Bono por WhatsApp</span>
-                </button>
-              </div>
+              <button type="button" onclick="sendToWhatsApp()" class="w-full py-4 rounded-2xl text-white font-extrabold text-sm tracking-wide shadow-lg hover:shadow-emerald-600/30 transition flex items-center justify-center space-x-2 cursor-pointer" style="background: linear-gradient(135deg, #059669, #047857);">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766 0-3.18-2.587-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.007c.106.005.249-.04.39.298.144.347.491 1.2.534 1.288.043.088.072.19.014.305-.058.115-.087.187-.173.289l-.26.308c-.087.086-.178.18-.077.354.102.174.451.745.969 1.206.666.593 1.228.777 1.402.864.174.087.275.072.376-.044.101-.116.433-.506.549-.68.116-.174.232-.145.39-.087s1.011.477 1.184.564.289.13.332.203c.044.072.044.419-.1.824z"/></svg>
+                <span>Reclamar mi Bono por WhatsApp</span>
+              </button>
 
               <p class="text-[10px] text-slate-500 text-center">
                 Tus datos están protegidos bajo estricto secreto comercial y normativa CNMC.
               </p>
             </div>
-
           </div>
 
         </div>
@@ -501,7 +524,7 @@
           <div class="w-9 h-9 rounded-xl overflow-hidden bg-slate-950 border border-amber-500/30 flex items-center justify-center">
             <img src="logo_navy.jpg" alt="Cash Energy" class="w-full h-full object-cover">
           </div>
-          <span class="text-base font-extrabold text-white tracking-tight brand-title">CASH<span class="text-emerald-400">ENERGY</span></span>
+          <span class="text-base font-extrabold text-white tracking-tight">CASH<span class="text-emerald-400">ENERGY</span></span>
         </div>
         <p class="text-slate-300 text-xs max-w-sm leading-relaxed">
           Plataforma de optimización de costes energéticos, consultoría mayorista y monetización de activos sostenibles para empresas y familias.
@@ -538,209 +561,177 @@
     </div>
   </footer>
 
-  <!-- ================= JAVASCRIPT ENGINE (SIMULADOR Y BOTONES MATEMATICOS) ================= -->
+  <!-- ================= JAVASCRIPT ENGINE (SIMULADOR MATEMATICO 100% FUNCIONAL) ================= -->
   <script>
-    let selectedType = 'negocio';
-    let selectedSpendVal = '150-500';
+    let currentProfile = 'empresa';
+    let selectedFile = null;
 
-    // 1. SELECCIÓN DE TIPO DE SUMINISTRO
-    function selectSupplyType(type) {
-      selectedType = type;
-      
-      const cards = {
-        negocio: document.getElementById('card-negocio'),
-        empresa: document.getElementById('card-empresa'),
-        hogar: document.getElementById('card-hogar')
-      };
+    function setProfile(type) {
+      currentProfile = type;
+      const tabEmpresa = document.getElementById('tab-empresa');
+      const tabHogar = document.getElementById('tab-hogar');
+      const slider = document.getElementById('spend-slider');
+      const minLbl = document.getElementById('slider-min-lbl');
+      const maxLbl = document.getElementById('slider-max-lbl');
 
-      // Reset card borders
-      Object.keys(cards).forEach(k => {
-        if (cards[k]) {
-          cards[k].className = "supply-card p-4 rounded-2xl border-2 border-slate-200 hover:border-emerald-500 bg-white cursor-pointer transition text-center shadow-sm";
-        }
-      });
+      if (type === 'empresa') {
+        tabEmpresa.className = "p-3.5 rounded-2xl border-2 border-emerald-600 bg-white text-slate-900 font-extrabold text-xs sm:text-sm flex flex-col items-center justify-center space-y-1 transition shadow-sm cursor-pointer";
+        tabHogar.className = "p-3.5 rounded-2xl border-2 border-slate-200 bg-slate-50 text-slate-500 font-extrabold text-xs sm:text-sm flex flex-col items-center justify-center space-y-1 hover:border-slate-300 transition cursor-pointer";
+        slider.min = "200";
+        slider.max = "10000";
+        slider.step = "100";
+        slider.value = "1200";
+        minLbl.innerText = "200 €";
+        maxLbl.innerText = "10.000 €+";
+      } else {
+        tabHogar.className = "p-3.5 rounded-2xl border-2 border-emerald-600 bg-white text-slate-900 font-extrabold text-xs sm:text-sm flex flex-col items-center justify-center space-y-1 transition shadow-sm cursor-pointer";
+        tabEmpresa.className = "p-3.5 rounded-2xl border-2 border-slate-200 bg-slate-50 text-slate-500 font-extrabold text-xs sm:text-sm flex flex-col items-center justify-center space-y-1 hover:border-slate-300 transition cursor-pointer";
+        slider.min = "40";
+        slider.max = "600";
+        slider.step = "10";
+        slider.value = "120";
+        minLbl.innerText = "40 €";
+        maxLbl.innerText = "600 €+";
+      }
+      updateCalculation();
+    }
 
-      // Highlight active card
-      if (cards[type]) {
-        cards[type].className = "supply-card p-4 rounded-2xl border-2 border-emerald-500 bg-emerald-50/70 cursor-pointer transition text-center shadow-sm";
+    // FUNCIÓN MATEMÁTICA EN DIRECTO AL DESLIZAR LA BARRA (ONINPUT)
+    function updateCalculation() {
+      const slider = document.getElementById('spend-slider');
+      const val = parseInt(slider.value);
+      const display = document.getElementById('slider-val-display');
+      if (display) {
+        display.innerText = val.toLocaleString('es-ES') + " € / mes";
       }
 
-      calculateMath();
-    }
-
-    // 2. BOTONES MATEMÁTICOS DE GASTO (<150, 150-500, >500)
-    function selectSpend(val) {
-      selectedSpendVal = val;
-      
-      const btn1 = document.getElementById('btn-spend-1');
-      const btn2 = document.getElementById('btn-spend-2');
-      const btn3 = document.getElementById('btn-spend-3');
-
-      // Reset all buttons
-      [btn1, btn2, btn3].forEach(b => {
-        if (b) {
-          b.className = "spend-btn py-3 px-2 rounded-xl border border-slate-200 bg-slate-50 hover:bg-white text-xs font-bold text-slate-700 transition cursor-pointer";
-        }
-      });
-
-      // Activate clicked button
-      if (val === '<150' && btn1) btn1.className = "spend-btn active py-3 px-2 rounded-xl border text-xs font-extrabold transition cursor-pointer";
-      if (val === '150-500' && btn2) btn2.className = "spend-btn active py-3 px-2 rounded-xl border text-xs font-extrabold transition cursor-pointer";
-      if (val === '>500' && btn3) btn3.className = "spend-btn active py-3 px-2 rounded-xl border text-xs font-extrabold transition cursor-pointer";
-
-      calculateMath();
-    }
-
-    // 3. MOTOR DE CÁLCULO MATEMÁTICO PRECISO
-    function calculateMath() {
-      let ahorro = "1.480 €/año";
-      let bono = "350 €";
-      let cae = "+ 450 €";
-
-      if (selectedType === 'empresa') {
-        if (selectedSpendVal === '<150') {
-          ahorro = "1.850 €/año";
-          bono = "400 €";
-          cae = "+ 600 €";
-        } else if (selectedSpendVal === '150-500') {
-          ahorro = "3.200 €/año";
-          bono = "750 €";
-          cae = "+ 1.200 €";
-        } else {
-          ahorro = "6.800 €/año";
-          bono = "1.000 €";
-          cae = "+ 2.400 €";
-        }
-      } else if (selectedType === 'negocio') {
-        if (selectedSpendVal === '<150') {
-          ahorro = "840 €/año";
-          bono = "150 €";
-          cae = "+ 250 €";
-        } else if (selectedSpendVal === '150-500') {
-          ahorro = "1.480 €/año";
-          bono = "350 €";
-          cae = "+ 450 €";
-        } else {
-          ahorro = "2.950 €/año";
-          bono = "600 €";
-          cae = "+ 850 €";
-        }
-      } else if (selectedType === 'hogar') {
-        if (selectedSpendVal === '<150') {
-          ahorro = "240 €/año";
-          bono = "40 €";
-          cae = "+ 120 €";
-        } else if (selectedSpendVal === '150-500') {
-          ahorro = "480 €/año";
-          bono = "80 €";
-          cae = "+ 250 €";
-        } else {
-          ahorro = "920 €/año";
-          bono = "150 €";
-          cae = "+ 450 €";
-        }
+      let ahorro, bono, cae;
+      if (currentProfile === 'empresa') {
+        ahorro = Math.round(val * 12 * 0.22);
+        bono = Math.min(1000, Math.round(val * 0.45));
+        cae = Math.round(val * 1.1);
+      } else {
+        ahorro = Math.round(val * 12 * 0.26);
+        bono = Math.min(150, Math.round(val * 0.40));
+        cae = Math.round(val * 0.8);
       }
 
-      // Update Step 1 Live
-      const s1A = document.getElementById('step1-ahorro');
-      const s1B = document.getElementById('step1-bono');
-      const s1C = document.getElementById('step1-cae');
-      if (s1A) s1A.innerText = ahorro.replace('/año', '');
-      if (s1B) s1B.innerText = bono;
-      if (s1C) s1C.innerText = cae;
+      // Actualizar contadores en vivo Paso 1
+      const s1A = document.getElementById('live-ahorro');
+      const s1B = document.getElementById('live-bono');
+      const s1C = document.getElementById('live-cae');
+      if (s1A) s1A.innerText = ahorro.toLocaleString('es-ES') + " €";
+      if (s1B) s1B.innerText = bono.toLocaleString('es-ES') + " €";
+      if (s1C) s1C.innerText = "+ " + cae.toLocaleString('es-ES') + " €";
 
-      // Update Step 2 Live Math
-      const mA = document.getElementById('math-ahorro');
-      const mB = document.getElementById('math-bono');
-      const mC = document.getElementById('math-cae');
-      if (mA) mA.innerText = ahorro;
-      if (mB) mB.innerText = bono;
-      if (mC) mC.innerText = cae;
-
-      // Update Step 3 Final Results
-      const rA = document.getElementById('res-ahorro');
-      const rB = document.getElementById('res-bono');
-      const rC = document.getElementById('res-cae');
-      if (rA) rA.innerText = ahorro;
-      if (rB) rB.innerText = bono;
-      if (rC) rC.innerText = cae;
+      // Actualizar resultados finales Paso 3
+      const fA = document.getElementById('final-ahorro');
+      const fB = document.getElementById('final-bono');
+      const fC = document.getElementById('final-cae');
+      if (fA) fA.innerText = ahorro.toLocaleString('es-ES') + " €";
+      if (fB) fB.innerText = bono.toLocaleString('es-ES') + " €";
+      if (fC) fC.innerText = "+ " + cae.toLocaleString('es-ES') + " €";
     }
 
-    // 4. NAVEGACIÓN ENTRE PASOS
     function goToStep(step) {
       const s1 = document.getElementById('step-1');
       const s2 = document.getElementById('step-2');
       const s3 = document.getElementById('step-3');
-      const ind = document.getElementById('step-indicator');
-      const prog = document.getElementById('progress-bar');
+      const num = document.getElementById('step-number');
+      const bar = document.getElementById('progress-bar');
 
       if (s1) s1.classList.add('hidden');
       if (s2) s2.classList.add('hidden');
       if (s3) s3.classList.add('hidden');
 
-      if (step === 1 && s1) {
-        s1.classList.remove('hidden');
-        if (ind) ind.innerText = "Paso 1 de 3";
-        if (prog) prog.style.width = "33%";
-      } else if (step === 2 && s2) {
-        s2.classList.remove('hidden');
-        if (ind) ind.innerText = "Paso 2 de 3";
-        if (prog) prog.style.width = "66%";
-      } else if (step === 3 && s3) {
-        s3.classList.remove('hidden');
-        if (ind) ind.innerText = "Paso 3 de 3";
-        if (prog) prog.style.width = "100%";
-      }
-    }
+      const target = document.getElementById(`step-${step}`);
+      if (target) target.classList.remove('hidden');
+      if (num) num.innerText = step;
 
-    // 5. MANEJO DE ARCHIVO DROPZONE
-    function triggerFileInput() {
-      const fi = document.getElementById('file-input');
-      if (fi) fi.click();
+      if (bar) {
+        if (step === 1) bar.className = "bg-gradient-to-r from-amber-400 to-emerald-500 h-full w-1/3 transition-all duration-500";
+        if (step === 2) bar.className = "bg-gradient-to-r from-amber-400 to-emerald-500 h-full w-2/3 transition-all duration-500";
+        if (step === 3) bar.className = "bg-gradient-to-r from-amber-400 to-emerald-500 h-full w-full transition-all duration-500";
+      }
     }
 
     function handleFileSelected(e) {
       const file = e.target.files[0];
       if (file) {
-        const disp = document.getElementById('file-name-display');
-        if (disp) {
-          disp.innerText = "✓ Factura cargada: " + file.name;
-          disp.className = "text-[11px] font-bold text-emerald-700 mt-1";
-        }
+        selectedFile = file;
+        const nameDisp = document.getElementById('file-name-text');
+        const boxDisp = document.getElementById('file-display');
+        if (nameDisp) nameDisp.innerText = file.name;
+        if (boxDisp) boxDisp.classList.remove('hidden');
       }
     }
 
-    // 6. ENVÍO A WHATSAPP
+    function executeAuditScan() {
+      const btn = document.getElementById('btn-scan');
+      const hud = document.getElementById('scan-hud');
+      const hudStatus = document.getElementById('hud-status-text');
+      const hudPercent = document.getElementById('hud-percent');
+      const hudBar = document.getElementById('hud-bar');
+
+      if (btn) btn.disabled = true;
+      if (hud) hud.classList.remove('hidden');
+
+      const steps = [
+        { p: 25, t: "Extrayendo código CUPS y peajes 2.0TD/3.0TD..." },
+        { p: 55, t: "Auditando excesos de potencia contratada..." },
+        { p: 85, t: "Comparando tarifas indexadas OMIE vs Several..." },
+        { p: 100, t: "Auditoría completada con éxito. Calculando bono..." }
+      ];
+
+      let idx = 0;
+      const interval = setInterval(() => {
+        if (idx < steps.length) {
+          if (hudPercent) hudPercent.innerText = steps[idx].p + "%";
+          if (hudBar) hudBar.style.width = steps[idx].p + "%";
+          if (hudStatus) hudStatus.innerText = steps[idx].t;
+          idx++;
+        } else {
+          clearInterval(interval);
+          setTimeout(() => {
+            goToStep(3);
+          }, 350);
+        }
+      }, 400);
+    }
+
     function sendToWhatsApp() {
       const nameInput = document.getElementById('lead-name');
       const phoneInput = document.getElementById('lead-phone');
       const name = (nameInput && nameInput.value) ? nameInput.value : "Cliente";
       const phone = (phoneInput && phoneInput.value) ? phoneInput.value : "";
       
-      const rA = document.getElementById('res-ahorro');
-      const rB = document.getElementById('res-bono');
-      const rC = document.getElementById('res-cae');
+      const fA = document.getElementById('final-ahorro');
+      const fB = document.getElementById('final-bono');
+      const fC = document.getElementById('final-cae');
       
-      const ahorro = rA ? rA.innerText : "1.480 €/año";
-      const bono = rB ? rB.innerText : "350 €";
-      const cae = rC ? rC.innerText : "+ 450 €";
-      const tipo = selectedType === 'empresa' ? 'Empresa / Franquicia' : (selectedType === 'negocio' ? 'Negocio / Local' : 'Hogar / Particular');
+      const ahorro = fA ? fA.innerText : "3.168 €";
+      const bono = fB ? fB.innerText : "540 €";
+      const cae = fC ? fC.innerText : "+ 1.320 €";
+      const tipo = currentProfile === 'empresa' ? 'Empresa / Negocio' : 'Hogar / Particular';
 
       let msg = `Hola Cash Energy, acabo de realizar la auditoría en la web:\n\n` +
                 `👤 *Nombre:* ${name}\n` +
                 `📱 *Teléfono:* ${phone}\n` +
                 `🏢 *Tipo:* ${tipo}\n` +
-                `💰 *Ahorro Estimado:* ${ahorro}\n` +
+                `💰 *Ahorro Estimado:* ${ahorro}/año\n` +
                 `🎁 *Bono de Bienvenida:* ${bono}\n` +
                 `🌱 *Monetización CAE:* ${cae}\n\n` +
-                `Deseo que revisen mi factura y me ingresen el Bono de Bienvenida.`;
+                `Deseo que revisen mi factura y me gestionen el Bono de Bienvenida.`;
 
       const encoded = encodeURIComponent(msg);
       window.open(`https://wa.me/34612345678?text=${encoded}`, '_blank');
     }
 
-    // Inicializar cálculo en carga
-    calculateMath();
+    // Inicializar cálculo automático al cargar la página
+    document.addEventListener('DOMContentLoaded', () => {
+      updateCalculation();
+    });
+    updateCalculation();
   </script>
 </body>
 </html>
