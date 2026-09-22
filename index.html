@@ -331,13 +331,20 @@
                 </p>
               </div>
 
-              <div id="dropzone" onclick="document.getElementById('file-input').click()" class="border-2 border-dashed border-slate-300 hover:border-amber-500 bg-slate-50 p-6 rounded-2xl text-center cursor-pointer transition group">
+              <div id="dropzone" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleFileDrop(event)" onclick="document.getElementById('file-input').click()" class="border-2 border-dashed border-slate-300 hover:border-amber-500 bg-slate-50 p-6 rounded-2xl text-center cursor-pointer transition group relative">
                 <input type="file" id="file-input" class="hidden" accept=".pdf,image/*" onchange="handleFileSelected(event)">
-                <div class="w-12 h-12 rounded-xl bg-white border border-slate-200 text-amber-600 group-hover:text-amber-700 flex items-center justify-center mx-auto mb-3 transition shadow-sm">
+                <input type="file" id="camera-input" class="hidden" accept="image/*" capture="environment" onchange="handleFileSelected(event)">
+                <div class="w-12 h-12 rounded-xl bg-white border border-slate-200 text-amber-600 group-hover:text-amber-700 flex items-center justify-center mx-auto mb-2 transition shadow-sm">
                   <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
                 </div>
                 <div class="text-xs font-bold text-slate-800">Arrastra tu factura aquí o <span class="text-amber-700 underline">haz clic para examinar</span></div>
-                <div class="text-[10px] text-slate-500 mt-1" id="file-status-text">Formatos admitidos: PDF, JPG, PNG (máx. 15 MB)</div>
+                <div class="text-[10px] text-slate-500 mt-1" id="file-status-text">Admite PDF o foto de factura (El Ojo IA lee tus datos automáticamente)</div>
+                <div class="mt-3 flex justify-center">
+                  <button type="button" onclick="event.stopPropagation(); document.getElementById('camera-input').click()" class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-white border border-slate-200 hover:border-amber-400 text-[11px] font-bold text-slate-700 shadow-sm transition">
+                    <span>📷</span>
+                    <span>Hacer foto con la cámara</span>
+                  </button>
+                </div>
               </div>
 
               <div id="file-display" class="hidden bg-emerald-50 p-3 rounded-xl border border-emerald-200 flex items-center justify-between text-xs">
@@ -349,7 +356,7 @@
               </div>
 
               <label class="flex items-start space-x-3 p-3 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer hover:border-slate-300 transition">
-                <input type="checkbox" id="cae-check" class="mt-0.5 w-4 h-4 rounded text-emerald-600 border-slate-300 focus:ring-emerald-500">
+                <input type="checkbox" id="cae-check" onchange="updateCalculation()" class="mt-0.5 w-4 h-4 rounded text-emerald-600 border-slate-300 focus:ring-emerald-500">
                 <span class="text-xs text-slate-700 leading-snug">
                   Tengo o planeo instalar <strong class="text-slate-900">placas solares, aerotermia o aislamiento</strong> (solicitar monetización de CAEs en metálico).
                 </span>
@@ -360,7 +367,7 @@
                   Atrás
                 </button>
                 <button type="button" onclick="executeAuditScan()" id="btn-scan" class="w-2/3 py-3.5 rounded-2xl text-slate-900 font-extrabold text-xs tracking-wide shadow-md transition flex items-center justify-center space-x-2 cursor-pointer" style="background: linear-gradient(135deg, #D4AF37, #ECC968);">
-                  <span>Auditar en Mayorista</span>
+                  <span id="btn-scan-text">👁️ Auditar con el Ojo IA</span>
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                 </button>
               </div>
@@ -400,6 +407,25 @@
                 </div>
               </div>
 
+              <!-- TARJETA DIAGNÓSTICO 'EL OJO' IA (SI DETECTA FACTURA) -->
+              <div id="ai-detected-card" class="hidden bg-emerald-50 border border-emerald-300 p-3.5 rounded-2xl text-left space-y-2 shadow-sm">
+                <div class="flex items-center justify-between text-xs font-bold text-emerald-900 border-b border-emerald-200/70 pb-1.5">
+                  <span class="flex items-center space-x-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span>
+                    <span>👁️ Factura Auditada por Visión IA</span>
+                  </span>
+                  <span id="detected-comercializadora" class="font-mono text-[11px] bg-white px-2 py-0.5 rounded border border-emerald-300 font-extrabold text-emerald-800">Compañía</span>
+                </div>
+                <div class="grid grid-cols-2 gap-2 text-[11px] text-slate-700">
+                  <div><span class="text-slate-500">CUPS:</span> <span id="detected-cups" class="font-mono text-emerald-800 font-bold block truncate">ES00...</span></div>
+                  <div><span class="text-slate-500">Potencia / Tarifa:</span> <span id="detected-potencia" class="font-mono font-bold text-slate-900 block">-</span></div>
+                </div>
+                <div class="pt-1.5 border-t border-emerald-200/60 flex items-center justify-between text-[11px]">
+                  <span class="text-slate-500">Titular de Contrato:</span>
+                  <span id="detected-titular" class="font-bold text-slate-900 font-mono">-</span>
+                </div>
+              </div>
+
               <div class="space-y-3">
                 <div>
                   <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wide mb-1">Nombre / Razón Social</label>
@@ -413,11 +439,11 @@
 
               <button type="button" onclick="sendToWhatsApp()" class="w-full py-4 rounded-2xl text-white font-extrabold text-sm tracking-wide shadow-lg hover:shadow-emerald-600/30 transition flex items-center justify-center space-x-2 cursor-pointer" style="background: linear-gradient(135deg, #059669, #047857);">
                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766 0-3.18-2.587-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.007c.106.005.249-.04.39.298.144.347.491 1.2.534 1.288.043.088.072.19.014.305-.058.115-.087.187-.173.289l-.26.308c-.087.086-.178.18-.077.354.102.174.451.745.969 1.206.666.593 1.228.777 1.402.864.174.087.275.072.376-.044.101-.116.433-.506.549-.68.116-.174.232-.145.39-.087s1.011.477 1.184.564.289.13.332.203c.044.072.044.419-.1.824z"/></svg>
-                <span>Reclamar mi Bono por WhatsApp</span>
+                <span>Solicitar Estudio & Tramitar Bono por WhatsApp</span>
               </button>
 
               <p class="text-[10px] text-slate-500 text-center">
-                Tus datos están protegidos bajo estricto secreto comercial y normativa CNMC.
+                * El bono en efectivo se liquida por transferencia tras la activación efectiva del contrato de suministro por la distribuidora. Datos protegidos bajo normativa CNMC.
               </p>
             </div>
           </div>
@@ -613,15 +639,22 @@
       }
 
       let ahorro, bono, cae;
+      const caeCheck = document.getElementById('cae-check');
+      const tieneCae = caeCheck && caeCheck.checked;
+
       if (currentProfile === 'empresa') {
-        ahorro = Math.round(val * 12 * 0.22);
-        bono = Math.min(1000, Math.round(val * 0.45));
-        cae = Math.round(val * 1.1);
+        // Tarifa 3.0TD / 6.XTD (Consumo empresarial - Calibrado con Candela & Several)
+        ahorro = Math.round(val * 12 * 0.14); // 14% de ahorro medio real
+        bono = Math.min(1000, Math.max(150, Math.round(val * 0.35))); // Bono escalonado según comisiones Several
+        cae = tieneCae ? Math.round(val * 0.9) : 0;
       } else {
-        ahorro = Math.round(val * 12 * 0.26);
-        bono = Math.min(150, Math.round(val * 0.40));
-        cae = Math.round(val * 0.8);
+        // Tarifa 2.0TD (Residencial - Margen blindado con comisión Several 49€-80€)
+        ahorro = Math.round(val * 12 * 0.16); // 16% de ahorro medio
+        bono = Math.min(40, Math.max(20, Math.round(val * 0.30))); // Bono seguro de 20€ a 40€ para asegurar ganancia limpia
+        cae = tieneCae ? Math.round(val * 0.6) : 0;
       }
+
+      const caeTexto = cae > 0 ? "+ " + cae.toLocaleString('es-ES') + " €" : "0 €";
 
       // Actualizar contadores en vivo Paso 1
       const s1A = document.getElementById('live-ahorro');
@@ -629,7 +662,7 @@
       const s1C = document.getElementById('live-cae');
       if (s1A) s1A.innerText = ahorro.toLocaleString('es-ES') + " €";
       if (s1B) s1B.innerText = bono.toLocaleString('es-ES') + " €";
-      if (s1C) s1C.innerText = "+ " + cae.toLocaleString('es-ES') + " €";
+      if (s1C) s1C.innerText = caeTexto;
 
       // Actualizar resultados finales Paso 3
       const fA = document.getElementById('final-ahorro');
@@ -637,7 +670,7 @@
       const fC = document.getElementById('final-cae');
       if (fA) fA.innerText = ahorro.toLocaleString('es-ES') + " €";
       if (fB) fB.innerText = bono.toLocaleString('es-ES') + " €";
-      if (fC) fC.innerText = "+ " + cae.toLocaleString('es-ES') + " €";
+      if (fC) fC.innerText = caeTexto;
     }
 
     function goToStep(step) {
@@ -662,48 +695,236 @@
       }
     }
 
-    function handleFileSelected(e) {
-      const file = e.target.files[0];
-      if (file) {
-        selectedFile = file;
-        const nameDisp = document.getElementById('file-name-text');
-        const boxDisp = document.getElementById('file-display');
-        if (nameDisp) nameDisp.innerText = file.name;
-        if (boxDisp) boxDisp.classList.remove('hidden');
+    let detectedInvoiceData = null;
+
+    function handleDragOver(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      const dz = document.getElementById('dropzone');
+      if (dz) dz.classList.add('border-amber-500', 'bg-amber-50/50');
+    }
+
+    function handleDragLeave(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      const dz = document.getElementById('dropzone');
+      if (dz) dz.classList.remove('border-amber-500', 'bg-amber-50/50');
+    }
+
+    function handleFileDrop(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      const dz = document.getElementById('dropzone');
+      if (dz) dz.classList.remove('border-amber-500', 'bg-amber-50/50');
+      
+      if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+        processSelectedFile(e.dataTransfer.files[0]);
       }
     }
 
-    function executeAuditScan() {
+    function handleFileSelected(e) {
+      const file = e.target.files[0];
+      if (file) {
+        processSelectedFile(file);
+      }
+    }
+
+    function processSelectedFile(file) {
+      selectedFile = file;
+      const nameDisp = document.getElementById('file-name-text');
+      const boxDisp = document.getElementById('file-display');
+      const statusText = document.getElementById('file-status-text');
+      if (nameDisp) nameDisp.innerText = file.name;
+      if (boxDisp) boxDisp.classList.remove('hidden');
+      if (statusText) {
+        statusText.innerText = "✓ Factura cargada: " + file.name + " - Lista para auditar";
+        statusText.className = "text-[10px] text-emerald-700 font-bold mt-1";
+      }
+      const btnText = document.getElementById('btn-scan-text');
+      if (btnText) btnText.innerText = "👁️ Leer Factura con el Ojo IA";
+    }
+
+    async function executeAuditScan() {
       const btn = document.getElementById('btn-scan');
       const hud = document.getElementById('scan-hud');
       const hudStatus = document.getElementById('hud-status-text');
       const hudPercent = document.getElementById('hud-percent');
       const hudBar = document.getElementById('hud-bar');
 
+      if (!selectedFile) {
+        const statusText = document.getElementById('file-status-text');
+        if (statusText) {
+          statusText.innerText = "⚠️ Por favor, selecciona o arrastra primero tu factura antes de auditar.";
+          statusText.className = "text-[11px] text-amber-700 font-bold mt-1";
+        }
+        document.getElementById('file-input').click();
+        return;
+      }
+
       if (btn) btn.disabled = true;
       if (hud) hud.classList.remove('hidden');
 
-      const steps = [
-        { p: 25, t: "Extrayendo código CUPS y peajes 2.0TD/3.0TD..." },
-        { p: 55, t: "Auditando excesos de potencia contratada..." },
-        { p: 85, t: "Comparando tarifas indexadas OMIE vs Several..." },
-        { p: 100, t: "Auditoría completada con éxito. Calculando bono..." }
-      ];
+      const setHud = (p, t) => {
+        if (hudPercent) hudPercent.innerText = p + "%";
+        if (hudBar) hudBar.style.width = p + "%";
+        if (hudStatus) hudStatus.innerText = t;
+      };
 
-      let idx = 0;
-      const interval = setInterval(() => {
-        if (idx < steps.length) {
-          if (hudPercent) hudPercent.innerText = steps[idx].p + "%";
-          if (hudBar) hudBar.style.width = steps[idx].p + "%";
-          if (hudStatus) hudStatus.innerText = steps[idx].t;
-          idx++;
-        } else {
-          clearInterval(interval);
-          setTimeout(() => {
-            goToStep(3);
-          }, 350);
+      setHud(20, "Activando Ojo de IA (Visión Multimodal)...");
+
+      if (selectedFile) {
+        try {
+          setHud(40, "Procesando documento en memoria...");
+          const base64Data = await fileToBase64(selectedFile);
+          const mimeType = selectedFile.type || (selectedFile.name.toLowerCase().endsWith('.pdf') ? 'application/pdf' : 'image/jpeg');
+
+          setHud(65, "Extrayendo CUPS, potencias y tarifas con IA...");
+          
+          const apiKey = "AIzaSyC6lLROWSH85Ao2RGZDor5tIS___QjgZiY";
+          const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+
+          const prompt = `Eres el auditor visual de Cash Energy. Analiza esta factura de electricidad española y extrae los datos en formato JSON estrictamente válido:
+{
+  "cups": "código CUPS que empieza por ES (20-22 caracteres)",
+  "comercializadora": "nombre de la compañía eléctrica actual",
+  "titular": "nombre del titular o razón social",
+  "tarifa": "tarifa de acceso (ej. 2.0TD, 3.0TD)",
+  "potencia_kw": número float con la potencia máxima contratada en kW,
+  "importe_total": número float con el importe total en euros de la factura
+}
+Responde ÚNICAMENTE con el objeto JSON.`;
+
+          const payload = {
+            contents: [{
+              parts: [
+                { text: prompt },
+                { inline_data: { mime_type: mimeType, data: base64Data } }
+              ]
+            }],
+            generationConfig: {
+              response_mime_type: "application/json"
+            }
+          };
+
+          const response = await fetch(endpoint, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+
+          if (response.ok) {
+            const resData = await response.json();
+            const textResponse = resData.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (textResponse) {
+              try {
+                let cleanJson = textResponse.replace(/```json/gi, '').replace(/```/g, '').trim();
+                const parsed = JSON.parse(cleanJson);
+                applyDetectedInvoice(parsed);
+              } catch (parseErr) {
+                console.warn("Aviso parseando JSON IA:", parseErr);
+              }
+            }
+          }
+        } catch (err) {
+          console.warn("Fallo temporal de visión, aplicando estimación matemática:", err);
         }
+      } else {
+        // Simulación rápida si no subió archivo pero pulsó auditar
+        setHud(60, "Auditando parámetros introducidos manualmente...");
+      }
+
+      setHud(100, "Auditoría completada con éxito. Calculando bono...");
+      setTimeout(() => {
+        goToStep(3);
+        if (btn) btn.disabled = false;
       }, 400);
+    }
+
+    function fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const result = reader.result;
+          const base64 = result.split(',')[1];
+          resolve(base64);
+        };
+        reader.onerror = error => reject(error);
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function applyDetectedInvoice(raw) {
+      if (!raw) return;
+      
+      // Desempaquetar si la IA devolvió un array [ { ... } ]
+      let data = Array.isArray(raw) ? (raw[0] || {}) : raw;
+      // Desempaquetar si vino envuelto en { "factura": { ... } }
+      if (data.factura && typeof data.factura === 'object') data = data.factura;
+      if (data.datos && typeof data.datos === 'object') data = data.datos;
+
+      const cups = data.cups || data.CUPS || data.Cups || data.codigo_cups || "";
+      const comercializadora = data.comercializadora || data.Comercializadora || data.compania || data.empresa || "";
+      const titular = data.titular || data.Titular || data.nombre || data.razon_social || data.cliente || "";
+      const tarifa = data.tarifa || data.Tarifa || data.peaje || "";
+      let potencia = data.potencia_kw ?? data.potencia ?? data.Potencia ?? null;
+      let importe = data.importe_total ?? data.importe ?? data.total ?? null;
+
+      if (typeof importe === 'string') {
+        importe = parseFloat(importe.replace('€', '').replace(',', '.').trim());
+      }
+      if (typeof potencia === 'string') {
+        potencia = parseFloat(potencia.replace('kW', '').replace(',', '.').trim());
+      }
+
+      // Autoajustar perfil y slider si hay importe detectado
+      if (importe && !isNaN(importe) && importe > 0) {
+        const imp = Math.round(importe);
+        if ((tarifa && (tarifa.includes('3.') || tarifa.includes('6.'))) || imp >= 300) {
+          setProfile('empresa');
+        } else if (imp < 300) {
+          setProfile('hogar');
+        }
+        
+        const slider = document.getElementById('spend-slider');
+        if (slider) {
+          if (imp < Number(slider.min)) slider.min = imp;
+          if (imp > Number(slider.max)) slider.max = Math.max(Number(slider.max), imp);
+          slider.value = imp;
+          updateCalculation();
+        }
+      }
+
+      // Rellenar tarjeta de diagnóstico en Step 3
+      const card = document.getElementById('ai-detected-card');
+      const detCups = document.getElementById('detected-cups');
+      const detCom = document.getElementById('detected-comercializadora');
+      const detPot = document.getElementById('detected-potencia');
+      const detTitular = document.getElementById('detected-titular');
+      const nameInput = document.getElementById('lead-name');
+
+      if (card) card.classList.remove('hidden');
+      if (detCups && cups) detCups.innerText = cups;
+      if (detCom && comercializadora) detCom.innerText = comercializadora;
+      if (detPot) {
+        const potStr = potencia ? `${potencia} kW` : '';
+        const tarStr = tarifa ? ` [${tarifa}]` : '';
+        detPot.innerText = (potStr + tarStr).trim() || "Auditada";
+      }
+      if (detTitular && titular) {
+        detTitular.innerText = titular;
+      }
+      if (nameInput && titular) {
+        nameInput.value = titular;
+      }
+
+      detectedInvoiceData = {
+        cups: cups,
+        comercializadora: comercializadora,
+        titular: titular,
+        tarifa: tarifa,
+        potencia_kw: potencia,
+        importe_total: importe
+      };
     }
 
     function sendToWhatsApp() {
@@ -721,14 +942,22 @@
       const cae = fC ? fC.innerText : "+ 1.320 €";
       const tipo = currentProfile === 'empresa' ? 'Empresa / Negocio' : 'Hogar / Particular';
 
-      let msg = `Hola Cash Energy, acabo de realizar la auditoría en la web:\n\n` +
+      let aiBlock = "";
+      if (detectedInvoiceData && detectedInvoiceData.cups) {
+        aiBlock = `⚡ *CUPS Detectado:* ${detectedInvoiceData.cups}\n` +
+                  `🏢 *Comercializadora Actual:* ${detectedInvoiceData.comercializadora || 'Auditada'}\n` +
+                  `🔌 *Potencia Contratada:* ${detectedInvoiceData.potencia_kw ? detectedInvoiceData.potencia_kw + ' kW' : 'Auditada'} (${detectedInvoiceData.tarifa || '2.0TD'})\n`;
+      }
+
+      let msg = `Hola Cash Energy, acabo de auditar mi factura con el Ojo IA:\n\n` +
                 `👤 *Nombre:* ${name}\n` +
                 `📱 *Teléfono:* ${phone}\n` +
                 `🏢 *Tipo:* ${tipo}\n` +
+                (aiBlock ? `${aiBlock}` : '') +
                 `💰 *Ahorro Estimado:* ${ahorro}/año\n` +
                 `🎁 *Bono de Bienvenida:* ${bono}\n` +
-                `🌱 *Monetización CAE:* ${cae}\n\n` +
-                `Deseo que revisen mi factura y me gestionen el Bono de Bienvenida.`;
+                (cae && cae !== "0 €" ? `🌱 *Monetización CAE:* ${cae}\n` : '') + `\n` +
+                `Deseo solicitar mi propuesta de ahorro formal, activar mi tarifa blindada y tramitar el Bono de Bienvenida.`;
 
       const encoded = encodeURIComponent(msg);
       window.open(`https://wa.me/34612345678?text=${encoded}`, '_blank');
