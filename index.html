@@ -780,8 +780,8 @@
 
           setHud(65, "Extrayendo CUPS, potencias y tarifas con IA...");
           
-          const apiKey = "";
-          const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+          const apiKey = atob("QVEuQWI4Uk42S19Zd0hGLU5vaVBRcjZ6UGxoQnJCUXN2eDc3WldNOVV1M3p3UU5FU3E3MEE=");
+          const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`;
 
           const prompt = `Eres el auditor visual de Cash Energy. Analiza esta factura de electricidad española y extrae los datos en formato JSON estrictamente válido:
 {
