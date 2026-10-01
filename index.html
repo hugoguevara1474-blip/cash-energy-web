@@ -456,9 +456,9 @@
                 </div>
               </div>
 
-              <button type="button" onclick="sendToWhatsApp()" class="w-full py-4 rounded-2xl text-white font-extrabold text-sm tracking-wide shadow-lg hover:shadow-emerald-600/30 transition flex items-center justify-center space-x-2 cursor-pointer" style="background: linear-gradient(135deg, #059669, #047857);">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766 0-3.18-2.587-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.007c.106.005.249-.04.39.298.144.347.491 1.2.534 1.288.043.088.072.19.014.305-.058.115-.087.187-.173.289l-.26.308c-.087.086-.178.18-.077.354.102.174.451.745.969 1.206.666.593 1.228.777 1.402.864.174.087.275.072.376-.044.101-.116.433-.506.549-.68.116-.174.232-.145.39-.087s1.011.477 1.184.564.289.13.332.203c.044.072.044.419-.1.824z"/></svg>
-                <span>Solicitar Estudio & Tramitar Bono por WhatsApp</span>
+              <button type="button" onclick="sendStudyRequest()" class="w-full py-4 rounded-2xl text-white font-extrabold text-sm tracking-wide shadow-lg hover:shadow-emerald-600/30 transition flex items-center justify-center space-x-2 cursor-pointer" style="background: linear-gradient(135deg, #059669, #047857);">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                <span>Solicitar Estudio Oficial & Tramitar Bono</span>
               </button>
 
               <p class="text-[10px] text-slate-500 text-center">
@@ -558,7 +558,7 @@
           </div>
         </div>
         <div class="lg:col-span-4 text-center lg:text-right">
-          <a href="https://wa.me/34612345678?text=Hola%20Zelmar%20y%20Giovanni%2C%20tengo%20una%20cartera%20de%20suministros%20y%20quiero%20conocer%20el%20acuerdo%20al%2050%25" target="_blank" class="inline-flex items-center space-x-2 px-7 py-4 rounded-2xl text-slate-950 font-extrabold text-sm shadow-xl transition cursor-pointer" style="background: linear-gradient(135deg, #D4AF37, #ECC968);">
+          <a href="mailto:info@cashenergy.eu?subject=Acuerdo%20Comercial%2050%25%20-%20Zelmar%20y%20Giovanni" class="inline-flex items-center space-x-2 px-7 py-4 rounded-2xl text-slate-950 font-extrabold text-sm shadow-xl transition cursor-pointer" style="background: linear-gradient(135deg, #D4AF37, #ECC968);">
             <span>Hablar con Zelmar & Giovanni</span>
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
           </a>
@@ -586,8 +586,8 @@
       <div class="space-y-2">
         <div class="text-slate-200 font-bold uppercase tracking-wider text-[11px]">Canales Oficiales</div>
         <div class="text-slate-400 space-y-1">
-          <div>Canal Directo WhatsApp: +34 612 345 678</div>
-          <div>Auditorías: info@cashenergygroup.com</div>
+          <div>Canal Oficial: info@cashenergy.eu</div>
+          <div>Auditorías Energéticas y CAE: info@cashenergy.eu</div>
           <div>Horario: L-V 09:00 - 19:00</div>
         </div>
       </div>
@@ -595,9 +595,9 @@
       <div class="space-y-2">
         <div class="text-slate-200 font-bold uppercase tracking-wider text-[11px]">Garantía Legal</div>
         <div class="text-slate-400 space-y-1">
-          <div>Agente Colaborador Autorizado</div>
+          <div>Agente Colaborador Autorizado Several Energy</div>
           <div>Operativa bajo el marco regulatorio vigente</div>
-          <div>Marca registrada en tramitación OEPM</div>
+          <div>Marca Registrada Oficial OEPM Nº M4405930</div>
         </div>
       </div>
 
@@ -987,7 +987,7 @@ Responde ÚNICAMENTE con el objeto JSON.`;
       };
     }
 
-    function sendToWhatsApp() {
+    function sendStudyRequest() {
       const nameInput = document.getElementById('lead-name');
       const phoneInput = document.getElementById('lead-phone');
       const name = (nameInput && nameInput.value) ? nameInput.value : "Cliente";
@@ -1024,7 +1024,7 @@ Responde ÚNICAMENTE con el objeto JSON.`;
                 `Deseo solicitar mi propuesta de ahorro formal, activar mi tarifa estable por 12 meses y tramitar el Bono de Bienvenida.`;
 
       const encoded = encodeURIComponent(msg);
-      window.open(`https://wa.me/34612345678?text=${encoded}`, '_blank');
+      window.location.href = `mailto:info@cashenergy.eu?subject=${encodeURIComponent('Solicitud Estudio y Bono Cash Energy - ' + name)}&body=${encoded}`;
     }
 
     // Inicializar cálculo automático al cargar la página
