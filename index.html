@@ -236,16 +236,16 @@
         <!-- Social Proof Numbers -->
         <div class="pt-2 grid grid-cols-3 gap-4 border-t border-slate-300/80 max-w-lg mx-auto lg:mx-0">
           <div>
-            <div class="text-2xl font-extrabold text-slate-900 font-mono">+1.8M€</div>
-            <div class="text-[11px] text-slate-600 uppercase font-semibold mt-0.5">Ahorro Auditado</div>
-          </div>
-          <div>
-            <div class="text-2xl font-extrabold text-amber-600 font-mono">Cash</div>
-            <div class="text-[11px] text-slate-600 uppercase font-semibold mt-0.5">Bono en Cuenta</div>
-          </div>
-          <div>
             <div class="text-2xl font-extrabold text-emerald-600 font-mono">100%</div>
-            <div class="text-[11px] text-slate-600 uppercase font-semibold mt-0.5">Marco Regulado</div>
+            <div class="text-[11px] text-slate-600 uppercase font-semibold mt-0.5">Marco Regulado CNMC</div>
+          </div>
+          <div>
+            <div class="text-2xl font-extrabold text-amber-600 font-mono">Bono Cash</div>
+            <div class="text-[11px] text-slate-600 uppercase font-semibold mt-0.5">Ingreso en Cuenta</div>
+          </div>
+          <div>
+            <div class="text-2xl font-extrabold text-slate-900 font-mono">IA B2B</div>
+            <div class="text-[11px] text-slate-600 uppercase font-semibold mt-0.5">Auditoría Luz y Gas</div>
           </div>
         </div>
 
@@ -280,15 +280,23 @@
             <!-- ================= STEP 1: SELECTOR DE PERFIL Y BARRA DE DESLIZAR ================= -->
             <div id="step-1" class="space-y-5">
               <div>
-                <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">1. Tipo de Suministro</label>
-                <div class="grid grid-cols-2 gap-3">
-                  <button type="button" id="tab-empresa" onclick="setProfile('empresa')" class="p-3.5 rounded-2xl border-2 border-emerald-600 bg-white text-slate-900 font-extrabold text-xs sm:text-sm flex flex-col items-center justify-center space-y-1 transition shadow-sm cursor-pointer">
-                    <span>🏢 Empresa / Negocio</span>
-                    <span class="text-[10px] text-emerald-700 font-medium">Tarifas 3.0TD / 6.X TD</span>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">1. Selecciona tu Sector o Tipo de Suministro</label>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  <button type="button" id="tab-hoteles" onclick="setProfile('hoteles')" class="p-3 rounded-2xl border-2 border-amber-500 bg-amber-50/50 text-slate-900 font-extrabold text-xs flex flex-col items-center justify-center space-y-1 transition shadow-sm cursor-pointer">
+                    <span class="text-sm">🏨 Hoteles</span>
+                    <span class="text-[9px] text-amber-800 font-medium">3.0TD / 6.1TD</span>
                   </button>
-                  <button type="button" id="tab-hogar" onclick="setProfile('hogar')" class="p-3.5 rounded-2xl border-2 border-slate-200 bg-slate-50 text-slate-500 font-extrabold text-xs sm:text-sm flex flex-col items-center justify-center space-y-1 hover:border-slate-300 transition cursor-pointer">
-                    <span>🏡 Residencial / Hogar</span>
-                    <span class="text-[10px] text-slate-500 font-normal">Tarifa 2.0TD</span>
+                  <button type="button" id="tab-negocios" onclick="setProfile('negocios')" class="p-3 rounded-2xl border-2 border-slate-200 bg-white text-slate-700 font-bold text-xs flex flex-col items-center justify-center space-y-1 hover:border-slate-300 transition cursor-pointer">
+                    <span class="text-sm">🏢 Negocios</span>
+                    <span class="text-[9px] text-slate-500 font-medium">Pymes y Locales</span>
+                  </button>
+                  <button type="button" id="tab-hogar" onclick="setProfile('hogar')" class="p-3 rounded-2xl border-2 border-slate-200 bg-white text-slate-700 font-bold text-xs flex flex-col items-center justify-center space-y-1 hover:border-slate-300 transition cursor-pointer">
+                    <span class="text-sm">🏡 Hogar</span>
+                    <span class="text-[9px] text-slate-500 font-medium">Tarifa 2.0TD</span>
+                  </button>
+                  <button type="button" id="tab-industria" onclick="setProfile('industria')" class="p-3 rounded-2xl border-2 border-slate-200 bg-white text-slate-700 font-bold text-xs flex flex-col items-center justify-center space-y-1 hover:border-slate-300 transition cursor-pointer">
+                    <span class="text-sm">🏭 Industria</span>
+                    <span class="text-[9px] text-slate-500 font-medium">Alta Tensión 6.X</span>
                   </button>
                 </div>
               </div>
@@ -297,28 +305,26 @@
               <div class="space-y-3 bg-slate-50 p-4 rounded-2xl border border-slate-200">
                 <div class="flex items-center justify-between">
                   <span class="text-xs font-bold text-slate-700">Gasto Mensual en Electricidad</span>
-                  <span id="slider-val-display" class="text-lg font-extrabold font-mono text-amber-700">1.200 € / mes</span>
+                  <span id="slider-val-display" class="text-lg font-extrabold font-mono text-amber-700">4.500 € / mes</span>
                 </div>
-                <input type="range" id="spend-slider" min="200" max="10000" step="100" value="1200" oninput="updateCalculation()" class="w-full">
+                <input type="range" id="spend-slider" min="1500" max="40000" step="500" value="4500" oninput="updateCalculation()" class="w-full">
                 <div class="flex justify-between text-[10px] text-slate-500 font-mono">
-                  <span id="slider-min-lbl">200 €</span>
-                  <span id="slider-max-lbl">10.000 €+</span>
+                  <span id="slider-min-lbl">1.500 €</span>
+                  <span id="slider-max-lbl">40.000 €+</span>
                 </div>
               </div>
 
-              <!-- RESULTADOS MATEMÁTICOS EN DIRECTO AL DESLIZAR LA BARRA -->
-              <div class="grid grid-cols-3 gap-2 text-center bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm">
-                <div>
-                  <div class="text-[10px] text-slate-500 uppercase font-semibold">Ahorro Anual</div>
-                  <div class="text-sm sm:text-base font-extrabold font-mono text-emerald-600" id="live-ahorro">3.168 €</div>
+              <!-- RESULTADOS EN DIRECTO SIMPLIFICADOS (2 TARJETAS GRANDES Y CLARAS) -->
+              <div class="grid grid-cols-2 gap-3 text-center bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+                <div class="p-3 rounded-xl bg-emerald-50/60 border border-emerald-100">
+                  <div class="text-[10px] text-emerald-800 uppercase font-bold tracking-wide">Ahorro Anual Estimado</div>
+                  <div class="text-lg sm:text-xl font-extrabold font-mono text-emerald-600 mt-0.5" id="live-ahorro">7.560 €</div>
+                  <div class="text-[10px] text-emerald-700 font-semibold" id="live-ahorro-mes">~ 630 € / mes</div>
                 </div>
-                <div>
-                  <div class="text-[10px] text-slate-500 uppercase font-semibold">Bono Directo</div>
-                  <div class="text-sm sm:text-base font-extrabold font-mono text-amber-600" id="live-bono">540 €</div>
-                </div>
-                <div>
-                  <div class="text-[10px] text-slate-500 uppercase font-semibold">Bono CAE</div>
-                  <div class="text-sm sm:text-base font-extrabold font-mono text-teal-700" id="live-cae">+ 1.320 €</div>
+                <div class="p-3 rounded-xl bg-amber-50/60 border border-amber-100">
+                  <div class="text-[10px] text-amber-800 uppercase font-bold tracking-wide">Bono de Bienvenida</div>
+                  <div class="text-lg sm:text-xl font-extrabold font-mono text-amber-600 mt-0.5" id="live-bono">1.000 €</div>
+                  <div class="text-[10px] text-amber-700 font-semibold">En cuenta bancaria</div>
                 </div>
               </div>
 
@@ -398,21 +404,16 @@
                 <h3 class="text-lg font-extrabold text-slate-900">Tu Oferta de Ahorro & Bono Está Lista</h3>
               </div>
 
-              <div class="grid grid-cols-3 gap-2 bg-slate-50 p-4 rounded-2xl border border-slate-200 text-center">
-                <div>
-                  <div class="text-[10px] text-slate-500 uppercase font-bold">Ahorro Anual</div>
-                  <div class="text-base sm:text-lg font-extrabold text-emerald-600 font-mono" id="final-ahorro">3.168 €</div>
-                  <div class="text-[10px] text-slate-500 font-semibold" id="final-ahorro-mes">~ 264 € / mes</div>
+              <div class="grid grid-cols-2 gap-3 bg-white p-4 rounded-2xl border border-slate-200 text-center shadow-sm">
+                <div class="p-3 rounded-xl bg-emerald-50/60 border border-emerald-100">
+                  <div class="text-[10px] text-emerald-800 uppercase font-bold tracking-wide">Ahorro Anual Estimado</div>
+                  <div class="text-lg sm:text-xl font-extrabold text-emerald-600 font-mono mt-0.5" id="final-ahorro">7.560 €</div>
+                  <div class="text-[10px] text-emerald-700 font-semibold" id="final-ahorro-mes">~ 630 € / mes</div>
                 </div>
-                <div>
-                  <div class="text-[10px] text-slate-500 uppercase font-bold">Bono Inmediato</div>
-                  <div class="text-base sm:text-lg font-extrabold text-amber-700 font-mono" id="final-bono">540 €</div>
-                  <div class="text-[10px] text-emerald-700 font-semibold">En cuenta</div>
-                </div>
-                <div>
-                  <div class="text-[10px] text-slate-500 uppercase font-bold">Bono CAE</div>
-                  <div class="text-base sm:text-lg font-extrabold text-teal-700 font-mono" id="final-cae">Opcional</div>
-                  <div class="text-[9px] text-slate-400 font-medium" id="final-cae-sub">Con placas/aerotermia</div>
+                <div class="p-3 rounded-xl bg-amber-50/60 border border-amber-100">
+                  <div class="text-[10px] text-amber-800 uppercase font-bold tracking-wide">Bono de Bienvenida</div>
+                  <div class="text-lg sm:text-xl font-extrabold text-amber-600 font-mono mt-0.5" id="final-bono">1.000 €</div>
+                  <div class="text-[10px] text-amber-700 font-semibold">En cuenta bancaria</div>
                 </div>
               </div>
 
@@ -512,9 +513,9 @@
           <div class="w-14 h-14 rounded-2xl bg-emerald-50 border border-emerald-300 text-emerald-700 flex items-center justify-center font-bold text-xl font-mono">
             02
           </div>
-          <h3 class="text-xl font-bold text-slate-900">Convierte tus CAEs en Ingresos</h3>
+          <h3 class="text-xl font-bold text-slate-900">Estabilidad y Cero Penalizaciones</h3>
           <p class="text-sm text-slate-600 leading-relaxed">
-            Los <strong>Certificados de Ahorro Energético</strong> (RD 36/2023) son documentos oficiales que acreditan el ahorro de energía tras realizar mejoras de eficiencia (iluminación LED, aerotermia, placas solares o aislamiento). Nosotros tramitamos y monetizamos tus certificados para convertirlos en ingresos directos.
+            Bloqueamos tu precio de energía durante 12 meses completos sin subidas inesperadas. Nuestro algoritmo optimiza tus potencias contratadas por periodo para eliminar sobrecostes de maxímetro y energía reactiva.
           </p>
         </div>
 
@@ -525,7 +526,7 @@
           </div>
           <h3 class="text-xl font-bold text-slate-900">Auditoría Mayorista Continua</h3>
           <p class="text-sm text-slate-600 leading-relaxed">
-            No estamos atados a una sola eléctrica. Conectamos con Several, Candela, Bea y el mercado OMIE para asegurar siempre el precio indexado o fijo más competitivo de España.
+            No estamos atados a una sola eléctrica. Conectamos con el mercado mayorista OMIE y comercializadoras líderes para asegurar siempre la tarifa indexada o fija más rentable y competitiva para tu negocio.
           </p>
         </div>
 
@@ -533,36 +534,113 @@
     </div>
   </section>
 
-  <!-- ================= SECTION 3: GRANDES CUENTAS ================= -->
-  <section class="boardroom-light-cinematic py-24 border-b border-slate-200 relative overflow-hidden" id="franquicias">
+  <!-- ================= SECCIÓN INDEPENDIENTE: EFICIENCIA ENERGÉTICA & CAEs ================= -->
+  <section class="py-20 bg-slate-900 text-white relative overflow-hidden" id="eficiencia-cae">
+    <div class="max-w-7xl mx-auto px-6 relative z-10">
+      <div class="text-center max-w-3xl mx-auto mb-12 space-y-3">
+        <span class="text-xs font-bold text-emerald-400 uppercase tracking-widest font-mono bg-emerald-500/10 px-3.5 py-1.5 rounded-full border border-emerald-500/30">
+          Ingeniería de Ahorro & Subvenciones MITECO
+        </span>
+        <h2 class="text-2xl sm:text-4xl font-extrabold tracking-tight">
+          Eficiencia Energética & Monetización de CAEs
+        </h2>
+        <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+          Los <strong>Certificados de Ahorro Energético (Real Decreto 36/2023)</strong> premian económicamente a hoteles y empresas que ejecuten mejoras de eficiencia. En Cash Energy gestionamos la auditoría técnica, la ingeniería y la liquidación del expediente en ingresos directos a fondo perdido.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div class="bg-slate-800/80 p-6 rounded-2xl border border-slate-700 hover:border-emerald-400/50 transition">
+          <div class="text-2xl mb-2">☀️</div>
+          <h3 class="font-bold text-white text-base">Energía Solar Fotovoltaica</h3>
+          <p class="text-xs text-slate-400 mt-1 leading-relaxed">Instalaciones de autoconsumo sobre cubierta con amortización acelerada y compensación de excedentes.</p>
+        </div>
+        <div class="bg-slate-800/80 p-6 rounded-2xl border border-slate-700 hover:border-emerald-400/50 transition">
+          <div class="text-2xl mb-2">♨️</div>
+          <h3 class="font-bold text-white text-base">Aerotermia & Climatización</h3>
+          <p class="text-xs text-slate-400 mt-1 leading-relaxed">Sustitución de calderas y equipos obsoletos por bombas de calor de alto rendimiento estacional.</p>
+        </div>
+        <div class="bg-slate-800/80 p-6 rounded-2xl border border-slate-700 hover:border-emerald-400/50 transition">
+          <div class="text-2xl mb-2">💡</div>
+          <h3 class="font-bold text-white text-base">Iluminación LED Industrial</h3>
+          <p class="text-xs text-slate-400 mt-1 leading-relaxed">Reconversión lumínica en hoteles, parkings, naves y locales comerciales con certificación oficial CAE.</p>
+        </div>
+        <div class="bg-slate-800/80 p-6 rounded-2xl border border-slate-700 hover:border-emerald-400/50 transition">
+          <div class="text-2xl mb-2">💶</div>
+          <h3 class="font-bold text-amber-400 text-base">Liquidación de Cheques CAE</h3>
+          <p class="text-xs text-slate-400 mt-1 leading-relaxed">Cobro directo en cuenta bancaria por cada MWh ahorrado, compatible con cualquier subvención autonómica.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CANAL PARTNERS & PRESCRIPTORES B2B ================= -->
+  <section class="boardroom-light-cinematic py-24 border-b border-slate-200 relative overflow-hidden" id="partners">
     <div class="max-w-7xl mx-auto px-6 relative z-10">
       <div class="bg-white/95 rounded-3xl p-8 sm:p-14 border border-amber-500/40 shadow-xl grid grid-cols-1 lg:grid-cols-12 gap-10 items-center backdrop-blur-md">
-        <div class="lg:col-span-8 space-y-4">
-          <span class="text-xs font-bold text-amber-800 uppercase tracking-widest font-mono bg-amber-100 px-3 py-1 rounded-full border border-amber-300">¿Eres Franquiciado, Gestor o Administrador de Fincas?</span>
+        
+        <div class="lg:col-span-7 space-y-4 text-left">
+          <span class="text-xs font-bold text-amber-800 uppercase tracking-widest font-mono bg-amber-100 px-3 py-1 rounded-full border border-amber-300">
+            Canal Partners & Prescriptores B2B
+          </span>
           <h2 class="text-2xl sm:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight">
-            Acuerdos de Colaboración Estratégica al 50% de Comisión
+            Monetiza tu Cartera de Clientes con Cash Energy
           </h2>
-          <p class="text-slate-700 text-sm sm:text-base max-w-2xl leading-relaxed">
-            Si gestionas carteras de 10, 20 o más suministros comerciales (restaurantes, cadenas de tiendas, naves o comunidades de propietarios), establecemos un acuerdo marco donde compartimos el 50% del margen total generado de forma transparente y recurrente.
+          <p class="text-slate-700 text-sm sm:text-base leading-relaxed">
+            Si gestionas clientes, comunidades o inmuebles, formalizamos un <strong>acuerdo mercantil de colaboración con comisiones recurrentes blindadas</strong>. Tu cliente ahorra y recibe su bono de bienvenida, y tú percibes ingresos directos continuos por cada suministro de luz y gas activado.
           </p>
-          <div class="pt-2 flex flex-wrap gap-4 text-xs font-mono text-emerald-800">
-            <span class="flex items-center space-x-1.5 bg-slate-50 px-3.5 py-2 rounded-xl border border-slate-200">
-              <span>⚡</span><span>Liquidación Mensual en Cuenta</span>
-            </span>
-            <span class="flex items-center space-x-1.5 bg-slate-50 px-3.5 py-2 rounded-xl border border-slate-200">
-              <span>📊</span><span>Panel de Telemedida 24/7</span>
-            </span>
-            <span class="flex items-center space-x-1.5 bg-slate-50 px-3.5 py-2 rounded-xl border border-slate-200">
-              <span>💼</span><span>Soporte Ejecutivo Dedicado</span>
-            </span>
+          
+          <div class="grid grid-cols-2 gap-3 pt-2 text-xs font-semibold text-slate-800">
+            <div class="flex items-center space-x-2 bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+              <span class="text-emerald-600 font-bold">✓</span>
+              <span>Administradores de Fincas</span>
+            </div>
+            <div class="flex items-center space-x-2 bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+              <span class="text-emerald-600 font-bold">✓</span>
+              <span>Agencias Inmobiliarias</span>
+            </div>
+            <div class="flex items-center space-x-2 bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+              <span class="text-emerald-600 font-bold">✓</span>
+              <span>Electricistas e Instaladores</span>
+            </div>
+            <div class="flex items-center space-x-2 bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+              <span class="text-emerald-600 font-bold">✓</span>
+              <span>Franquiciadores & Gestorías</span>
+            </div>
           </div>
         </div>
-        <div class="lg:col-span-4 text-center lg:text-right">
-          <a href="mailto:info@cashenergy.eu?subject=Acuerdo%20Comercial%2050%25%20-%20Zelmar%20y%20Giovanni" class="inline-flex items-center space-x-2 px-7 py-4 rounded-2xl text-slate-950 font-extrabold text-sm shadow-xl transition cursor-pointer" style="background: linear-gradient(135deg, #D4AF37, #ECC968);">
-            <span>Hablar con Zelmar & Giovanni</span>
+
+        <div class="lg:col-span-5 bg-slate-50 p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-inner space-y-4">
+          <h3 class="text-sm font-extrabold text-slate-900 uppercase tracking-wider font-mono">Solicitar Acuerdo Comercial de Partner</h3>
+          
+          <div class="space-y-3 text-left">
+            <div>
+              <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wide mb-1">Tu Perfil Profesional</label>
+              <select id="partner-role" class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs font-semibold focus:outline-none focus:border-amber-500">
+                <option value="Administrador de Fincas">🏢 Administrador de Fincas / Comunidades</option>
+                <option value="Agencia Inmobiliaria">🏠 Agencia Inmobiliaria / Property Manager</option>
+                <option value="Electricista / Instalador">⚡ Electricista / Instalador Autorizado</option>
+                <option value="Franquiciador">🏬 Franquiciador / Cadena de Locales</option>
+                <option value="Gestoría / Asesoría">💼 Gestoría / Asesoría de Empresas</option>
+                <option value="Otro Prescriptor">🤝 Otro Perfil con Cartera de Clientes</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wide mb-1">Nombre o Empresa</label>
+              <input type="text" id="partner-name" placeholder="Ej. Fincas Barcelona / Tu Nombre" class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs focus:outline-none focus:border-amber-500">
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wide mb-1">Teléfono Móvil (WhatsApp)</label>
+              <input type="tel" id="partner-phone" placeholder="Ej. 612 345 678" class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs focus:outline-none focus:border-amber-500">
+            </div>
+          </div>
+
+          <button type="button" onclick="sendPartnerRequest()" class="w-full py-3.5 rounded-xl text-slate-950 font-extrabold text-xs tracking-wide shadow-md transition flex items-center justify-center space-x-2 cursor-pointer" style="background: linear-gradient(135deg, #D4AF37, #ECC968);">
+            <span>Solicitar Acuerdo con Hugo & Zelmar</span>
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-          </a>
+          </button>
         </div>
+
       </div>
     </div>
   </section>
@@ -615,35 +693,59 @@
 
   <!-- ================= JAVASCRIPT ENGINE (SIMULADOR MATEMATICO 100% FUNCIONAL) ================= -->
   <script>
-    let currentProfile = 'empresa';
+    let currentProfile = 'hoteles';
     let selectedFile = null;
 
     function setProfile(type) {
       currentProfile = type;
-      const tabEmpresa = document.getElementById('tab-empresa');
-      const tabHogar = document.getElementById('tab-hogar');
+      const tabs = {
+        hoteles: document.getElementById('tab-hoteles'),
+        negocios: document.getElementById('tab-negocios'),
+        hogar: document.getElementById('tab-hogar'),
+        industria: document.getElementById('tab-industria')
+      };
       const slider = document.getElementById('spend-slider');
       const minLbl = document.getElementById('slider-min-lbl');
       const maxLbl = document.getElementById('slider-max-lbl');
 
-      if (type === 'empresa') {
-        tabEmpresa.className = "p-3.5 rounded-2xl border-2 border-emerald-600 bg-white text-slate-900 font-extrabold text-xs sm:text-sm flex flex-col items-center justify-center space-y-1 transition shadow-sm cursor-pointer";
-        tabHogar.className = "p-3.5 rounded-2xl border-2 border-slate-200 bg-slate-50 text-slate-500 font-extrabold text-xs sm:text-sm flex flex-col items-center justify-center space-y-1 hover:border-slate-300 transition cursor-pointer";
+      // Reset all tab styles
+      for (const [key, btn] of Object.entries(tabs)) {
+        if (!btn) continue;
+        if (key === type) {
+          btn.className = "p-3 rounded-2xl border-2 border-amber-500 bg-amber-50/70 text-slate-950 font-extrabold text-xs flex flex-col items-center justify-center space-y-1 transition shadow-sm cursor-pointer";
+        } else {
+          btn.className = "p-3 rounded-2xl border-2 border-slate-200 bg-white text-slate-700 font-bold text-xs flex flex-col items-center justify-center space-y-1 hover:border-slate-300 transition cursor-pointer";
+        }
+      }
+
+      if (type === 'hoteles') {
+        slider.min = "1500";
+        slider.max = "40000";
+        slider.step = "500";
+        slider.value = "4500";
+        if (minLbl) minLbl.innerText = "1.500 €";
+        if (maxLbl) maxLbl.innerText = "40.000 €+";
+      } else if (type === 'negocios') {
         slider.min = "200";
-        slider.max = "10000";
+        slider.max = "5000";
         slider.step = "100";
-        slider.value = "1200";
-        minLbl.innerText = "200 €";
-        maxLbl.innerText = "10.000 €+";
-      } else {
-        tabHogar.className = "p-3.5 rounded-2xl border-2 border-emerald-600 bg-white text-slate-900 font-extrabold text-xs sm:text-sm flex flex-col items-center justify-center space-y-1 transition shadow-sm cursor-pointer";
-        tabEmpresa.className = "p-3.5 rounded-2xl border-2 border-slate-200 bg-slate-50 text-slate-500 font-extrabold text-xs sm:text-sm flex flex-col items-center justify-center space-y-1 hover:border-slate-300 transition cursor-pointer";
+        slider.value = "850";
+        if (minLbl) minLbl.innerText = "200 €";
+        if (maxLbl) maxLbl.innerText = "5.000 €+";
+      } else if (type === 'hogar') {
         slider.min = "40";
-        slider.max = "600";
+        slider.max = "500";
         slider.step = "10";
-        slider.value = "120";
-        minLbl.innerText = "40 €";
-        maxLbl.innerText = "600 €+";
+        slider.value = "110";
+        if (minLbl) minLbl.innerText = "40 €";
+        if (maxLbl) maxLbl.innerText = "500 €+";
+      } else if (type === 'industria') {
+        slider.min = "5000";
+        slider.max = "80000";
+        slider.step = "1000";
+        slider.value = "15000";
+        if (minLbl) minLbl.innerText = "5.000 €";
+        if (maxLbl) maxLbl.innerText = "80.000 €+";
       }
       updateCalculation();
     }
@@ -657,57 +759,43 @@
         display.innerText = val.toLocaleString('es-ES') + " € / mes";
       }
 
-      let ahorro, bono, cae;
-      const caeCheck = document.getElementById('cae-check');
-      const tieneCae = caeCheck && caeCheck.checked;
+      let ahorro, bono;
 
-      if (currentProfile === 'empresa') {
-        // Tarifa 3.0TD / 6.XTD (Consumo empresarial - Calibrado con Tabla Oficial Several 2026)
-        ahorro = Math.round(val * 12 * 0.14); // 14% de ahorro medio real
-        if (val <= 400) {
-          bono = Math.round(150 + (val - 200) * 0.25); // 150€ a 200€ (Comisión Several: 388€-500€)
-        } else if (val <= 1200) {
-          bono = Math.round(200 + (val - 400) * 0.35); // 200€ a 480€ (Comisión Several: 1.100€-2.600€)
-        } else {
-          bono = Math.min(1000, Math.round(480 + (val - 1200) * 0.20)); // hasta 1000€ (Comisión Several: 2.600€-6.800€+)
-        }
-        cae = tieneCae ? Math.round(val * 0.9) : 0;
-      } else {
-        // Tarifa 2.0TD (Residencial - Calibrado con CMS_ASISTENTE_DLZ_SEVERAL_11.03.26.pdf)
+      if (currentProfile === 'hoteles') {
+        // Sector Hotelero: Tarifas 3.0TD / 6.1TD (Climatización 24/7, lavandería, spa)
         ahorro = Math.round(val * 12 * 0.15); // 15% de ahorro medio
-        if (val <= 65) {
-          bono = 25; // Tramo <5 MWh/año: Several paga 49€-85€ -> Bono 25€ (Margen neto: 24€-60€)
-        } else if (val <= 140) {
-          bono = Math.round(35 + (val - 65) * 0.45); // Tramo 5-10 MWh/año: Several paga 177€-225€ -> Bono 35€-70€ (Margen neto: 100€-150€)
-        } else {
-          bono = Math.min(120, Math.round(70 + (val - 140) * 0.35)); // Consumo residencial alto / chalet
-        }
-        cae = tieneCae ? Math.round(val * 0.6) : 0;
+        bono = Math.min(1000, Math.round(500 + (val - 1500) * 0.05)); // Bono de bienvenida hasta 1.000€
+      } else if (currentProfile === 'negocios') {
+        // Pymes, restaurantes, locales comerciales
+        ahorro = Math.round(val * 12 * 0.14);
+        bono = Math.min(600, Math.round(150 + (val - 200) * 0.10));
+      } else if (currentProfile === 'hogar') {
+        // Residencial
+        ahorro = Math.round(val * 12 * 0.15);
+        bono = Math.min(100, Math.round(25 + (val - 40) * 0.15));
+      } else if (currentProfile === 'industria') {
+        // Alta Tensión 6.XTD
+        ahorro = Math.round(val * 12 * 0.13);
+        bono = 1000;
       }
 
       const ahorroMes = Math.round(ahorro / 12);
-      const caeTexto = (tieneCae && cae > 0) ? "+ " + cae.toLocaleString('es-ES') + " €" : "Opcional";
-      const caeSubTexto = (tieneCae && cae > 0) ? "Monetización RD 36/2023" : "Con placas/aerotermia";
 
       // Actualizar contadores en vivo Paso 1
       const s1A = document.getElementById('live-ahorro');
+      const s1Mes = document.getElementById('live-ahorro-mes');
       const s1B = document.getElementById('live-bono');
-      const s1C = document.getElementById('live-cae');
       if (s1A) s1A.innerText = ahorro.toLocaleString('es-ES') + " €";
+      if (s1Mes) s1Mes.innerText = "~ " + ahorroMes.toLocaleString('es-ES') + " € / mes";
       if (s1B) s1B.innerText = bono.toLocaleString('es-ES') + " €";
-      if (s1C) s1C.innerText = caeTexto;
 
       // Actualizar resultados finales Paso 3
       const fA = document.getElementById('final-ahorro');
       const fMes = document.getElementById('final-ahorro-mes');
       const fB = document.getElementById('final-bono');
-      const fC = document.getElementById('final-cae');
-      const fCSub = document.getElementById('final-cae-sub');
       if (fA) fA.innerText = ahorro.toLocaleString('es-ES') + " €";
       if (fMes) fMes.innerText = "~ " + ahorroMes.toLocaleString('es-ES') + " € / mes";
       if (fB) fB.innerText = bono.toLocaleString('es-ES') + " €";
-      if (fC) fC.innerText = caeTexto;
-      if (fCSub) fCSub.innerText = caeSubTexto;
     }
 
     function goToStep(step) {
@@ -995,18 +1083,20 @@ Responde ÚNICAMENTE con el objeto JSON.`;
       
       const fA = document.getElementById('final-ahorro');
       const fB = document.getElementById('final-bono');
-      const fC = document.getElementById('final-cae');
       
-      const ahorro = fA ? fA.innerText : "3.168 €";
-      const bono = fB ? fB.innerText : "540 €";
-      const cae = fC ? fC.innerText : "+ 1.320 €";
-      const tipo = currentProfile === 'empresa' ? 'Empresa / Negocio' : 'Hogar / Particular';
+      const ahorro = fA ? fA.innerText : "7.560 €";
+      const bono = fB ? fB.innerText : "1.000 €";
+      
+      let tipo = 'Hotel / Establecimiento';
+      if (currentProfile === 'negocios') tipo = 'Negocio / Pyme';
+      else if (currentProfile === 'industria') tipo = 'Industria / Gran Cuenta';
+      else if (currentProfile === 'hogar') tipo = 'Hogar / Particular';
 
       let aiBlock = "";
       if (detectedInvoiceData && detectedInvoiceData.cups) {
         aiBlock = `⚡ *CUPS Detectado:* ${detectedInvoiceData.cups}\n` +
                   `🏢 *Comercializadora Actual:* ${detectedInvoiceData.comercializadora || 'Auditada'}\n` +
-                  `🔌 *Potencia / Tarifa:* ${detectedInvoiceData.potencia_kw ? detectedInvoiceData.potencia_kw + ' kW' : 'Auditada'} (${detectedInvoiceData.tarifa || '2.0TD'})\n` +
+                  `🔌 *Potencia / Tarifa:* ${detectedInvoiceData.potencia_kw ? detectedInvoiceData.potencia_kw + ' kW' : 'Auditada'} (${detectedInvoiceData.tarifa || '3.0TD'})\n` +
                   (detectedInvoiceData.precio_kwh ? `💡 *Precio Energía:* ${detectedInvoiceData.precio_kwh} €/kWh\n` : '');
       }
 
@@ -1016,22 +1106,57 @@ Responde ÚNICAMENTE con el objeto JSON.`;
       let msg = `Hola Cash Energy, acabo de auditar mi factura con el Ojo IA:\n\n` +
                 `👤 *Nombre:* ${name}\n` +
                 `📱 *Teléfono:* ${phone}\n` +
-                `🏢 *Tipo:* ${tipo}\n` +
+                `🏢 *Sector:* ${tipo}\n` +
                 (aiBlock ? `${aiBlock}` : '') +
                 `💰 *Ahorro Estimado:* ${ahorro}/año${mesStr}\n` +
-                `🎁 *Bono de Bienvenida:* ${bono}\n` +
-                (cae && cae !== "0 €" && cae !== "Opcional" ? `🌱 *Monetización CAE:* ${cae}\n` : '') + `\n` +
+                `🎁 *Bono de Bienvenida:* ${bono}\n\n` +
                 `Deseo solicitar mi propuesta de ahorro formal, activar mi tarifa estable por 12 meses y tramitar el Bono de Bienvenida.`;
 
       const encoded = encodeURIComponent(msg);
       window.location.href = `mailto:info@cashenergy.eu?subject=${encodeURIComponent('Solicitud Estudio y Bono Cash Energy - ' + name)}&body=${encoded}`;
     }
 
-    // Inicializar cálculo automático al cargar la página
+    function sendPartnerRequest() {
+      const role = document.getElementById('partner-role')?.value || "Partner";
+      const name = document.getElementById('partner-name')?.value || "Colaborador";
+      const phone = document.getElementById('partner-phone')?.value || "";
+
+      if (!name || name.trim() === "") {
+        alert("Por favor, introduce tu nombre o empresa.");
+        return;
+      }
+
+      const msg = `Hola Hugo y Zelmar, deseo solicitar un acuerdo comercial de colaboración B2B con Cash Energy:\n\n` +
+                  `💼 *Perfil:* ${role}\n` +
+                  `👤 *Nombre / Empresa:* ${name}\n` +
+                  `📱 *Teléfono:* ${phone}\n\n` +
+                  `Deseo conocer las condiciones de comisiones recurrentes y formalizar el contrato de colaboración para mi cartera de clientes.`;
+
+      const encoded = encodeURIComponent(msg);
+      window.location.href = `mailto:info@cashenergy.eu?subject=${encodeURIComponent('Solicitud Acuerdo Comercial Partner - ' + role + ' - ' + name)}&body=${encoded}`;
+    }
+
+    // Inicializar cálculo automático y enrutamiento inteligente
     document.addEventListener('DOMContentLoaded', () => {
-      updateCalculation();
+      const path = window.location.pathname.toLowerCase();
+      const hash = window.location.hash.toLowerCase();
+
+      if (hash === '#hoteles' || path.includes('/hoteles')) {
+        setProfile('hoteles');
+        const sim = document.getElementById('simulador');
+        if (sim && hash === '#hoteles') {
+          setTimeout(() => sim.scrollIntoView({ behavior: 'smooth' }), 300);
+        }
+      } else if (hash === '#negocios' || path.includes('/negocios')) {
+        setProfile('negocios');
+      } else if (hash === '#industria' || path.includes('/industria')) {
+        setProfile('industria');
+      } else if (hash === '#hogar' || path.includes('/hogar')) {
+        setProfile('hogar');
+      } else {
+        setProfile('hoteles');
+      }
     });
-    updateCalculation();
   </script>
 </body>
 </html>
