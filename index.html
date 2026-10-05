@@ -258,6 +258,9 @@
 
       <!-- RIGHT COLUMN: SIMULADOR CON LA BARRA DE DESLIZAR (SLIDER) MATEMÁTICA -->
       <div class="lg:col-span-6" id="simulador">
+        <div id="video" class="mb-6 rounded-3xl overflow-hidden border border-amber-400/60 shadow-xl bg-slate-900">
+          <video id="pitch-video" src="video_pitch.mp4" poster="video_poster.jpg" controls playsinline preload="metadata" class="w-full h-auto block"></video>
+        </div>
         <div class="card-clean-luxury p-6 sm:p-8 rounded-3xl relative overflow-hidden">
           
           <!-- Mini sello de agua en esquina interior del simulador -->
@@ -1138,6 +1141,8 @@ Responde ÚNICAMENTE con el objeto JSON.`;
     document.addEventListener('DOMContentLoaded', () => {
       const path = window.location.pathname.toLowerCase();
       const hash = window.location.hash.toLowerCase();
+      const pv = document.getElementById('pitch-video');
+      if (pv && (hash === '#hoteles' || hash === '#video' || path.includes('/hoteles'))) { pv.muted = true; pv.play().catch(() => {}); }
 
       if (hash === '#hoteles' || path.includes('/hoteles')) {
         setProfile('hoteles');
