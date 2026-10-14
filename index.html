@@ -145,15 +145,15 @@
     <div class="max-w-7xl mx-auto flex items-center justify-between">
       
       <!-- LOGO -->
-      <a href="#" class="flex items-center space-x-3.5 group cursor-pointer">
-        <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden shadow-lg flex items-center justify-center border border-amber-500/30 shrink-0" style="background:#0A1128;">
+      <a href="#" class="flex items-center space-x-4 group cursor-pointer">
+        <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden shadow-2xl flex items-center justify-center border-2 border-amber-400/60 ring-4 ring-amber-400/10 shrink-0 transform group-hover:scale-105 transition-all duration-300" style="background:#0A1128;">
           <img src="logo_master_4k.png" alt="Cash Energy Logo" class="w-full h-full object-cover" onerror="this.src='logo_navy.jpg'">
         </div>
         <div>
-          <div class="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 leading-none">
+          <div class="text-3xl sm:text-4xl font-black tracking-tight text-slate-950 leading-none">
             CASH<span class="text-emerald-600">ENERGY</span>
           </div>
-          <span class="text-[10px] sm:text-xs font-bold uppercase tracking-[0.25em] text-slate-600 block mt-1.5">Energy · Capital · Technology</span>
+          <span class="text-[11px] sm:text-xs font-extrabold uppercase tracking-[0.28em] text-slate-700 block mt-2">Energy · Capital · Technology</span>
         </div>
       </a>
 
@@ -457,6 +457,12 @@
                   <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wide mb-1">Teléfono Móvil (WhatsApp)</label>
                   <input type="tel" id="lead-phone" placeholder="Ej. 612 345 678" class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs focus:outline-none focus:border-amber-500 transition shadow-sm">
                 </div>
+                <div class="flex items-start space-x-2.5 pt-1">
+                  <input type="checkbox" id="lead-rgpd" class="mt-0.5 w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500 cursor-pointer shrink-0">
+                  <label for="lead-rgpd" class="text-[10px] text-slate-600 leading-snug cursor-pointer select-none">
+                    He leído y acepto la <a href="javascript:void(0)" onclick="openModalRGPD('privacidad')" class="text-emerald-700 font-bold underline hover:text-emerald-800">Política de Privacidad</a> y autorizo el tratamiento de mis datos para el estudio comparativo y la tramitación del bono.
+                  </label>
+                </div>
               </div>
 
               <button type="button" onclick="sendStudyRequest()" class="w-full py-4 rounded-2xl text-white font-extrabold text-sm tracking-wide shadow-lg hover:shadow-emerald-600/30 transition flex items-center justify-center space-x-2 cursor-pointer" style="background: linear-gradient(135deg, #059669, #047857);">
@@ -635,6 +641,12 @@
               <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wide mb-1">Teléfono Móvil (WhatsApp)</label>
               <input type="tel" id="partner-phone" placeholder="Ej. 612 345 678" class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs focus:outline-none focus:border-amber-500">
             </div>
+            <div class="flex items-start space-x-2.5 pt-1">
+              <input type="checkbox" id="partner-rgpd" class="mt-0.5 w-4 h-4 text-amber-600 rounded border-slate-300 focus:ring-amber-500 cursor-pointer shrink-0">
+              <label for="partner-rgpd" class="text-[10px] text-slate-600 leading-snug cursor-pointer select-none">
+                Acepto la <a href="javascript:void(0)" onclick="openModalRGPD('privacidad')" class="text-amber-800 font-bold underline hover:text-amber-900">Política de Privacidad</a> y autorizo el contacto para la propuesta de colaboración comercial.
+              </label>
+            </div>
           </div>
 
           <button type="button" onclick="sendPartnerRequest()" class="w-full py-3.5 rounded-xl text-slate-950 font-extrabold text-xs tracking-wide shadow-md transition flex items-center justify-center space-x-2 cursor-pointer" style="background: linear-gradient(135deg, #D4AF37, #ECC968);">
@@ -686,11 +698,65 @@
       <div>&copy; 2026 Cash Energy. Todos los derechos reservados.</div>
       <div class="flex space-x-6">
         <a href="logos.html" class="hover:text-amber-300 transition">Visor de Marca 4K</a>
-        <a href="#" class="hover:text-slate-300 transition">Aviso Legal</a>
-        <a href="#" class="hover:text-slate-300 transition">Política de Privacidad</a>
+        <a href="javascript:void(0)" onclick="openModalRGPD('legal')" class="hover:text-amber-300 transition cursor-pointer">Aviso Legal</a>
+        <a href="javascript:void(0)" onclick="openModalRGPD('privacidad')" class="hover:text-amber-300 transition cursor-pointer">Política de Privacidad</a>
       </div>
     </div>
   </footer>
+
+  <!-- ================= MODAL RGPD / LSSI (TEXTOS LEGALES OFICIALES) ================= -->
+  <div id="modal-rgpd" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+    <div class="bg-slate-900 border border-amber-500/40 rounded-2xl max-w-2xl w-full max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
+      <!-- Modal Header -->
+      <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/70">
+        <div class="flex items-center space-x-3">
+          <div class="w-8 h-8 rounded-lg overflow-hidden bg-slate-900 border border-amber-500/30 flex items-center justify-center">
+            <img src="logo_navy.jpg" alt="Cash Energy" class="w-full h-full object-cover">
+          </div>
+          <span class="text-sm font-extrabold text-white tracking-wide">Marco Legal & Cumplimiento Normativo</span>
+        </div>
+        <button type="button" onclick="closeModalRGPD()" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <div class="flex border-b border-slate-800 bg-slate-950/40 px-6">
+        <button id="rgpd-tab-privacidad" onclick="switchRGPDTab('privacidad')" class="py-3 px-4 text-xs font-bold border-b-2 border-amber-400 text-amber-400 transition cursor-pointer">Política de Privacidad</button>
+        <button id="rgpd-tab-legal" onclick="switchRGPDTab('legal')" class="py-3 px-4 text-xs font-bold border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition cursor-pointer">Aviso Legal</button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-6 overflow-y-auto text-xs text-slate-300 space-y-4 leading-relaxed font-sans">
+        <!-- Contenido Privacidad -->
+        <div id="rgpd-content-privacidad" class="space-y-3">
+          <h3 class="text-sm font-bold text-amber-300">1. Responsable del Tratamiento</h3>
+          <p>En cumplimiento del Reglamento (UE) 2016/679 (RGPD) y la Ley Orgánica 3/2018 (LOPDGDD), se informa que los datos facilitados serán tratados por <strong class="text-white">Cash Energy</strong> (Canal de Consultoría e Intermediación Energética B2B / Agente Colaborador Autorizado Several Energy).</p>
+          <h3 class="text-sm font-bold text-amber-300">2. Finalidad del Tratamiento</h3>
+          <p>Los datos recabados (nombre, teléfono, factura eléctrica, datos del CUPS y consumo) se tratarán con las siguientes finalidades: a) Realizar la auditoría técnica comparativa y simulación de ahorro energético; b) Calcular y tramitar los bonos de bienvenida y monetización de CAEs (RD 36/2023); c) Presentar la propuesta contractual personalizada de suministro eléctrico; d) Atender solicitudes de colaboración B2B en el Canal Partners.</p>
+          <h3 class="text-sm font-bold text-amber-300">3. Legitimación y Conservación</h3>
+          <p>La base legal para el tratamiento de sus datos es el consentimiento expreso del interesado otorgado mediante la marcación de la casilla correspondiente y el envío del formulario. Los datos se conservarán durante el tiempo necesario para la elaboración de la propuesta y, en su caso, la ejecución de la relación contractual, conforme a los plazos legales aplicables.</p>
+          <h3 class="text-sm font-bold text-amber-300">4. Destinatarios y Derechos</h3>
+          <p>No se cederán datos a terceros salvo obligación legal o a las comercializadoras y distribuidoras estrictamente necesarias para el cambio de tarifa y liquidación del bono solicitado. El usuario puede ejercer en cualquier momento sus derechos de acceso, rectificación, supresión, limitación y portabilidad enviando un correo electrónico a <a href="mailto:info@cashenergy.eu" class="text-emerald-400 underline">info@cashenergy.eu</a>.</p>
+        </div>
+
+        <!-- Contenido Aviso Legal -->
+        <div id="rgpd-content-legal" class="hidden space-y-3">
+          <h3 class="text-sm font-bold text-amber-300">Información General (LSSI-CE)</h3>
+          <p>En cumplimiento del artículo 10 de la Ley 34/2002, de 11 de julio, de Servicios de la Sociedad de la Información y de Comercio Electrónico (LSSI-CE), se informa que la plataforma web <strong class="text-white">cashenergy.eu</strong> es un portal de optimización de costes y consultoría energética independiente operado en colaboración con comercializadoras autorizadas por el Ministerio para la Transición Ecológica y el Reto Demográfico (MITECO).</p>
+          <h3 class="text-sm font-bold text-amber-300">Condiciones de Uso y Propiedad Intelectual</h3>
+          <p>Todos los contenidos, marcas, logotipos, simuladores matemáticos, algoritmos de detección y diseños gráficos de esta web están protegidos por derechos de propiedad intelectual e industrial. Queda prohibida su reproducción o explotación no autorizada. Las simulaciones de ahorro y bonos constituyen estimaciones técnicas sujetas a la verificación final de las curvas horarias y características de suministro por la distribuidora oficial.</p>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="px-6 py-3 border-t border-slate-800 bg-slate-950/70 flex justify-end">
+        <button type="button" onclick="closeModalRGPD()" class="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs rounded-xl transition cursor-pointer">
+          Entendido y Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- ================= JAVASCRIPT ENGINE (SIMULADOR MATEMATICO 100% FUNCIONAL) ================= -->
   <script>
@@ -1076,7 +1142,60 @@ Responde ÚNICAMENTE con el objeto JSON.`;
       };
     }
 
+    function openModalRGPD(tab) {
+      const modal = document.getElementById('modal-rgpd');
+      if (!modal) return;
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      switchRGPDTab(tab || 'privacidad');
+    }
+
+    function closeModalRGPD() {
+      const modal = document.getElementById('modal-rgpd');
+      if (!modal) return;
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function switchRGPDTab(tab) {
+      const tabPriv = document.getElementById('rgpd-tab-privacidad');
+      const tabLeg = document.getElementById('rgpd-tab-legal');
+      const contentPriv = document.getElementById('rgpd-content-privacidad');
+      const contentLeg = document.getElementById('rgpd-content-legal');
+      
+      if (tab === 'legal') {
+        if (contentPriv) contentPriv.classList.add('hidden');
+        if (contentLeg) contentLeg.classList.remove('hidden');
+        if (tabLeg) {
+          tabLeg.classList.add('border-amber-400', 'text-amber-400');
+          tabLeg.classList.remove('border-transparent', 'text-slate-400');
+        }
+        if (tabPriv) {
+          tabPriv.classList.remove('border-amber-400', 'text-amber-400');
+          tabPriv.classList.add('border-transparent', 'text-slate-400');
+        }
+      } else {
+        if (contentPriv) contentPriv.classList.remove('hidden');
+        if (contentLeg) contentLeg.classList.add('hidden');
+        if (tabPriv) {
+          tabPriv.classList.add('border-amber-400', 'text-amber-400');
+          tabPriv.classList.remove('border-transparent', 'text-slate-400');
+        }
+        if (tabLeg) {
+          tabLeg.classList.remove('border-amber-400', 'text-amber-400');
+          tabLeg.classList.add('border-transparent', 'text-slate-400');
+        }
+      }
+    }
+
     function sendStudyRequest() {
+      const rgpdCheck = document.getElementById('lead-rgpd');
+      if (rgpdCheck && !rgpdCheck.checked) {
+        alert("Por favor, marca la casilla de aceptación de la Política de Privacidad para tramitar tu estudio y bono.");
+        rgpdCheck.focus();
+        return;
+      }
+
       const nameInput = document.getElementById('lead-name');
       const phoneInput = document.getElementById('lead-phone');
       const name = (nameInput && nameInput.value) ? nameInput.value : "Cliente";
@@ -1118,6 +1237,13 @@ Responde ÚNICAMENTE con el objeto JSON.`;
     }
 
     function sendPartnerRequest() {
+      const rgpdPartner = document.getElementById('partner-rgpd');
+      if (rgpdPartner && !rgpdPartner.checked) {
+        alert("Por favor, marca la casilla de aceptación de la Política de Privacidad para solicitar el acuerdo.");
+        rgpdPartner.focus();
+        return;
+      }
+
       const role = document.getElementById('partner-role')?.value || "Partner";
       const name = document.getElementById('partner-name')?.value || "Colaborador";
       const phone = document.getElementById('partner-phone')?.value || "";
