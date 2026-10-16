@@ -1022,6 +1022,14 @@
 
           if (response.ok) {
             const parsed = await response.json();
+            if (parsed.es_factura_luz === false) {
+              setHud(0, "Documento no válido");
+              if (hud) hud.classList.add('hidden');
+              const tipoDoc = parsed.tipo_documento_detectado ? parsed.tipo_documento_detectado.replace(/_/g, ' ') : "no eléctrico";
+              alert(`⚠️ Documento no válido detectado: [${tipoDoc}].\n\n${parsed.mensaje_validacion || 'Por favor, sube una factura de electricidad (Luz) española con código CUPS para auditar tus tarifas y calcular tu ahorro.'}`);
+              if (btn) btn.disabled = false;
+              return;
+            }
             applyDetectedInvoice(parsed);
           }
         } catch (err) {
