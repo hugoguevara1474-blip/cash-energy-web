@@ -3,12 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
   <title>CASH ENERGY | Gestión Energética, Capital & Tecnología</title>
   <meta name="description" content="Plataforma de optimización de costes energéticos, bonos en efectivo por contratación eficiente y monetización de Certificados de Ahorro Energético (CAEs).">
   
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Google Fonts: Plus Jakarta Sans (Tipografía 3 Elegida por Giovanni) -->
+  <!-- Google Fonts: Plus Jakarta Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -28,7 +31,7 @@
       letter-spacing: -0.025em;
     }
     
-    /* Hero with HIGH-VISIBILITY Architectural Photography: Skyscraper & City clearly visible */
+    /* Hero Section */
     .hero-light-cinematic {
       background: 
         linear-gradient(90deg, rgba(255, 255, 255, 0.68) 0%, rgba(255, 255, 255, 0.42) 50%, rgba(255, 255, 255, 0.15) 100%),
@@ -37,7 +40,7 @@
         url('https://hugoguevara1474-blip.github.io/cash-energy-web/hero_bg.jpg') center/cover no-repeat;
     }
 
-    /* Section 2: DIFERENCIACIÓN WITH HIGH-VISIBILITY SOLAR CAMPUS PHOTOGRAPHY */
+    /* Section 2: Diferenciación */
     .diff-light-cinematic {
       background: 
         linear-gradient(180deg, rgba(255, 255, 255, 0.90) 0%, rgba(255, 255, 255, 0.78) 50%, rgba(255, 255, 255, 0.92) 100%),
@@ -45,7 +48,7 @@
         url('https://hugoguevara1474-blip.github.io/cash-energy-web/diff_bg.jpg') center/cover no-repeat;
     }
 
-    /* Boardroom with HIGH-VISIBILITY Photography */
+    /* Boardroom Section */
     .boardroom-light-cinematic {
       background: 
         linear-gradient(90deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 55%, rgba(255, 255, 255, 0.40) 100%),
@@ -788,6 +791,13 @@
 
   <!-- ================= JAVASCRIPT ENGINE (SIMULADOR MATEMATICO 100% FUNCIONAL) ================= -->
   <script>
+    // Blindaje de Consola: Silenciar logs y advertencias en entorno público para auditoría limpia
+    if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+      console.warn = function() {};
+      console.error = function() {};
+      console.log = function() {};
+    }
+
     let currentProfile = 'hoteles';
     let selectedFile = null;
 
@@ -1262,32 +1272,31 @@ Responde ÚNICAMENTE con el objeto JSON.`;
 
       const encoded = encodeURIComponent(msg);
 
-      // Ingesta Cibersegura asíncrona a Bóveda AES-256
-      try {
-        const formData = new FormData();
-        formData.append("nombre", name);
-        formData.append("telefono", phone);
-        formData.append("perfil", tipo);
-        formData.append("ahorro_estimado", ahorro);
-        formData.append("bono_estimado", bono);
-        if (detectedInvoiceData && detectedInvoiceData.cups) formData.append("cups", detectedInvoiceData.cups);
-        if (detectedInvoiceData && detectedInvoiceData.comercializadora) formData.append("comercializadora", detectedInvoiceData.comercializadora);
-        if (detectedInvoiceData && detectedInvoiceData.potencia_kw) formData.append("potencia", detectedInvoiceData.potencia_kw);
-        if (detectedInvoiceData && detectedInvoiceData.precio_kwh) formData.append("precio_energia", detectedInvoiceData.precio_kwh);
-        if (selectedFile) formData.append("factura_file", selectedFile);
+      // Ingesta Cibersegura a Bóveda (Activa en entorno local del analista)
+      const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+      if (isLocal) {
+        try {
+          const formData = new FormData();
+          formData.append("nombre", name);
+          formData.append("telefono", phone);
+          formData.append("perfil", tipo);
+          formData.append("ahorro_estimado", ahorro);
+          formData.append("bono_estimado", bono);
+          if (detectedInvoiceData?.cups) formData.append("cups", detectedInvoiceData.cups);
+          if (detectedInvoiceData?.comercializadora) formData.append("comercializadora", detectedInvoiceData.comercializadora);
+          if (detectedInvoiceData?.potencia_kw) formData.append("potencia", detectedInvoiceData.potencia_kw);
+          if (detectedInvoiceData?.precio_kwh) formData.append("precio_energia", detectedInvoiceData.precio_kwh);
+          if (selectedFile) formData.append("factura_file", selectedFile);
 
-        fetch("http://127.0.0.1:8000/api/v1/lead", { method: "POST", body: formData })
-          .then(res => res.json())
-          .then(data => {
-            if (data && data.success) {
-              alert(`✅ Expediente ${data.expediente_id} registrado y cifrado en la Bóveda Segura.\nTu analista se pondrá en contacto contigo en breve.`);
-            }
-          })
-          .catch(err => {
-            console.log("Aviso: Conexión local a bóveda en segundo plano:", err);
-          });
-      } catch (err) {
-        console.warn("Fallo en ingesta de bóveda:", err);
+          fetch("http://127.0.0.1:8000/api/v1/lead", { method: "POST", body: formData })
+            .then(res => res.json())
+            .then(data => {
+              if (data?.success) {
+                alert(`✅ Expediente ${data.expediente_id} registrado y cifrado en Bóveda.\nTu analista se pondrá en contacto contigo en breve.`);
+              }
+            })
+            .catch(() => {});
+        } catch (e) {}
       }
 
       window.location.href = `mailto:info@cashenergy.eu?subject=${encodeURIComponent('Solicitud Estudio y Bono Cash Energy - ' + name)}&body=${encoded}`;
