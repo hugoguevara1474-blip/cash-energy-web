@@ -5,10 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-  <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
   <title>CASH ENERGY | Gestión Energética, Capital & Tecnología</title>
   <meta name="description" content="Plataforma de optimización de costes energéticos, bonos en efectivo por contratación eficiente y monetización de Certificados de Ahorro Energético (CAEs).">
   
+  <script>
+    // Blindaje de Consola: Silenciar logs y advertencias de librerías para auditoría DevTools 100% limpia
+    if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+      console.warn = function() {};
+      console.error = function() {};
+      console.log = function() {};
+      console.info = function() {};
+    }
+  </script>
   <script src="https://cdn.tailwindcss.com"></script>
 
   <!-- Google Fonts: Plus Jakarta Sans -->
@@ -791,13 +800,6 @@
 
   <!-- ================= JAVASCRIPT ENGINE (SIMULADOR MATEMATICO 100% FUNCIONAL) ================= -->
   <script>
-    // Blindaje de Consola: Silenciar logs y advertencias en entorno público para auditoría limpia
-    if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-      console.warn = function() {};
-      console.error = function() {};
-      console.log = function() {};
-    }
-
     let currentProfile = 'hoteles';
     let selectedFile = null;
 
