@@ -1315,11 +1315,15 @@
       if (hash === '#hoteles' || path.includes('/hoteles')) {
         setProfile('hoteles');
         const sim = document.getElementById('simulador');
-        if (sim && hash === '#hoteles') {
+        if (sim && (hash === '#hoteles' || path.includes('/hoteles'))) {
           setTimeout(() => sim.scrollIntoView({ behavior: 'smooth' }), 300);
         }
-      } else if (hash === '#negocios' || path.includes('/negocios')) {
+      } else if (hash === '#talleres' || path.includes('/talleres') || hash === '#clinicas' || path.includes('/clinicas') || hash === '#restaurantes' || path.includes('/restaurantes') || hash === '#negocios' || path.includes('/negocios')) {
         setProfile('negocios');
+        const sim = document.getElementById('simulador');
+        if (sim && (hash === '#talleres' || hash === '#clinicas' || hash === '#restaurantes' || hash === '#negocios')) {
+          setTimeout(() => sim.scrollIntoView({ behavior: 'smooth' }), 300);
+        }
       } else if (hash === '#industria' || path.includes('/industria')) {
         setProfile('industria');
       } else if (hash === '#hogar' || path.includes('/hogar')) {
