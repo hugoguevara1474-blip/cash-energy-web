@@ -961,7 +961,7 @@
       const list = document.getElementById('several-offers-list');
       const badge = document.getElementById('several-total-badge');
 
-      const cups = detectedInvoiceData?.cups || null;
+      const cups = detectedInvoiceData?.cups || "";
       const tarifa = detectedInvoiceData?.tarifa || (currentProfile === 'industria' ? '6.1TD' : (currentProfile === 'hoteles' || currentProfile === 'negocios' ? '3.0TD' : '2.0TD'));
       const potVal = detectedInvoiceData?.potencia_kw || (currentProfile === 'hoteles' ? 25 : (currentProfile === 'negocios' ? 15 : 4.6));
       const sliderVal = Number(document.getElementById('spend-slider')?.value || 300);
