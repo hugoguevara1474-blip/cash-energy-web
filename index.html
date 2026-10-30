@@ -19,6 +19,7 @@
     }
   </script>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="html2pdf.bundle.min.js"></script>
 
   <!-- Google Fonts: Plus Jakarta Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -579,13 +580,13 @@
                     </table>
                   </div>
 
-                  <!-- BOTÓN DESCARGA DIRECTA PDF ESTUDIO 1895 -->
-                  <div class="pt-2 flex flex-col sm:flex-row items-center justify-between gap-2 border-t border-slate-100">
+                  <!-- BOTÓN DESCARGA DINÁMICA PDF ESTUDIO OFICIAL -->
+                  <div id="btn-descargar-estudio-wrap" class="pt-2 flex flex-col sm:flex-row items-center justify-between gap-2 border-t border-slate-100">
                     <span class="text-[10px] text-slate-500 font-mono text-center sm:text-left">Propuesta oficial certificada por Several Energy</span>
-                    <a href="estudio-1895.pdf" target="_blank" download="Estudio_Energetico_CashEnergy_1895.pdf" class="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-[11px] font-bold font-mono shadow-sm transition cursor-pointer">
+                    <button type="button" onclick="descargarEstudioPDF()" id="btn-descargar-estudio" class="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-[11px] font-bold font-mono shadow-sm transition cursor-pointer active:scale-95">
                       <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                      <span>Descargar Estudio Oficial en PDF</span>
-                    </a>
+                      <span id="btn-descargar-estudio-texto">Descargar Estudio Oficial en PDF</span>
+                    </button>
                   </div>
                 </div>
 
@@ -1161,6 +1162,76 @@
       if (totActEl) totActEl.innerText = impActual.toFixed(2) + " €";
       if (totOfEl) totOfEl.innerText = impProp.toFixed(2) + " €";
       if (totDiffEl) totDiffEl.innerText = "+" + ahrFact.toFixed(2) + " €";
+
+      // Actualizar botón de descarga con el nombre del cliente auditado
+      const btnTexto = document.getElementById('btn-descargar-estudio-texto');
+      if (btnTexto) {
+        if (titular && titular !== "ZELMAR CAO") {
+          btnTexto.innerText = "Descargar Estudio Oficial en PDF (" + titular.split(' ')[0] + ")";
+        } else {
+          btnTexto.innerText = "Descargar Estudio Oficial en PDF (Estudio 1895)";
+        }
+      }
+    }
+
+    // ================= GENERADOR DINÁMICO DE ESTUDIO OFICIAL EN PDF =================
+    async function descargarEstudioPDF() {
+      const btn = document.getElementById('btn-descargar-estudio');
+      const btnTxt = document.getElementById('btn-descargar-estudio-texto');
+      const btnWrap = document.getElementById('btn-descargar-estudio-wrap');
+      const originalText = btnTxt ? btnTxt.innerText : "Descargar Estudio Oficial en PDF";
+
+      // Si no hay factura auditada o es el default de Zelmar Cao sin modificar:
+      const isDefaultZelmar = (!detectedInvoiceData || !detectedInvoiceData.titular || (detectedInvoiceData.titular === 'ZELMAR CAO' && (!detectedInvoiceData.importe_total || Math.abs(detectedInvoiceData.importe_total - 51.68) < 0.5)));
+
+      if (isDefaultZelmar && !detectedInvoiceData) {
+        const a = document.createElement('a');
+        a.href = 'estudio-1895.pdf';
+        a.download = 'Estudio_Energetico_CashEnergy_1895.pdf';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        return;
+      }
+
+      if (btn) btn.disabled = true;
+      if (btnTxt) btnTxt.innerText = "⏳ Generando PDF Oficial...";
+
+      try {
+        const titular = detectedInvoiceData?.titular || "CLIENTE_CASH_ENERGY";
+        const safeTitular = titular.trim().replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ]/g, '_').replace(/__+/g, '_');
+        const finalFilename = `Estudio_Energetico_${safeTitular}.pdf`;
+
+        const container = document.getElementById('estudio-oficial-container');
+        if (container) {
+          if (btnWrap) btnWrap.style.visibility = 'hidden';
+
+          const opt = {
+            margin: [8, 8, 8, 8],
+            filename: finalFilename,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, useCORS: true, letterRendering: true, scrollY: 0 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+          };
+
+          await html2pdf().set(opt).from(container).save();
+
+          if (btnWrap) btnWrap.style.visibility = 'visible';
+          if (btnTxt) btnTxt.innerText = "✓ ¡PDF Descargado!";
+          setTimeout(() => {
+            if (btnTxt) btnTxt.innerText = originalText;
+            if (btn) btn.disabled = false;
+          }, 3000);
+          return;
+        }
+      } catch (err) {
+        console.warn("Fallo en generación PDF, aplicando descarga directa:", err);
+      }
+
+      if (btnWrap) btnWrap.style.visibility = 'visible';
+      if (btnTxt) btnTxt.innerText = originalText;
+      if (btn) btn.disabled = false;
+      window.open('estudio-1895.pdf', '_blank');
     }
 
     // ================= MOTOR DE COMPARACIÓN SEVERAL CRM (525 TARIFAS) =================
