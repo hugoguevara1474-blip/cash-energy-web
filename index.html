@@ -376,11 +376,6 @@
                 <span>Continuar con mi Factura</span>
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
               </button>
-              <div class="text-center pt-0.5">
-                <button type="button" onclick="goToStep(3)" class="text-xs font-bold text-amber-700 hover:text-amber-800 underline inline-flex items-center space-x-1 cursor-pointer">
-                  <span>⚡ Ver Estudio Comparativo en Vivo (Several CRM) →</span>
-                </button>
-              </div>
             </div>
 
             <!-- ================= STEP 2: DROPZONE & OCR SCAN HUD ================= -->
@@ -424,12 +419,6 @@
                 <button type="button" onclick="executeAuditScan()" id="btn-scan" class="w-2/3 py-3.5 rounded-2xl text-slate-900 font-extrabold text-xs tracking-wide shadow-md transition flex items-center justify-center space-x-2 cursor-pointer" style="background: linear-gradient(135deg, #D4AF37, #ECC968);">
                   <span id="btn-scan-text">👁️ Auditar con el Ojo IA</span>
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                </button>
-              </div>
-
-              <div class="text-center pt-1">
-                <button type="button" onclick="goToStep(3)" class="text-[11px] text-slate-500 hover:text-amber-700 font-semibold underline cursor-pointer">
-                  ¿No tienes tu factura a mano? Ver estudio y tarifas en vivo →
                 </button>
               </div>
 
@@ -1377,6 +1366,14 @@
     }
 
     function goToStep(step) {
+      if (step === 3 && !detectedInvoiceData && !selectedFile) {
+        step = 2;
+        const statusText = document.getElementById('file-status-text');
+        if (statusText) {
+          statusText.innerText = "⚠️ Por favor, selecciona o sube tu factura antes de generar tu estudio personalizado.";
+          statusText.className = "text-[11px] text-amber-700 font-bold mt-1";
+        }
+      }
       const s1 = document.getElementById('step-1');
       const s2 = document.getElementById('step-2');
       const s3 = document.getElementById('step-3');
