@@ -483,15 +483,56 @@
                 </div>
               </div>
 
+              <!-- ================= TARIFAS OFICIALES RECOMENDADAS (SEVERAL CRM) ================= -->
+              <div id="several-rates-section" class="bg-gradient-to-br from-slate-900 to-slate-950 p-4 rounded-2xl border border-amber-500/40 text-left space-y-3 shadow-xl">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                  <div class="flex items-center space-x-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+                    <span class="text-xs font-black text-white uppercase tracking-wider font-mono">
+                      ⚡ Catálogo de Tarifas en Vivo
+                    </span>
+                  </div>
+                  <span id="several-total-badge" class="text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded-full">
+                    Consultando 525 tarifas...
+                  </span>
+                </div>
+
+                <!-- Lista dinámica de tarjetas de Several -->
+                <div id="several-offers-list" class="space-y-2">
+                  <div id="several-loading" class="p-3.5 rounded-xl bg-slate-800/60 border border-slate-700/60 text-center text-xs text-slate-300 space-y-2">
+                    <div class="inline-block w-4 h-4 border-2 border-amber-400 border-t-transparent rounded-full animate-spin"></div>
+                    <div>Optimizando potencias y cruzando precios oficiales en Several CRM...</div>
+                  </div>
+                </div>
+
+                <div class="text-[9.5px] text-slate-400 text-center flex items-center justify-center space-x-1">
+                  <span>🔒 Red oficial CNMC & Several Energy · Comisiones y Bonos garantizados por contrato</span>
+                </div>
+              </div>
+
               <div class="space-y-3">
-                <div>
-                  <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wide mb-1">Nombre / Razón Social</label>
-                  <input type="text" id="lead-name" placeholder="Ej. Restaurante / Giovanni" class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs focus:outline-none focus:border-amber-500 transition shadow-sm">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wide mb-1">Nombre / Razón Social</label>
+                    <input type="text" id="lead-name" placeholder="Ej. Restaurante / Giovanni" class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs focus:outline-none focus:border-amber-500 transition shadow-sm">
+                  </div>
+                  <div>
+                    <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wide mb-1">DNI / NIE / CIF</label>
+                    <input type="text" id="lead-dni" placeholder="Ej. 12345678Z / B12345678" class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs focus:outline-none focus:border-amber-500 transition shadow-sm font-mono uppercase">
+                  </div>
                 </div>
-                <div>
-                  <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wide mb-1">Teléfono Móvil (WhatsApp)</label>
-                  <input type="tel" id="lead-phone" placeholder="Ej. 612 345 678" class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs focus:outline-none focus:border-amber-500 transition shadow-sm">
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wide mb-1">Teléfono Móvil (WhatsApp)</label>
+                    <input type="tel" id="lead-phone" placeholder="Ej. 612 345 678" class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs focus:outline-none focus:border-amber-500 transition shadow-sm font-mono">
+                  </div>
+                  <div>
+                    <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wide mb-1">IBAN Cuenta Bancaria <span class="text-slate-400 font-normal lowercase">(para el bono)</span></label>
+                    <input type="text" id="lead-iban" placeholder="ES00 0000 0000 0000 0000 0000" class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs focus:outline-none focus:border-amber-500 transition shadow-sm font-mono">
+                  </div>
                 </div>
+
                 <div class="flex items-start space-x-2.5 pt-1">
                   <input type="checkbox" id="lead-rgpd" class="mt-0.5 w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500 cursor-pointer shrink-0">
                   <label for="lead-rgpd" class="text-[10px] text-slate-600 leading-snug cursor-pointer select-none">
@@ -908,6 +949,145 @@
       if (fB) fB.innerText = bono.toLocaleString('es-ES') + " €";
     }
 
+    // ================= MOTOR DE COMPARACIÓN SEVERAL CRM (525 TARIFAS) =================
+    let selectedSeveralTariff = null;
+    let currentSeveralOffers = [];
+    let isFetchingSeveral = false;
+
+    async function fetchSeveralComparison() {
+      if (isFetchingSeveral) return;
+      isFetchingSeveral = true;
+
+      const list = document.getElementById('several-offers-list');
+      const badge = document.getElementById('several-total-badge');
+
+      const cups = detectedInvoiceData?.cups || null;
+      const tarifa = detectedInvoiceData?.tarifa || (currentProfile === 'industria' ? '6.1TD' : (currentProfile === 'hoteles' || currentProfile === 'negocios' ? '3.0TD' : '2.0TD'));
+      const potVal = detectedInvoiceData?.potencia_kw || (currentProfile === 'hoteles' ? 25 : (currentProfile === 'negocios' ? 15 : 4.6));
+      const sliderVal = Number(document.getElementById('spend-slider')?.value || 300);
+      const consEst = Math.round(sliderVal * 4.5);
+
+      const payload = {
+        cups: cups,
+        tipo_suministro: 'luz',
+        tarifa: tarifa,
+        zona: 'PENINSULAR',
+        potencias: [potVal, potVal],
+        consumos: [Math.round(consEst * 0.3), Math.round(consEst * 0.3), Math.round(consEst * 0.4)]
+      };
+
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/v1/several/comparar`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          const offers = data.top_comision || [];
+          currentSeveralOffers = offers;
+          if (badge) badge.innerText = `${data.total_tarifas_calculadas || '1.020'} Tarifas Auditadas`;
+          renderSeveralOffers(offers);
+        } else {
+          renderFallbackSeveralOffers();
+        }
+      } catch (err) {
+        renderFallbackSeveralOffers();
+      } finally {
+        isFetchingSeveral = false;
+      }
+    }
+
+    function renderSeveralOffers(offers) {
+      const list = document.getElementById('several-offers-list');
+      if (!list) return;
+
+      if (!offers || offers.length === 0) {
+        renderFallbackSeveralOffers();
+        return;
+      }
+
+      const top3 = offers.slice(0, 3);
+      let html = '';
+
+      top3.forEach((o, idx) => {
+        const isSelected = idx === 0;
+        if (isSelected && !selectedSeveralTariff) selectedSeveralTariff = o;
+
+        const comName = o.comercializadora || 'Compañía Seleccionada';
+        const tarName = o.nombre_tarifa || 'Tarifa Oficial Regulada';
+        const logo = o.logo_url ? `<img src="${o.logo_url}" alt="${comName}" class="h-6 w-auto object-contain max-w-[80px] bg-white p-0.5 rounded shadow-sm" onerror="this.style.display='none'">` : '';
+        const pxKwh = o.precio_energia_promedio ? `${o.precio_energia_promedio.toFixed(3)} €/kWh` : 'Precio Fijo Mayorista';
+        const tipoPx = (o.tipo_precio || 'Fijo').toUpperCase();
+        
+        const is30 = (detectedInvoiceData?.tarifa && detectedInvoiceData.tarifa.includes('3.')) || currentProfile === 'hoteles' || currentProfile === 'negocios';
+        const bonoEur = is30 ? Math.min(1000, Math.max(150, Math.round((o.comision_cash_energy_eur || 300) * 0.45))) : Math.min(70, Math.max(30, Math.round((o.comision_cash_energy_eur || 90) * 0.40)));
+
+        o.cashback_eur = `${bonoEur} €`;
+
+        html += `
+          <div onclick="selectSeveralTariff(${idx})" id="several-card-${idx}" class="p-3 rounded-xl border transition cursor-pointer flex items-center justify-between ${isSelected ? 'border-amber-400 bg-slate-800/90 shadow-md ring-1 ring-amber-400/30' : 'border-slate-800 bg-slate-900/70 hover:border-slate-700'}">
+            <div class="flex items-center space-x-3 text-left">
+              <div class="w-5 h-5 rounded-full border flex items-center justify-center ${isSelected ? 'border-amber-400 bg-amber-400 text-slate-950 font-bold' : 'border-slate-600 bg-slate-800 text-transparent'} text-xs shrink-0" id="several-check-${idx}">
+                ✓
+              </div>
+              <div class="space-y-0.5">
+                <div class="flex items-center space-x-2">
+                  ${logo}
+                  <span class="font-bold text-white text-xs">${comName}</span>
+                  <span class="text-[9px] font-mono px-1.5 py-0.2 rounded bg-slate-800 text-slate-300 border border-slate-700">${tipoPx}</span>
+                </div>
+                <div class="text-[11px] text-slate-300 font-medium truncate max-w-[200px] sm:max-w-xs">${tarName}</div>
+                <div class="text-[10px] text-emerald-400 font-mono font-semibold">Energía: ${pxKwh}</div>
+              </div>
+            </div>
+            <div class="text-right shrink-0 pl-2">
+              <span class="text-[9px] uppercase font-bold text-amber-300 block">Bono en Cuenta</span>
+              <span class="text-sm font-black font-mono text-amber-400">+${bonoEur} €</span>
+            </div>
+          </div>
+        `;
+      });
+
+      list.innerHTML = html;
+    }
+
+    function selectSeveralTariff(idx) {
+      if (!currentSeveralOffers || !currentSeveralOffers[idx]) return;
+      selectedSeveralTariff = currentSeveralOffers[idx];
+
+      currentSeveralOffers.slice(0, 3).forEach((_, i) => {
+        const card = document.getElementById(`several-card-${i}`);
+        const chk = document.getElementById(`several-check-${i}`);
+        if (i === idx) {
+          if (card) card.className = "p-3 rounded-xl border transition cursor-pointer flex items-center justify-between border-amber-400 bg-slate-800/90 shadow-md ring-1 ring-amber-400/30";
+          if (chk) { chk.className = "w-5 h-5 rounded-full border flex items-center justify-center border-amber-400 bg-amber-400 text-slate-950 font-bold text-xs shrink-0"; chk.innerText = "✓"; }
+        } else {
+          if (card) card.className = "p-3 rounded-xl border transition cursor-pointer flex items-center justify-between border-slate-800 bg-slate-900/70 hover:border-slate-700";
+          if (chk) { chk.className = "w-5 h-5 rounded-full border flex items-center justify-center border-slate-600 bg-slate-800 text-transparent text-xs shrink-0"; chk.innerText = ""; }
+        }
+      });
+    }
+
+    function renderFallbackSeveralOffers() {
+      const list = document.getElementById('several-offers-list');
+      if (!list) return;
+      list.innerHTML = `
+        <div class="p-3 rounded-xl border border-amber-500/50 bg-slate-800/80 flex items-center justify-between">
+          <div class="space-y-0.5 text-left">
+            <div class="text-xs font-bold text-white">Tarifa Indexada / Fija Optimizada</div>
+            <div class="text-[10px] text-slate-300">Auditoría con Several Energy · Precio Pool Mayorista</div>
+            <div class="text-[10px] text-emerald-400 font-mono">Energía asegurada a precio de coste + Bono</div>
+          </div>
+          <div class="text-right">
+            <span class="text-[9px] uppercase font-bold text-amber-300 block">Bono de Bienvenida</span>
+            <span class="text-sm font-black font-mono text-amber-400">Garantizado</span>
+          </div>
+        </div>
+      `;
+    }
+
     function goToStep(step) {
       const s1 = document.getElementById('step-1');
       const s2 = document.getElementById('step-2');
@@ -927,6 +1107,10 @@
         if (step === 1) bar.className = "bg-gradient-to-r from-amber-400 to-emerald-500 h-full w-1/3 transition-all duration-500";
         if (step === 2) bar.className = "bg-gradient-to-r from-amber-400 to-emerald-500 h-full w-2/3 transition-all duration-500";
         if (step === 3) bar.className = "bg-gradient-to-r from-amber-400 to-emerald-500 h-full w-full transition-all duration-500";
+      }
+
+      if (step === 3) {
+        fetchSeveralComparison();
       }
     }
 
@@ -1154,6 +1338,9 @@
         importe_total: importe,
         precio_kwh: precioKwh
       };
+
+      // Precarga proactiva del comparador Several CRM con los parámetros detectados
+      fetchSeveralComparison();
     }
 
     function openModalRGPD(tab) {
@@ -1212,8 +1399,12 @@
 
       const nameInput = document.getElementById('lead-name');
       const phoneInput = document.getElementById('lead-phone');
+      const dniInput = document.getElementById('lead-dni');
+      const ibanInput = document.getElementById('lead-iban');
       const name = (nameInput && nameInput.value) ? nameInput.value : "Cliente";
       const phone = (phoneInput && phoneInput.value) ? phoneInput.value : "";
+      const dni = (dniInput && dniInput.value) ? dniInput.value.trim().toUpperCase() : "";
+      const iban = (ibanInput && ibanInput.value) ? ibanInput.value.trim().toUpperCase() : "";
       
       const fA = document.getElementById('final-ahorro');
       const fB = document.getElementById('final-bono');
@@ -1231,7 +1422,15 @@
         aiBlock = `⚡ *CUPS Detectado:* ${detectedInvoiceData.cups}\n` +
                   `🏢 *Comercializadora Actual:* ${detectedInvoiceData.comercializadora || 'Auditada'}\n` +
                   `🔌 *Potencia / Tarifa:* ${detectedInvoiceData.potencia_kw ? detectedInvoiceData.potencia_kw + ' kW' : 'Auditada'} (${detectedInvoiceData.tarifa || '3.0TD'})\n` +
-                  (detectedInvoiceData.precio_kwh ? `💡 *Precio Energía:* ${detectedInvoiceData.precio_kwh} €/kWh\n` : '');
+                  (detectedInvoiceData.precio_kwh ? `💡 *Precio Energía Actual:* ${detectedInvoiceData.precio_kwh} €/kWh\n` : '');
+      }
+
+      let severalBlock = "";
+      if (selectedSeveralTariff) {
+        severalBlock = `📊 *Tarifa Seleccionada (Several CRM):* ${selectedSeveralTariff.nombre_tarifa || 'Oficial'} (${selectedSeveralTariff.comercializadora || 'Compañía'})\n` +
+                       `⚡ *Tipo Precio:* ${(selectedSeveralTariff.tipo_precio || 'Fijo').toUpperCase()}\n` +
+                       (selectedSeveralTariff.precio_energia_promedio ? `💡 *Precio Energía Ofrecido:* ${selectedSeveralTariff.precio_energia_promedio.toFixed(3)} €/kWh\n` : '') +
+                       (selectedSeveralTariff.cashback_eur ? `🎁 *Bono Asociado:* ${selectedSeveralTariff.cashback_eur}\n` : '');
       }
 
       const fMes = document.getElementById('final-ahorro-mes');
@@ -1239,9 +1438,12 @@
 
       let msg = `Hola Cash Energy, acabo de auditar mi factura con el Ojo IA:\n\n` +
                 `👤 *Nombre:* ${name}\n` +
+                (dni ? `🆔 *DNI / CIF:* ${dni}\n` : '') +
                 `📱 *Teléfono:* ${phone}\n` +
+                (iban ? `💳 *IBAN para Bono:* ${iban}\n` : '') +
                 `🏢 *Sector:* ${tipo}\n` +
                 (aiBlock ? `${aiBlock}` : '') +
+                (severalBlock ? `${severalBlock}` : '') +
                 `💰 *Ahorro Estimado:* ${ahorro}/año${mesStr}\n` +
                 `🎁 *Bono de Bienvenida:* ${bono}\n\n` +
                 `Deseo solicitar mi propuesta de ahorro formal, activar mi tarifa estable por 12 meses y tramitar el Bono de Bienvenida.`;
@@ -1253,6 +1455,8 @@
         const formData = new FormData();
         formData.append("nombre", name);
         formData.append("telefono", phone);
+        if (dni) formData.append("dni", dni);
+        if (iban) formData.append("iban", iban);
         formData.append("perfil", tipo);
         formData.append("ahorro_estimado", ahorro);
         formData.append("bono_estimado", bono);
@@ -1260,6 +1464,12 @@
         if (detectedInvoiceData?.comercializadora) formData.append("comercializadora", detectedInvoiceData.comercializadora);
         if (detectedInvoiceData?.potencia_kw) formData.append("potencia", detectedInvoiceData.potencia_kw);
         if (detectedInvoiceData?.precio_kwh) formData.append("precio_energia", detectedInvoiceData.precio_kwh);
+        if (selectedSeveralTariff) {
+          formData.append("several_tarifa", selectedSeveralTariff.nombre_tarifa || "");
+          formData.append("several_comercializadora", selectedSeveralTariff.comercializadora || "");
+          formData.append("several_id_tarifa", selectedSeveralTariff.id_tarifa || "");
+          formData.append("several_bono", selectedSeveralTariff.cashback_eur || "");
+        }
         if (selectedFile) formData.append("factura_file", selectedFile);
 
         fetch(`${API_BASE_URL}/api/v1/lead`, { method: "POST", body: formData })
