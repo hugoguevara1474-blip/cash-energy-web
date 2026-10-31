@@ -309,7 +309,7 @@
             <div class="flex items-center justify-between pb-4 border-b border-slate-100">
               <div class="flex items-center space-x-2">
                 <span class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span class="text-xs font-bold text-slate-800 tracking-wider uppercase font-mono">Simulador & Estudio Oficial Several 2026</span>
+                <span class="text-xs font-bold text-slate-800 tracking-wider uppercase font-mono">Simulador & Estudio Oficial Cash Energy 2026</span>
               </div>
               <span class="text-[11px] font-mono font-bold text-amber-800 bg-amber-100 px-3 py-1 rounded-full border border-amber-300">
                 Paso <span id="step-number">1</span> de 3
@@ -383,7 +383,7 @@
               <div class="text-left">
                 <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">2. Sube una foto o PDF de tu Factura</label>
                 <p class="text-xs text-slate-500 leading-relaxed">
-                  Necesitamos el código CUPS y la potencia para comparar exactamente con Several, Candela y el mercado mayorista.
+                  Necesitamos el código CUPS y la potencia para auditar tus tarifas y comparar con las condiciones más eficientes del mercado mayorista.
                 </p>
               </div>
 
@@ -424,7 +424,7 @@
 
               <div id="scan-hud" class="hidden bg-slate-900 text-white p-4 rounded-xl border border-emerald-500/40 text-left space-y-2 font-mono text-[11px]">
                 <div class="flex items-center justify-between text-emerald-400">
-                  <span id="hud-status-text">Conectando con OMIE y Several...</span>
+                  <span id="hud-status-text">Conectando con OMIE y Mercado Mayorista...</span>
                   <span id="hud-percent">35%</span>
                 </div>
                 <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
@@ -441,14 +441,19 @@
                 <!-- 1. ENCABEZADO OFICIAL DEL ESTUDIO (IDÉNTICO A ESTUDIO 1895) -->
                 <div class="bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 p-4 rounded-2xl border border-amber-500/40 text-white shadow-xl space-y-2.5">
                   <div class="flex items-center justify-between border-b border-slate-800 pb-2">
-                    <div class="flex items-center space-x-2">
-                      <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                      <span class="text-[10px] font-mono uppercase tracking-widest text-slate-300 font-bold">
-                        ⚡ Estudio Energético Oficial Several Energy
-                      </span>
+                    <div class="flex items-center space-x-2.5">
+                      <div class="w-7 h-7 rounded-lg overflow-hidden border border-amber-400/50 shrink-0 bg-slate-950 flex items-center justify-center shadow-sm">
+                        <img src="data:image/jpeg;base64,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" alt="Cash Energy" class="w-full h-full object-cover">
+                      </div>
+                      <div>
+                        <span class="text-[10.5px] font-mono uppercase tracking-wider text-white font-extrabold flex items-center space-x-1.5">
+                          <span>⚡ Estudio Oficial de Optimización Energética</span>
+                          <span class="text-amber-400">· CASH ENERGY</span>
+                        </span>
+                      </div>
                     </div>
                     <span id="estudio-numero" class="text-[10px] font-mono font-bold text-amber-300 bg-amber-400/10 px-2.5 py-0.5 rounded-full border border-amber-400/30">
-                      Estudio Nº 1895
+                      Certificación Nº 1895
                     </span>
                   </div>
 
@@ -479,10 +484,10 @@
                     </div>
                   </div>
 
-                  <!-- OFERTA SEVERAL ENERGY -->
+                  <!-- PROPUESTA OPTIMIZADA CASH ENERGY -->
                   <div class="p-4 rounded-2xl bg-gradient-to-br from-slate-900 to-emerald-950/70 border border-emerald-500/50 text-white shadow-md relative overflow-hidden ring-1 ring-emerald-500/30">
                     <div class="text-[10px] uppercase font-bold tracking-wider text-emerald-300 font-mono flex items-center justify-center space-x-1">
-                      <span>✓ Oferta Several Energy</span>
+                      <span>✓ Propuesta Optimizada Cash Energy</span>
                     </div>
                     <div class="text-2xl sm:text-3xl font-black font-mono text-emerald-400 mt-1" id="estudio-factura-propuesta">49,65 €</div>
                     <div class="text-[11px] text-emerald-200 font-medium mt-0.5">
@@ -623,10 +628,10 @@
 
                   <!-- BOTÓN DESCARGA DINÁMICA PDF ESTUDIO OFICIAL -->
                   <div id="btn-descargar-estudio-wrap" class="pt-2 flex flex-col sm:flex-row items-center justify-between gap-2 border-t border-slate-100">
-                    <span class="text-[10px] text-slate-500 font-mono text-center sm:text-left">Propuesta oficial certificada por Several Energy</span>
+                    <span class="text-[10px] text-slate-500 font-mono text-center sm:text-left">Estudio oficial certificado por Cash Energy · Garantía CNMC</span>
                     <button type="button" onclick="descargarEstudioPDF()" id="btn-descargar-estudio" class="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-[11px] font-bold font-mono shadow-sm transition cursor-pointer active:scale-95">
                       <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                      <span id="btn-descargar-estudio-texto">Descargar Estudio Oficial en PDF</span>
+                      <span id="btn-descargar-estudio-texto">Descargar Estudio Oficial Cash Energy (PDF)</span>
                     </button>
                   </div>
                 </div>
@@ -651,12 +656,12 @@
                 <div id="several-offers-list" class="space-y-2">
                   <div id="several-loading" class="p-3.5 rounded-xl bg-slate-800/60 border border-slate-700/60 text-center text-xs text-slate-300 space-y-2">
                     <div class="inline-block w-4 h-4 border-2 border-amber-400 border-t-transparent rounded-full animate-spin"></div>
-                    <div>Optimizando potencias y cruzando precios oficiales en Several CRM...</div>
+                    <div>Optimizando potencias y cruzando precios oficiales en el Mercado Mayorista CNMC...</div>
                   </div>
                 </div>
 
                 <div class="text-[9.5px] text-slate-400 text-center flex items-center justify-center space-x-1">
-                  <span>🔒 Red oficial CNMC & Several Energy · Comisiones y Bonos garantizados por contrato</span>
+                  <span>🔒 Red Oficial CNMC & Cash Energy · Comisiones y Bonos garantizados por contrato</span>
                 </div>
               </div>
 
@@ -1273,9 +1278,9 @@
       const btnTexto = document.getElementById('btn-descargar-estudio-texto');
       if (btnTexto) {
         if (titular && titular !== "ZELMAR CAO") {
-          btnTexto.innerText = "Descargar Estudio Oficial en PDF (" + titular.split(' ')[0] + ")";
+          btnTexto.innerText = "Descargar Estudio Oficial Cash Energy (" + titular.split(' ')[0] + ")";
         } else {
-          btnTexto.innerText = "Descargar Estudio Oficial en PDF (Estudio 1895)";
+          btnTexto.innerText = "Descargar Estudio Oficial Cash Energy (PDF)";
         }
       }
     }
@@ -1471,7 +1476,7 @@
         <div class="p-3 rounded-xl border border-amber-500/50 bg-slate-800/80 flex items-center justify-between">
           <div class="space-y-0.5 text-left">
             <div class="text-xs font-bold text-white">Tarifa Indexada / Fija Optimizada</div>
-            <div class="text-[10px] text-slate-300">Auditoría con Several Energy · Precio Pool Mayorista</div>
+            <div class="text-[10px] text-slate-300">Auditoría Mayorista Cash Energy · Precio Pool CNMC</div>
             <div class="text-[10px] text-emerald-400 font-mono">Energía asegurada a precio de coste + Bono</div>
           </div>
           <div class="text-right">
@@ -1850,7 +1855,7 @@
 
       let severalBlock = "";
       if (selectedSeveralTariff) {
-        severalBlock = `📊 *Tarifa Seleccionada (Several CRM):* ${selectedSeveralTariff.nombre_tarifa || 'Oficial'} (${selectedSeveralTariff.comercializadora || 'Compañía'})\n` +
+        severalBlock = `📊 *Tarifa Recomendada (Cash Energy):* ${selectedSeveralTariff.nombre_tarifa || 'Oficial'} (${selectedSeveralTariff.comercializadora || 'Compañía'})\n` +
                        `⚡ *Tipo Precio:* ${(selectedSeveralTariff.tipo_precio || 'Fijo').toUpperCase()}\n` +
                        (selectedSeveralTariff.precio_energia_promedio ? `💡 *Precio Energía Ofrecido:* ${selectedSeveralTariff.precio_energia_promedio.toFixed(3)} €/kWh\n` : '') +
                        (selectedSeveralTariff.cashback_eur ? `🎁 *Bono Asociado:* ${selectedSeveralTariff.cashback_eur}\n` : '');
