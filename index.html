@@ -572,7 +572,7 @@
                     <div class="p-2.5 rounded-xl bg-gradient-to-b from-amber-500/15 to-amber-500/5 border border-amber-500/40">
                       <div class="text-[9px] text-amber-300 uppercase font-mono font-bold">Bono en Cuenta</div>
                       <div class="text-base sm:text-lg font-black font-mono text-amber-400 mt-0.5" id="final-bono">+30 €</div>
-                      <span class="inline-block text-[9px] font-bold text-amber-300 bg-amber-400/20 px-1.5 py-0.2 rounded font-mono mt-0.5">En tu IBAN</span>
+                      <span class="inline-block text-[9px] font-bold text-amber-300 bg-amber-400/20 px-1.5 py-0.2 rounded font-mono mt-0.5">Por Bizum</span>
                     </div>
                   </div>
                 </div>
@@ -656,6 +656,17 @@
                       <span id="btn-descargar-estudio-texto">Descargar Estudio Oficial Cash Energy (PDF)</span>
                     </button>
                   </div>
+
+                  <!-- BOTÓN DE CONTRATACIÓN DIRECTA EN PROPUESTA -->
+                  <div class="pt-3">
+                    <button type="button" onclick="abrirModalContratacionChat()" class="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold text-xs shadow-lg hover:shadow-emerald-500/30 transition flex items-center justify-center space-x-2 cursor-pointer border border-emerald-300/40">
+                      <span class="flex h-2 w-2 relative">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-300 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-400"></span>
+                      </span>
+                      <span>⚡ Continuar con la Contratación & Activar Bono <span id="propuesta-btn-bono" class="text-amber-300 font-mono"></span> →</span>
+                    </button>
+                  </div>
                 </div>
 
               </div>
@@ -694,19 +705,8 @@
                     <input type="text" id="lead-name" placeholder="Ej. Restaurante / Giovanni" class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs focus:outline-none focus:border-amber-500 transition shadow-sm">
                   </div>
                   <div>
-                    <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wide mb-1">DNI / NIE / CIF</label>
-                    <input type="text" id="lead-dni" placeholder="Ej. 12345678Z / B12345678" class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs focus:outline-none focus:border-amber-500 transition shadow-sm font-mono uppercase">
-                  </div>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
                     <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wide mb-1">Teléfono Móvil (WhatsApp)</label>
                     <input type="tel" id="lead-phone" placeholder="Ej. 612 345 678" class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs focus:outline-none focus:border-amber-500 transition shadow-sm font-mono">
-                  </div>
-                  <div>
-                    <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wide mb-1">IBAN Cuenta Bancaria <span class="text-slate-400 font-normal lowercase">(para el bono)</span></label>
-                    <input type="text" id="lead-iban" placeholder="ES00 0000 0000 0000 0000 0000" class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs focus:outline-none focus:border-amber-500 transition shadow-sm font-mono">
                   </div>
                 </div>
 
@@ -718,13 +718,13 @@
                 </div>
               </div>
 
-              <button type="button" onclick="sendStudyRequest()" class="w-full py-4 rounded-2xl text-white font-extrabold text-sm tracking-wide shadow-lg hover:shadow-emerald-600/30 transition flex items-center justify-center space-x-2 cursor-pointer" style="background: linear-gradient(135deg, #059669, #047857);">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-                <span>Solicitar Estudio Oficial & Tramitar Bono</span>
+              <button type="button" onclick="iniciarContratacionDesdeFormulario()" class="w-full py-4 rounded-2xl text-white font-extrabold text-sm tracking-wide shadow-lg hover:shadow-emerald-600/30 transition flex items-center justify-center space-x-2 cursor-pointer" style="background: linear-gradient(135deg, #059669, #047857);">
+                <svg class="w-5 h-5 text-amber-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                <span>⚡ Continuar con la Contratación y Activar Bono</span>
               </button>
 
               <p class="text-[10px] text-slate-500 text-center">
-                * El bono en efectivo se liquida por transferencia tras la activación efectiva del contrato de suministro por la distribuidora según consumo, tarifa y condiciones contratadas. Operativa bajo el marco regulatorio del sector eléctrico español.
+                * El bono de bienvenida en efectivo se abona fraccionado a mes vencido directamente por Bizum a tu teléfono móvil mientras el contrato permanezca activo tras la activación oficial de la distribuidora.
               </p>
             </div>
           </div>
@@ -1574,6 +1574,9 @@
       if (step === 3) {
         updateEstudio1895View(detectedInvoiceData, selectedSeveralTariff);
         fetchSeveralComparison();
+        if (typeof mostrarBotonContratarFlotante === 'function') mostrarBotonContratarFlotante();
+      } else {
+        if (typeof ocultarBotonContratarFlotante === 'function') ocultarBotonContratarFlotante();
       }
     }
 
@@ -2025,6 +2028,352 @@
         setProfile('hoteles');
       }
     });
+
+    // =========================================================================
+    // LÓGICA DE ASISTENTE CONVERSACIONAL DE CONTRATACIÓN (DEEPSEEK & TELEGRAM)
+    // =========================================================================
+    let chatHistorial = [];
+    let chatExpedienteId = null;
+    let chatDniCaptado = "";
+    let chatIbanCaptado = "";
+    let chatFormalizadoNotificado = false;
+
+    function mostrarBotonContratarFlotante() {
+      const btnWrap = document.getElementById('btn-contratar-flotante-wrap');
+      const bonoTag = document.getElementById('btn-flotante-bono-tag');
+      const propBono = document.getElementById('propuesta-btn-bono');
+      const fBono = document.getElementById('final-bono');
+      const bonoTxt = fBono ? fBono.innerText : "+300 €";
+      if (bonoTag) bonoTag.innerText = `(${bonoTxt})`;
+      if (propBono) propBono.innerText = `(${bonoTxt})`;
+      if (btnWrap) btnWrap.classList.remove('hidden');
+    }
+
+    function ocultarBotonContratarFlotante() {
+      const btnWrap = document.getElementById('btn-contratar-flotante-wrap');
+      if (btnWrap) btnWrap.classList.add('hidden');
+    }
+
+    function iniciarContratacionDesdeFormulario() {
+      const rgpd = document.getElementById('lead-rgpd');
+      if (rgpd && !rgpd.checked) {
+        alert("Por favor, marca la casilla de aceptación de la Política de Privacidad para continuar con la contratación y activar tu bono.");
+        rgpd.focus();
+        return;
+      }
+      abrirModalContratacionChat();
+    }
+
+    function abrirModalContratacionChat() {
+      const modal = document.getElementById('modal-contratacion-chat');
+      if (!modal) return;
+      modal.classList.remove('hidden');
+
+      const nameInput = document.getElementById('lead-name');
+      const phoneInput = document.getElementById('lead-phone');
+      const nombreCliente = (nameInput && nameInput.value) ? nameInput.value.trim() : "Cliente";
+      const telCliente = (phoneInput && phoneInput.value) ? phoneInput.value.trim() : "";
+
+      const fA = document.getElementById('final-ahorro');
+      const fB = document.getElementById('final-bono');
+      const ahorroTxt = fA ? fA.innerText : "Ahorro Máximo";
+      const bonoTxt = fB ? fB.innerText : "+300 €";
+      const cupsTxt = detectedInvoiceData?.cups || "Auditado en Factura";
+
+      const ctxAhorro = document.getElementById('chat-ctx-ahorro');
+      const ctxBono = document.getElementById('chat-ctx-bono');
+      const ctxCups = document.getElementById('chat-ctx-cups');
+      if (ctxAhorro) ctxAhorro.innerText = ahorroTxt;
+      if (ctxBono) ctxBono.innerText = bonoTxt;
+      if (ctxCups) ctxCups.innerText = cupsTxt;
+
+      if (!chatExpedienteId) {
+        chatExpedienteId = "EXP_" + new Date().toISOString().replace(/[-:T.Z]/g, '').slice(0, 14) + "_" + Math.random().toString(36).substring(2, 6).toUpperCase();
+      }
+
+      const contenedor = document.getElementById('chat-mensajes-container');
+      if (contenedor && contenedor.children.length === 0) {
+        // Mensaje inicial de DeepSeek guiado y perfectamente blindado
+        const compa = selectedSeveralTariff?.comercializadora || "Several Energy (Naturgy Compromiso)";
+        const saludoInicial = `¡Hola ${nombreCliente}! Soy el Asistente Oficial de Contratación de Cash Energy.\n\n` +
+          `Hemos auditado tu suministro y tienes un ahorro anual estimado de **${ahorroTxt}** con la tarifa oficial de **${compa}**, más un **Bono de Bienvenida de ${bonoTxt}**.\n\n` +
+          `📌 **¿Cómo se cobra tu bono?** Se abona fraccionado a mes vencido directamente por **Bizum** a tu teléfono móvil mientras el contrato se mantenga activo, premiando tu fidelidad.\n\n` +
+          `📞 **Aviso de verificación:** Several Energy te llamará por teléfono para una rápida comprobación de seguridad y te enviará un **SMS con PIN** para la firma digital oficial.\n\n` +
+          `Para preparar tu expediente de alta ahora mismo, por favor indícame tu **DNI/CIF** y el **IBAN** bancario para las facturas con descuento, o pregúntame cualquier duda que tengas.`;
+
+        renderMensajeChat('assistant', saludoInicial);
+        chatHistorial.push({ role: 'assistant', content: saludoInicial });
+      }
+
+      const quickDni = document.getElementById('chat-input-dni');
+      const quickIban = document.getElementById('chat-input-iban');
+      if (quickDni && chatDniCaptado) quickDni.value = chatDniCaptado;
+      if (quickIban && chatIbanCaptado) quickIban.value = chatIbanCaptado;
+    }
+
+    function cerrarModalContratacionChat() {
+      const modal = document.getElementById('modal-contratacion-chat');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function renderMensajeChat(role, texto) {
+      const contenedor = document.getElementById('chat-mensajes-container');
+      if (!contenedor) return;
+
+      const msgDiv = document.createElement('div');
+      const esBot = role === 'assistant';
+
+      msgDiv.className = esBot 
+        ? "flex items-start space-x-2.5 max-w-[92%]"
+        : "flex items-start justify-end space-x-2.5 max-w-[92%] ml-auto";
+
+      const parsedText = texto.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+
+      if (esBot) {
+        msgDiv.innerHTML = `
+          <div class="w-6 h-6 rounded-lg bg-amber-400/20 border border-amber-400/40 text-amber-300 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">
+            ⚡
+          </div>
+          <div class="p-3 rounded-2xl rounded-tl-sm bg-slate-800/90 border border-slate-700/80 text-slate-100 shadow-md">
+            <div class="text-[9px] uppercase tracking-wider text-amber-400/90 font-mono font-bold mb-1">DeepSeek AI · Cash Energy</div>
+            <div class="text-xs leading-relaxed font-sans">${parsedText}</div>
+          </div>
+        `;
+      } else {
+        msgDiv.innerHTML = `
+          <div class="p-3 rounded-2xl rounded-tr-sm bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-md">
+            <div class="text-xs leading-relaxed font-sans">${parsedText}</div>
+          </div>
+          <div class="w-6 h-6 rounded-lg bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">
+            👤
+          </div>
+        `;
+      }
+
+      contenedor.appendChild(msgDiv);
+      contenedor.scrollTop = contenedor.scrollHeight;
+    }
+
+    async function enviarChipPregunta(pregunta) {
+      renderMensajeChat('user', pregunta);
+      chatHistorial.push({ role: 'user', content: pregunta });
+      await consultarDeepSeekYResponder(pregunta);
+    }
+
+    async function enviarMensajeChatCliente() {
+      const textInput = document.getElementById('chat-input-texto');
+      const dniInput = document.getElementById('chat-input-dni');
+      const ibanInput = document.getElementById('chat-input-iban');
+
+      let texto = textInput ? textInput.value.trim() : "";
+      const dniVal = dniInput ? dniInput.value.trim().toUpperCase() : "";
+      const ibanVal = ibanInput ? ibanInput.value.trim().replace(/\s+/g, '').toUpperCase() : "";
+
+      if (dniVal && !chatDniCaptado) chatDniCaptado = dniVal;
+      if (ibanVal && !chatIbanCaptado) chatIbanCaptado = ibanVal;
+
+      if (!texto && (dniVal || ibanVal)) {
+        texto = `Te facilito mis datos: ${dniVal ? 'DNI ' + dniVal + ' ' : ''}${ibanVal ? 'IBAN ' + ibanVal : ''}`.trim();
+      }
+
+      if (!texto) return;
+
+      if (textInput) textInput.value = "";
+
+      renderMensajeChat('user', texto);
+      chatHistorial.push({ role: 'user', content: texto });
+
+      // Detección automática de DNI e IBAN en texto
+      const dniMatch = texto.match(/\b([0-9]{8}[A-Za-z]|[XYZxyz][0-9]{7}[A-Za-z]|[ABCDEFGHJNPQRSUVWabcdefghjnpqrsuvw][0-9]{7}[0-9A-Ja-j])\b/);
+      if (dniMatch) {
+        chatDniCaptado = dniMatch[1].toUpperCase();
+        if (dniInput) dniInput.value = chatDniCaptado;
+      }
+      const ibanMatch = texto.match(/\b(ES[0-9]{2}[0-9A-Za-z]{20})\b/i);
+      if (ibanMatch) {
+        chatIbanCaptado = ibanMatch[1].toUpperCase();
+        if (ibanInput) ibanInput.value = chatIbanCaptado;
+      }
+
+      await consultarDeepSeekYResponder(texto);
+
+      // Si captamos DNI e IBAN, formalizar en Telegram
+      if (chatDniCaptado && chatIbanCaptado && !chatFormalizadoNotificado) {
+        formalizarExpedienteEnTelegram();
+      }
+    }
+
+    async function consultarDeepSeekYResponder(mensajeUsuario) {
+      const typing = document.getElementById('chat-typing-indicator');
+      const btnEnviar = document.getElementById('btn-chat-enviar');
+      if (typing) typing.classList.remove('hidden');
+      if (btnEnviar) btnEnviar.disabled = true;
+
+      const nameInput = document.getElementById('lead-name');
+      const phoneInput = document.getElementById('lead-phone');
+      const fA = document.getElementById('final-ahorro');
+      const fB = document.getElementById('final-bono');
+
+      const contexto = {
+        nombre: (nameInput && nameInput.value) ? nameInput.value.trim() : "Cliente",
+        telefono: (phoneInput && phoneInput.value) ? phoneInput.value.trim() : "",
+        cups: detectedInvoiceData?.cups || "",
+        tarifa: selectedSeveralTariff?.nombre_tarifa || detectedInvoiceData?.tarifa || "2.0TD Fijo",
+        compania_oferta: selectedSeveralTariff?.comercializadora || "Several Energy",
+        ahorro: fA ? fA.innerText : "Ahorro Máximo",
+        bono: fB ? fB.innerText : "+300 €"
+      };
+
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/v1/chat/mensaje`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            mensaje: mensajeUsuario,
+            historial: chatHistorial,
+            contexto: contexto
+          })
+        });
+
+        const data = await res.json();
+        const respuestaBot = data?.respuesta || "Gracias por tu mensaje. Para formalizar tu expediente y activar tu bono por Bizum, facilítanos tu DNI e IBAN.";
+        renderMensajeChat('assistant', respuestaBot);
+        chatHistorial.push({ role: 'assistant', content: respuestaBot });
+      } catch (err) {
+        const fallback = "Disculpa, hubo una pequeña demora en la conexión. Por favor indícanos tu DNI e IBAN para tramitar tu expediente o plantéanos cualquier duda.";
+        renderMensajeChat('assistant', fallback);
+        chatHistorial.push({ role: 'assistant', content: fallback });
+      } finally {
+        if (typing) typing.classList.add('hidden');
+        if (btnEnviar) btnEnviar.disabled = false;
+      }
+    }
+
+    function formalizarExpedienteEnTelegram() {
+      chatFormalizadoNotificado = true;
+
+      const nameInput = document.getElementById('lead-name');
+      const phoneInput = document.getElementById('lead-phone');
+      const fA = document.getElementById('final-ahorro');
+      const fB = document.getElementById('final-bono');
+
+      const payload = {
+        expediente_id: chatExpedienteId,
+        nombre: (nameInput && nameInput.value) ? nameInput.value.trim() : "Cliente",
+        telefono: (phoneInput && phoneInput.value) ? phoneInput.value.trim() : "",
+        dni: chatDniCaptado,
+        iban: chatIbanCaptado,
+        telefono_bizum: (phoneInput && phoneInput.value) ? phoneInput.value.trim() : "",
+        cups: detectedInvoiceData?.cups || "",
+        compania: selectedSeveralTariff?.comercializadora || "Several Energy",
+        ahorro: fA ? fA.innerText : "",
+        bono: fB ? fB.innerText : "",
+        transcripcion: chatHistorial
+      };
+
+      fetch(`${API_BASE_URL}/api/v1/chat/guardar-y-notificar`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      }).then(r => r.json()).then(data => {
+        const confirmMsg = `✅ **¡Expediente de Contratación Formalizado!**\n\n` +
+          `Hemos registrado tu DNI (${chatDniCaptado}) y tu IBAN (${chatIbanCaptado.slice(0, 4)}••••${chatIbanCaptado.slice(-4)}) de forma segura en la Bóveda Cifrada de Cash Energy.\n\n` +
+          `📞 **Próximo paso:** En breve recibirás la **llamada oficial de verificación de Several Energy** y tu **SMS con PIN** para la firma digital sin ningún coste.\n\n` +
+          `¡Enhorabuena por activar tu tarifa garantizada y tu Bono de Bienvenida!`;
+        renderMensajeChat('assistant', confirmMsg);
+        chatHistorial.push({ role: 'assistant', content: confirmMsg });
+      }).catch(() => {});
+    }
   </script>
+
+  <!-- ================= BOTÓN FLOTANTE MAGNÉTICO DE CONTRATACIÓN ================= -->
+  <div id="btn-contratar-flotante-wrap" class="hidden fixed bottom-6 right-6 z-40 max-w-[92vw]">
+    <button type="button" onclick="abrirModalContratacionChat()" class="group relative flex items-center space-x-3 px-5 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold text-xs sm:text-sm shadow-2xl hover:shadow-emerald-500/50 transition transform hover:-translate-y-1 active:scale-95 cursor-pointer border border-emerald-300/40">
+      <span class="flex h-3 w-3 relative">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+        <span class="relative inline-flex rounded-full h-3 w-3 bg-amber-400"></span>
+      </span>
+      <span class="tracking-wide">⚡ Continuar con la Contratación & Activar Bono <span id="btn-flotante-bono-tag" class="text-amber-300 font-mono"></span> →</span>
+    </button>
+  </div>
+
+  <!-- ================= MODAL ASISTENTE CONVERSACIONAL DE CONTRATACIÓN (DEEPSEEK) ================= -->
+  <div id="modal-contratacion-chat" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-slate-900 border border-amber-500/40 w-full sm:max-w-lg rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col h-[90vh] sm:h-[660px] max-h-[92vh] overflow-hidden text-slate-100 animate-in fade-in zoom-in duration-200">
+      
+      <!-- Encabezado del Chat -->
+      <div class="p-4 bg-slate-950 border-b border-slate-800 flex items-center justify-between shrink-0">
+        <div class="flex items-center space-x-3">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-slate-950 text-base font-black shadow-md shadow-amber-500/20">
+            ⚡
+          </div>
+          <div>
+            <h4 class="text-xs font-bold text-white flex items-center space-x-2">
+              <span>Asistente de Contratación</span>
+              <span class="text-[9px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-mono font-bold border border-emerald-500/30 flex items-center space-x-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>DeepSeek IA Online</span>
+              </span>
+            </h4>
+            <p class="text-[10px] text-slate-400">Cash Energy · Activación Oficial Several Energy</p>
+          </div>
+        </div>
+        <button type="button" onclick="cerrarModalContratacionChat()" class="text-slate-400 hover:text-white p-2 rounded-xl hover:bg-slate-800 transition cursor-pointer text-sm font-bold">✕</button>
+      </div>
+
+      <!-- Resumen Contextual de la Auditoría -->
+      <div class="px-4 py-2 bg-slate-800/80 border-b border-slate-800 flex items-center justify-between text-[11px] font-mono shrink-0">
+        <div>
+          <span class="text-slate-400 text-[10px]">Ahorro:</span> <b class="text-emerald-400" id="chat-ctx-ahorro">--</b>
+        </div>
+        <div>
+          <span class="text-slate-400 text-[10px]">Bono Bizum:</span> <b class="text-amber-400 font-black" id="chat-ctx-bono">--</b>
+        </div>
+        <div class="text-[10px] text-slate-300">
+          CUPS: <span id="chat-ctx-cups" class="text-slate-100 font-bold">Auditado</span>
+        </div>
+      </div>
+
+      <!-- Aviso Oficial de Seguridad: Llamada Several + SMS PIN -->
+      <div class="px-4 py-1.5 bg-amber-400/10 border-b border-amber-400/20 text-[10px] text-amber-300/90 flex items-center space-x-2 shrink-0">
+        <span>🔒</span>
+        <span><b>Aviso Oficial:</b> Several Energy te llamará para verificar datos y recibirás un SMS con PIN para firma.</span>
+      </div>
+
+      <!-- Contenedor de Mensajes -->
+      <div id="chat-mensajes-container" class="flex-1 p-4 overflow-y-auto space-y-3 text-xs leading-relaxed">
+        <!-- Mensajes inyectados dinámicamente -->
+      </div>
+
+      <!-- Indicador de DeepSeek Escribiendo -->
+      <div id="chat-typing-indicator" class="hidden px-4 py-1.5 text-[11px] text-slate-400 italic flex items-center space-x-2 shrink-0">
+        <div class="w-3 h-3 border-2 border-amber-400 border-t-transparent rounded-full animate-spin"></div>
+        <span>DeepSeek está redactando respuesta...</span>
+      </div>
+
+      <!-- Chips de Dudas Frecuentes Rápidas -->
+      <div class="px-3 py-2 bg-slate-950/80 border-t border-slate-800 flex items-center space-x-1.5 overflow-x-auto text-[10px] no-scrollbar shrink-0">
+        <button type="button" onclick="enviarChipPregunta('¿Cómo se cobra el bono por Bizum?')" class="whitespace-nowrap px-3 py-1 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition cursor-pointer">💸 ¿Cómo cobro el bono?</button>
+        <button type="button" onclick="enviarChipPregunta('¿Cuándo me llamará Several Energy para verificar mis datos?')" class="whitespace-nowrap px-3 py-1 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition cursor-pointer">📞 ¿Cuándo me llaman?</button>
+        <button type="button" onclick="enviarChipPregunta('¿Me cortarán la luz en algún momento durante el cambio?')" class="whitespace-nowrap px-3 py-1 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition cursor-pointer">⚡ ¿Habrá corte de luz?</button>
+        <button type="button" onclick="enviarChipPregunta('¿Cuánto tarda el trámite de cambio de compañía?')" class="whitespace-nowrap px-3 py-1 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition cursor-pointer">⏱️ ¿Cuánto tarda?</button>
+      </div>
+
+      <!-- Formulario de Entrada: DNI, IBAN y Texto -->
+      <div id="chat-input-bar-wrap" class="p-3 bg-slate-950 border-t border-slate-800 space-y-2 shrink-0">
+        <div class="grid grid-cols-2 gap-2" id="chat-quick-inputs-row">
+          <input type="text" id="chat-input-dni" placeholder="DNI / NIE / CIF titular" class="px-3 py-2 rounded-xl bg-slate-800/90 border border-slate-700 text-slate-100 text-xs focus:outline-none focus:border-amber-400 font-mono uppercase">
+          <input type="text" id="chat-input-iban" placeholder="IBAN (facturas con descuento)" class="px-3 py-2 rounded-xl bg-slate-800/90 border border-slate-700 text-slate-100 text-xs focus:outline-none focus:border-amber-400 font-mono uppercase">
+        </div>
+        <div class="flex items-center space-x-2">
+          <input type="text" id="chat-input-texto" placeholder="Escribe tu consulta o duda a DeepSeek..." class="flex-1 px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-slate-100 text-xs focus:outline-none focus:border-amber-400 transition" onkeydown="if(event.key==='Enter'){event.preventDefault();enviarMensajeChatCliente();}">
+          <button type="button" onclick="enviarMensajeChatCliente()" id="btn-chat-enviar" class="px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition cursor-pointer flex items-center space-x-1 shrink-0">
+            <span>Enviar</span>
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
