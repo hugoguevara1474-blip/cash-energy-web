@@ -1471,31 +1471,31 @@
         o.cashback_eur = `+${bonoEur.toLocaleString('es-ES')} €`;
 
         html += `
-          <div onclick="selectSeveralTariff(${idx})" id="several-card-${idx}" class="p-3 rounded-xl border transition cursor-pointer flex items-center justify-between ${isSelected ? 'border-amber-400 bg-slate-800/90 shadow-md ring-1 ring-amber-400/30' : 'border-slate-800 bg-slate-900/70 hover:border-slate-700'}">
-            <div class="flex items-center space-x-3 text-left">
+          <div onclick="selectSeveralTariff(${idx})" id="several-card-${idx}" class="p-2.5 sm:p-3 rounded-xl border transition cursor-pointer flex items-center justify-between gap-2 ${isSelected ? 'border-amber-400 bg-slate-800/90 shadow-md ring-1 ring-amber-400/30' : 'border-slate-800 bg-slate-900/70 hover:border-slate-700'}">
+            <div class="flex items-center space-x-2 sm:space-x-3 text-left flex-1 min-w-0">
               <div class="w-5 h-5 rounded-full border flex items-center justify-center ${isSelected ? 'border-amber-400 bg-amber-400 text-slate-950 font-bold' : 'border-slate-600 bg-slate-800 text-transparent'} text-xs shrink-0" id="several-check-${idx}">
                 ✓
               </div>
-              <div class="space-y-0.5">
-                <div class="flex items-center space-x-2">
+              <div class="space-y-0.5 flex-1 min-w-0">
+                <div class="flex flex-wrap items-center gap-1.5">
                   ${logo}
-                  <span class="text-[9.5px] uppercase font-bold text-amber-400 font-mono">Compañía:</span>
+                  <span class="text-[9px] sm:text-[9.5px] uppercase font-bold text-amber-400 font-mono">Compañía:</span>
                   <span class="font-extrabold text-white text-xs">${comName}</span>
-                  <span class="text-[9px] font-mono px-1.5 py-0.2 rounded bg-slate-800 text-slate-300 border border-slate-700">${tipoPx}</span>
+                  <span class="text-[8.5px] font-mono px-1.5 py-0.2 rounded bg-slate-800 text-slate-300 border border-slate-700">${tipoPx}</span>
                 </div>
-                <div class="text-[11px] text-slate-300 font-medium truncate max-w-[200px] sm:max-w-xs">${tarName}</div>
-                <div class="text-[10px] text-emerald-400 font-mono font-semibold">Energía: ${pxKwh}</div>
+                <div class="text-[10.5px] sm:text-[11px] text-slate-300 font-medium truncate">${tarName}</div>
+                <div class="text-[9.5px] sm:text-[10px] text-emerald-400 font-mono font-semibold">Energía: ${pxKwh}</div>
                 ${o.alerta_several ? `
-                  <div class="mt-1 flex items-center space-x-1 text-[9px] px-1.5 py-0.5 rounded font-mono max-w-[200px] sm:max-w-xs ${o.alerta_several.tipo === 'URGENCIA_SUBIDA' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' : 'bg-blue-500/20 text-blue-300 border border-blue-500/30'}">
+                  <div class="mt-1 flex items-center space-x-1 text-[8.5px] px-1.5 py-0.5 rounded font-mono truncate ${o.alerta_several.tipo === 'URGENCIA_SUBIDA' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' : 'bg-blue-500/20 text-blue-300 border border-blue-500/30'}">
                     <span>⚠️</span>
                     <span class="truncate">${o.alerta_several.resumen}</span>
                   </div>
                 ` : ''}
               </div>
             </div>
-            <div class="text-right shrink-0 pl-2">
-              <span class="text-[9px] uppercase font-bold text-amber-300 block">Bono en Cuenta</span>
-              <span class="text-sm font-black font-mono text-amber-400">+${bonoEur} €</span>
+            <div class="text-right shrink-0 bg-amber-500/10 border border-amber-500/30 px-2 py-1.5 rounded-xl text-center min-w-[74px]">
+              <span class="text-[8px] sm:text-[8.5px] uppercase font-bold text-amber-300 block leading-tight">Bono Bizum</span>
+              <span class="text-xs sm:text-sm font-black font-mono text-amber-400 block mt-0.5 leading-none">+${bonoEur} €</span>
             </div>
           </div>
         `;
@@ -1513,10 +1513,10 @@
         const card = document.getElementById(`several-card-${i}`);
         const chk = document.getElementById(`several-check-${i}`);
         if (i === idx) {
-          if (card) card.className = "p-3 rounded-xl border transition cursor-pointer flex items-center justify-between border-amber-400 bg-slate-800/90 shadow-md ring-1 ring-amber-400/30";
+          if (card) card.className = "p-2.5 sm:p-3 rounded-xl border transition cursor-pointer flex items-center justify-between gap-2 border-amber-400 bg-slate-800/90 shadow-md ring-1 ring-amber-400/30";
           if (chk) { chk.className = "w-5 h-5 rounded-full border flex items-center justify-center border-amber-400 bg-amber-400 text-slate-950 font-bold text-xs shrink-0"; chk.innerText = "✓"; }
         } else {
-          if (card) card.className = "p-3 rounded-xl border transition cursor-pointer flex items-center justify-between border-slate-800 bg-slate-900/70 hover:border-slate-700";
+          if (card) card.className = "p-2.5 sm:p-3 rounded-xl border transition cursor-pointer flex items-center justify-between gap-2 border-slate-800 bg-slate-900/70 hover:border-slate-700";
           if (chk) { chk.className = "w-5 h-5 rounded-full border flex items-center justify-center border-slate-600 bg-slate-800 text-transparent text-xs shrink-0"; chk.innerText = ""; }
         }
       });
@@ -1528,18 +1528,19 @@
       const list = document.getElementById('several-offers-list');
       if (!list) return;
       list.innerHTML = `
-        <div class="p-3.5 rounded-xl border border-amber-500/50 bg-slate-800/80 flex items-center justify-between">
-          <div class="space-y-1 text-left">
-            <div class="flex items-center space-x-1.5">
-              <span class="text-[9px] uppercase font-bold text-amber-300 font-mono tracking-wider">🏢 Compañía Suministradora:</span>
+        <div class="p-2.5 sm:p-3.5 rounded-xl border border-amber-500/50 bg-slate-800/80 flex items-center justify-between gap-2">
+          <div class="space-y-1 text-left flex-1 min-w-0">
+            <div class="flex flex-wrap items-center gap-1.5">
+              <span class="text-[9px] uppercase font-bold text-amber-300 font-mono tracking-wider">🏢 Compañía:</span>
               <span class="text-xs font-bold text-white">Naturgy</span>
+              <span class="text-[8.5px] font-mono px-1.5 py-0.2 rounded bg-slate-800 text-slate-300 border border-slate-700">FIJO</span>
             </div>
-            <div class="text-[11px] text-slate-200 font-medium">Tarifa Fijo Garantizado 12m (Optimizada CNMC)</div>
-            <div class="text-[10px] text-emerald-400 font-mono">Energía asegurada a precio de coste + Bono en Cuenta</div>
+            <div class="text-[10.5px] sm:text-[11px] text-slate-200 font-medium truncate">Tarifa Fijo Garantizado 12m (Optimizada CNMC)</div>
+            <div class="text-[9.5px] sm:text-[10px] text-emerald-400 font-mono">Energía asegurada a precio de coste + Bono en Cuenta</div>
           </div>
-          <div class="text-right shrink-0 pl-2">
-            <span class="text-[9px] uppercase font-bold text-amber-300 block">Bono de Bienvenida</span>
-            <span class="text-sm font-black font-mono text-amber-400">30% Comisión</span>
+          <div class="text-right shrink-0 bg-amber-500/10 border border-amber-500/30 px-2 py-1.5 rounded-xl text-center min-w-[74px]">
+            <span class="text-[8px] sm:text-[8.5px] uppercase font-bold text-amber-300 block leading-tight">Bono Bizum</span>
+            <span class="text-xs sm:text-sm font-black font-mono text-amber-400 block mt-0.5 leading-none">30% Comisión</span>
           </div>
         </div>
       `;
