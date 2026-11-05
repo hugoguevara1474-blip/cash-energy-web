@@ -629,7 +629,7 @@
                             <td class="py-2 text-right text-emerald-600 font-bold font-mono" id="estudio-tabla-ene-diff">+3,79 €</td>
                           </tr>
                           <tr class="bg-slate-50 font-bold font-mono">
-                            <td class="py-2 px-1 text-slate-900 font-sans">Total Factura Periodo</td>
+                            <td class="py-2 px-1 text-slate-900 font-sans" id="estudio-tabla-tot-lbl">Total Factura Periodo</td>
                             <td class="py-2 text-center text-slate-900" id="estudio-tabla-tot-actual">51,68 €</td>
                             <td class="py-2 text-center text-emerald-700" id="estudio-tabla-tot-oferta">49,65 €</td>
                             <td class="py-2 text-right text-emerald-600" id="estudio-tabla-tot-diff">+2,03 €</td>
@@ -1303,17 +1303,61 @@
       if (bonoEl) bonoEl.innerText = bonoVal;
       sincronizarBonoEnTodaLaUI(bonoVal);
 
+      // 1. Precio Energía (€/kWh) con formateo y colores exactos
       if (pxActEl) pxActEl.innerText = pxAct.toFixed(4) + " €";
       if (pxOfEl) pxOfEl.innerText = Number(ofertaPx).toFixed(4) + " €";
-      if (pxDiffEl) pxDiffEl.innerText = (pxDiff > 0 ? "-" : "+") + Math.abs(pxDiff).toFixed(4) + " €";
+      if (pxDiffEl) {
+        if (pxDiff > 0.0001) {
+          pxDiffEl.className = "py-2 text-right text-emerald-600 font-bold font-mono";
+          pxDiffEl.innerText = "-" + pxDiff.toFixed(4) + " €";
+        } else if (pxDiff < -0.0001) {
+          pxDiffEl.className = "py-2 text-right text-slate-500 font-medium font-mono";
+          pxDiffEl.innerText = "+" + Math.abs(pxDiff).toFixed(4) + " €";
+        } else {
+          pxDiffEl.className = "py-2 text-right text-slate-500 font-mono";
+          pxDiffEl.innerText = "0,0000 €";
+        }
+      }
 
-      if (eneActEl) eneActEl.innerText = (Math.round(impActual * 0.372 * 100) / 100).toFixed(2) + " €";
-      if (eneOfEl) eneOfEl.innerText = (Math.round(impProp * 0.311 * 100) / 100).toFixed(2) + " €";
-      if (eneDiffEl) eneDiffEl.innerText = "+3,79 €";
+      // 2. Total Energía Factura calculado dinámicamente según consumo mensual
+      const consKwhMes = invoiceData?.consumo_kwh 
+        ? (esBimestral ? (invoiceData.consumo_kwh / (diasFact / 30)) : invoiceData.consumo_kwh)
+        : ((esBimestral ? impBaseMensual : impActual) * 0.48 / (pxAct || 0.15));
+      const valEneAct = Math.round(consKwhMes * pxAct * 100) / 100;
+      const valEneOf = Math.round(consKwhMes * ofertaPx * 100) / 100;
+      const valEneDiff = Math.round((valEneAct - valEneOf) * 100) / 100;
 
-      if (totActEl) totActEl.innerText = impActual.toFixed(2) + " €";
-      if (totOfEl) totOfEl.innerText = impProp.toFixed(2) + " €";
-      if (totDiffEl) totDiffEl.innerText = "+" + ahrFact.toFixed(2) + " €";
+      if (eneActEl) eneActEl.innerText = valEneAct.toFixed(2) + " €";
+      if (eneOfEl) eneOfEl.innerText = valEneOf.toFixed(2) + " €";
+      if (eneDiffEl) {
+        if (valEneDiff > 0) {
+          eneDiffEl.className = "py-2 text-right text-emerald-600 font-bold font-mono";
+          eneDiffEl.innerText = "+" + valEneDiff.toFixed(2) + " €";
+        } else if (valEneDiff < 0) {
+          eneDiffEl.className = "py-2 text-right text-slate-500 font-medium font-mono";
+          eneDiffEl.innerText = "-" + Math.abs(valEneDiff).toFixed(2) + " €";
+        } else {
+          eneDiffEl.className = "py-2 text-right text-slate-500 font-mono";
+          eneDiffEl.innerText = "0,00 €";
+        }
+      }
+
+      // 3. Total Factura normalizado a mensual si es bimestral (congruencia 100%)
+      const valTotAct = esBimestral ? impBaseMensual : impActual;
+      if (totActEl) totActEl.innerText = valTotAct.toFixed(2) + " €" + (esBimestral ? "/mes" : "");
+      if (totOfEl) totOfEl.innerText = impProp.toFixed(2) + " €" + (esBimestral ? "/mes" : "");
+      if (totDiffEl) {
+        totDiffEl.className = "py-2 text-right text-emerald-600 font-bold font-mono";
+        totDiffEl.innerText = "+" + ahrFact.toFixed(2) + " €" + (esBimestral ? "/mes" : "");
+      }
+      const totLblEl = document.getElementById('estudio-tabla-tot-lbl');
+      if (totLblEl) totLblEl.innerText = esBimestral ? "Total Mensual (Normalizado)" : "Total Factura Periodo";
+
+      // 4. Actualizar badge de ahorro del acordeón técnico dinámicamente
+      const ahrBadgeEl = document.getElementById('estudio-ahorro-ene-badge');
+      if (ahrBadgeEl) {
+        ahrBadgeEl.innerText = `Ahorro global del ${ahrPct} certificado`;
+      }
 
       // Actualizar tarjeta de seguros parásitos
       const segDescEl = document.getElementById('estudio-seguros-desc');
@@ -1459,7 +1503,34 @@
 
         if (res.ok) {
           const data = await res.json();
-          const offers = data.top_comision || [];
+          let offers = data.top_comision || [];
+
+          // Blindaje de competitividad en 2.0TD:
+          // Si Several devuelve ofertas y estamos en 2.0TD o doméstico,
+          // filtramos ofertas viables con precio de energía competitivo (<= 0.160 €/kWh)
+          // para evitar tarifas infladas como Plan Exclusivo 0.1999 €/kWh
+          if (data.ofertas && Array.isArray(data.ofertas) && data.ofertas.length > 0) {
+            const comp = data.ofertas.filter(o => 
+              o.comision_cash_energy_eur !== null && 
+              o.comision_cash_energy_eur !== undefined && 
+              !o.bloqueada && 
+              o.precio_energia_promedio && 
+              o.precio_energia_promedio >= 0.05 && 
+              o.precio_energia_promedio <= 0.160
+            );
+            if (comp.length > 0) {
+              const comAct = (detectedInvoiceData?.compania || '').toUpperCase();
+              comp.sort((a, b) => {
+                const aEsMisma = comAct && (a.comercializadora || '').toUpperCase().includes(comAct);
+                const bEsMisma = comAct && (b.comercializadora || '').toUpperCase().includes(comAct);
+                if (aEsMisma && !bEsMisma) return 1;
+                if (!aEsMisma && bEsMisma) return -1;
+                return (b.comision_cash_energy_eur || 0) - (a.comision_cash_energy_eur || 0);
+              });
+              offers = comp;
+            }
+          }
+
           currentSeveralOffers = offers;
           if (badge) badge.innerText = `${data.total_tarifas_calculadas || '1.020'} Tarifas Auditadas`;
           renderSeveralOffers(offers);
