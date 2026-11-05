@@ -612,7 +612,7 @@
                             <th class="pb-1.5">Concepto</th>
                             <th class="pb-1.5 text-center text-slate-600">Actual (<span id="tabla-com-actual">Endesa</span>)</th>
                             <th class="pb-1.5 text-center text-emerald-700">Oferta (<span id="tabla-com-oferta">Naturgy</span>)</th>
-                            <th class="pb-1.5 text-right text-emerald-600">Diferencia</th>
+                            <th class="pb-1.5 text-right text-emerald-600">Ahorro</th>
                           </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100 text-[11px]">
@@ -1263,13 +1263,24 @@
         ahrPct = "3,9%";
       } else {
         const ratio = is30 ? 0.85 : 0.94;
-        const calcImp = esBimestral ? impBaseMensual : impActual;
-        impProp = Math.round(calcImp * ratio * 100) / 100;
-        anualAct = Math.round(calcImp * 12 * 100) / 100;
-        anualProp = Math.round(impProp * 12 * 100) / 100;
-        ahrFact = Math.round((calcImp - impProp) * 100) / 100;
-        ahrAnual = Math.round((anualAct - anualProp) * 100) / 100;
-        ahrPct = Math.round((ahrFact / calcImp) * 1000) / 10 + "%";
+        const factorDias = esBimestral ? (diasFact / 30) : 1;
+        const baseFacturaMes = Math.round((impActual / factorDias) * 100) / 100;
+        
+        // Base de energía y potencia pura (sin seguros parásitos)
+        const segMes = costeSeguros > 0 ? Math.round((costeSeguros / factorDias) * 100) / 100 : 0;
+        const baseLuzMes = Math.round((baseFacturaMes - segMes) * 100) / 100;
+        
+        // Propuesta optimizada de luz pura en Mercado Libre
+        impProp = Math.round(baseLuzMes * ratio * 100) / 100;
+        
+        // Ahorro mensual estricto: Total factura actual menos nueva factura propuesta
+        ahrFact = Math.round((baseFacturaMes - impProp) * 100) / 100;
+        
+        // REGLA MATEMÁTICA INVIOLABLE: Ahorro Anual = Ahorro Mensual * 12
+        ahrAnual = Math.round(ahrFact * 12 * 100) / 100;
+        anualAct = Math.round(baseFacturaMes * 12 * 100) / 100;
+        anualProp = Math.round((anualAct - ahrAnual) * 100) / 100;
+        ahrPct = Math.round((ahrFact / baseFacturaMes) * 1000) / 10 + "%";
       }
 
       // Regla Oficial Cash Energy: 30% exacto de la comisión neta de Several Energy
@@ -1280,18 +1291,6 @@
       bonoVal = selectedOffer?.cashback_eur 
         ? (selectedOffer.cashback_eur.startsWith('+') ? selectedOffer.cashback_eur : '+' + selectedOffer.cashback_eur)
         : `+${bonoNum.toLocaleString('es-ES')} €`;
-
-      // Sumar ahorro directo por supresión de seguros parásitos (normalizado a mensual si es bimestral)
-      if (costeSeguros > 0) {
-        const factorDias = diasFact / 30;
-        const segMes = esBimestral ? Math.round((costeSeguros / factorDias) * 100) / 100 : costeSeguros;
-        const segAnual = esBimestral ? Math.round((costeSeguros * 6) * 100) / 100 : Math.round(costeSeguros * 12 * 100) / 100;
-        ahrFact = Math.round((ahrFact + segMes) * 100) / 100;
-        ahrAnual = Math.round((ahrAnual + segAnual) * 100) / 100;
-        anualAct = Math.round((anualAct + segAnual) * 100) / 100;
-        const baseFacturaMes = esBimestral ? (impActual / factorDias) : impActual;
-        ahrPct = Math.round((ahrFact / baseFacturaMes) * 1000) / 10 + "%";
-      }
 
       const pxAct = invoiceData?.precio_kwh || 0.1532;
       const pxDiff = Math.round((pxAct - ofertaPx) * 10000) / 10000;
@@ -1537,14 +1536,22 @@
             }
             if (comp.length > 0) {
               const comAct = (detectedInvoiceData?.compania || '').toUpperCase();
-              comp.sort((a, b) => {
+              const pxCliente = detectedInvoiceData?.precio_kwh;
+              // Regla de Oro Cash Energy: Si se conoce el precio del cliente, priorizar tarifas que mejoren su kWh
+              const mejoresTarifas = pxCliente ? comp.filter(o => o.precio_energia_promedio && o.precio_energia_promedio <= pxCliente) : [];
+              const restoTarifas = pxCliente ? comp.filter(o => !o.precio_energia_promedio || o.precio_energia_promedio > pxCliente) : comp;
+
+              const ordenarComision = (arr) => arr.sort((a, b) => {
                 const aEsMisma = comAct && (a.comercializadora || '').toUpperCase().includes(comAct);
                 const bEsMisma = comAct && (b.comercializadora || '').toUpperCase().includes(comAct);
                 if (aEsMisma && !bEsMisma) return 1;
                 if (!aEsMisma && bEsMisma) return -1;
                 return (b.comision_cash_energy_eur || 0) - (a.comision_cash_energy_eur || 0);
               });
-              offers = comp;
+
+              offers = mejoresTarifas.length > 0 
+                ? [...ordenarComision(mejoresTarifas), ...ordenarComision(restoTarifas)]
+                : ordenarComision(comp);
             }
           }
 
@@ -1575,7 +1582,7 @@
 
       top3.forEach((o, idx) => {
         const isSelected = idx === 0;
-        if (isSelected && !selectedSeveralTariff) selectedSeveralTariff = o;
+        if (isSelected) selectedSeveralTariff = o;
 
         const comName = o.comercializadora || 'Compañía Seleccionada';
         const tarName = o.nombre_tarifa || 'Tarifa Oficial Regulada';
