@@ -1510,14 +1510,24 @@
           // filtramos ofertas viables con precio de energía competitivo (<= 0.160 €/kWh)
           // para evitar tarifas infladas como Plan Exclusivo 0.1999 €/kWh
           if (data.ofertas && Array.isArray(data.ofertas) && data.ofertas.length > 0) {
-            const comp = data.ofertas.filter(o => 
+            let comp = data.ofertas.filter(o => 
               o.comision_cash_energy_eur !== null && 
               o.comision_cash_energy_eur !== undefined && 
               !o.bloqueada && 
               o.precio_energia_promedio && 
               o.precio_energia_promedio >= 0.05 && 
-              o.precio_energia_promedio <= 0.160
+              o.precio_energia_promedio <= 0.140
             );
+            if (comp.length === 0) {
+              comp = data.ofertas.filter(o => 
+                o.comision_cash_energy_eur !== null && 
+                o.comision_cash_energy_eur !== undefined && 
+                !o.bloqueada && 
+                o.precio_energia_promedio && 
+                o.precio_energia_promedio >= 0.05 && 
+                o.precio_energia_promedio <= 0.160
+              );
+            }
             if (comp.length > 0) {
               const comAct = (detectedInvoiceData?.compania || '').toUpperCase();
               comp.sort((a, b) => {
