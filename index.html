@@ -612,7 +612,7 @@
                             <th class="pb-1.5">Concepto</th>
                             <th class="pb-1.5 text-center text-slate-600">Actual (<span id="tabla-com-actual">Endesa</span>)</th>
                             <th class="pb-1.5 text-center text-emerald-700">Oferta (<span id="tabla-com-oferta">Naturgy</span>)</th>
-                            <th class="pb-1.5 text-right text-emerald-600">Ahorro</th>
+                            <th class="pb-1.5 text-right text-emerald-600">Diferencia</th>
                           </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100 text-[11px]">
@@ -1313,10 +1313,10 @@
       if (pxDiffEl) {
         if (pxDiff > 0.0001) {
           pxDiffEl.className = "py-2 text-right text-emerald-600 font-bold font-mono";
-          pxDiffEl.innerText = "+" + pxDiff.toFixed(4) + " €";
+          pxDiffEl.innerText = "-" + pxDiff.toFixed(4) + " €";
         } else if (pxDiff < -0.0001) {
           pxDiffEl.className = "py-2 text-right text-slate-500 font-medium font-mono";
-          pxDiffEl.innerText = "-" + Math.abs(pxDiff).toFixed(4) + " €";
+          pxDiffEl.innerText = "+" + Math.abs(pxDiff).toFixed(4) + " €";
         } else {
           pxDiffEl.className = "py-2 text-right text-slate-500 font-mono";
           pxDiffEl.innerText = "0,0000 €";
@@ -1336,10 +1336,10 @@
       if (eneDiffEl) {
         if (valEneDiff > 0) {
           eneDiffEl.className = "py-2 text-right text-emerald-600 font-bold font-mono";
-          eneDiffEl.innerText = "+" + valEneDiff.toFixed(2) + " €";
+          eneDiffEl.innerText = "-" + valEneDiff.toFixed(2) + " €";
         } else if (valEneDiff < 0) {
           eneDiffEl.className = "py-2 text-right text-slate-500 font-medium font-mono";
-          eneDiffEl.innerText = "-" + Math.abs(valEneDiff).toFixed(2) + " €";
+          eneDiffEl.innerText = "+" + Math.abs(valEneDiff).toFixed(2) + " €";
         } else {
           eneDiffEl.className = "py-2 text-right text-slate-500 font-mono";
           eneDiffEl.innerText = "0,00 €";
@@ -1353,7 +1353,7 @@
       if (totOfEl) totOfEl.innerText = impProp.toFixed(2) + " €" + (esBimestral ? "/mes" : "");
       if (totDiffEl) {
         totDiffEl.className = "py-2 text-right text-emerald-600 font-bold font-mono";
-        totDiffEl.innerText = "+" + ahrFact.toFixed(2) + " €" + (esBimestral ? "/mes" : "");
+        totDiffEl.innerText = "-" + ahrFact.toFixed(2) + " €" + (esBimestral ? "/mes" : "");
       }
       const totLblEl = document.getElementById('estudio-tabla-tot-lbl');
       if (totLblEl) totLblEl.innerText = esBimestral ? "Total Mensual (Normalizado)" : "Total Factura Periodo";
