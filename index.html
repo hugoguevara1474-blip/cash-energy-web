@@ -1281,11 +1281,16 @@
         ? (selectedOffer.cashback_eur.startsWith('+') ? selectedOffer.cashback_eur : '+' + selectedOffer.cashback_eur)
         : `+${bonoNum.toLocaleString('es-ES')} €`;
 
-      // Sumar ahorro directo por supresión de seguros parásitos
+      // Sumar ahorro directo por supresión de seguros parásitos (normalizado a mensual si es bimestral)
       if (costeSeguros > 0) {
-        ahrFact += costeSeguros;
-        ahrAnual += Math.round(costeSeguros * 12 * 100) / 100;
-        ahrPct = Math.round((ahrFact / impActual) * 1000) / 10 + "%";
+        const factorDias = diasFact / 30;
+        const segMes = esBimestral ? Math.round((costeSeguros / factorDias) * 100) / 100 : costeSeguros;
+        const segAnual = esBimestral ? Math.round((costeSeguros * 6) * 100) / 100 : Math.round(costeSeguros * 12 * 100) / 100;
+        ahrFact = Math.round((ahrFact + segMes) * 100) / 100;
+        ahrAnual = Math.round((ahrAnual + segAnual) * 100) / 100;
+        anualAct = Math.round((anualAct + segAnual) * 100) / 100;
+        const baseFacturaMes = esBimestral ? (impActual / factorDias) : impActual;
+        ahrPct = Math.round((ahrFact / baseFacturaMes) * 1000) / 10 + "%";
       }
 
       const pxAct = invoiceData?.precio_kwh || 0.1532;
@@ -1343,7 +1348,8 @@
       }
 
       // 3. Total Factura normalizado a mensual si es bimestral (congruencia 100%)
-      const valTotAct = esBimestral ? impBaseMensual : impActual;
+      const factorDias = diasFact / 30;
+      const valTotAct = esBimestral ? Math.round((impActual / factorDias) * 100) / 100 : impActual;
       if (totActEl) totActEl.innerText = valTotAct.toFixed(2) + " €" + (esBimestral ? "/mes" : "");
       if (totOfEl) totOfEl.innerText = impProp.toFixed(2) + " €" + (esBimestral ? "/mes" : "");
       if (totDiffEl) {
@@ -1365,13 +1371,14 @@
       if (segDescEl) {
         if (costeSeguros > 0) {
           const concStr = conceptoSeguros ? ` (${conceptoSeguros})` : '';
-          segDescEl.innerText = `Detectados seguros y servicios parásitos${concStr} por ${costeSeguros.toFixed(2)} €/factura. Con Cash Energy quedan suprimidos al 100%.`;
+          const perSeg = esBimestral ? "bimestre" : "factura";
+          segDescEl.innerText = `Detectados seguros y servicios parásitos${concStr} por ${costeSeguros.toFixed(2)} €/${perSeg}. Con Cash Energy quedan suprimidos al 100%.`;
         } else {
           segDescEl.innerText = "Tu factura actual no registra seguros parásitos o han sido suprimidos al 100%. Sin costes ocultos.";
         }
       }
       if (segAhrEl) {
-        const ahorroAnualSeguros = costeSeguros * 12;
+        const ahorroAnualSeguros = esBimestral ? Math.round((costeSeguros * 6) * 100) / 100 : Math.round(costeSeguros * 12 * 100) / 100;
         segAhrEl.innerText = "+" + ahorroAnualSeguros.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " € / año";
       }
 
