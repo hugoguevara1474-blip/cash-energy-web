@@ -1030,6 +1030,7 @@
       : 'https://attempting-hide-mere-addition.trycloudflare.com';
     let currentProfile = 'hoteles';
     let selectedFile = null;
+    let selectedFiles = [];
 
     function setProfile(type) {
       if (type === 'empresa') type = 'negocios';
@@ -1617,9 +1618,6 @@
 
     let detectedInvoiceData = null;
 
-    let selectedFiles = [];
-    let selectedFile = null;
-
     function handleDragOver(e) {
       e.preventDefault();
       e.stopPropagation();
@@ -1647,9 +1645,11 @@
 
     function handleFileSelected(e) {
       if (e.target && e.target.files && e.target.files.length > 0) {
-        processIncomingFiles(e.target.files);
+        processIncomingFiles(Array.from(e.target.files));
       }
-      if (e.target) e.target.value = '';
+      setTimeout(() => {
+        try { if (e.target) e.target.value = ''; } catch(err){}
+      }, 100);
     }
 
     function processIncomingFiles(fileList) {
