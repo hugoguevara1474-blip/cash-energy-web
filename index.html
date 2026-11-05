@@ -1313,10 +1313,10 @@
       if (pxDiffEl) {
         if (pxDiff > 0.0001) {
           pxDiffEl.className = "py-2 text-right text-emerald-600 font-bold font-mono";
-          pxDiffEl.innerText = "-" + pxDiff.toFixed(4) + " €";
+          pxDiffEl.innerText = "+" + pxDiff.toFixed(4) + " €";
         } else if (pxDiff < -0.0001) {
           pxDiffEl.className = "py-2 text-right text-slate-500 font-medium font-mono";
-          pxDiffEl.innerText = "+" + Math.abs(pxDiff).toFixed(4) + " €";
+          pxDiffEl.innerText = "-" + Math.abs(pxDiff).toFixed(4) + " €";
         } else {
           pxDiffEl.className = "py-2 text-right text-slate-500 font-mono";
           pxDiffEl.innerText = "0,0000 €";
