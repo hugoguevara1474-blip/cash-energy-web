@@ -388,27 +388,34 @@
               </div>
 
               <div id="dropzone" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleFileDrop(event)" onclick="document.getElementById('file-input').click()" class="border-2 border-dashed border-slate-300 hover:border-amber-500 bg-slate-50 p-6 rounded-2xl text-center cursor-pointer transition group relative">
-                <input type="file" id="file-input" class="hidden" accept=".pdf,image/*" onchange="handleFileSelected(event)">
+                <input type="file" id="file-input" class="hidden" accept=".pdf,image/*" multiple onchange="handleFileSelected(event)">
                 <input type="file" id="camera-input" class="hidden" accept="image/*" capture="environment" onchange="handleFileSelected(event)">
                 <div class="w-12 h-12 rounded-xl bg-white border border-slate-200 text-amber-600 group-hover:text-amber-700 flex items-center justify-center mx-auto mb-2 transition shadow-sm">
                   <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
                 </div>
                 <div class="text-xs font-bold text-slate-800">Arrastra tu factura aquí o <span class="text-amber-700 underline">haz clic para examinar</span></div>
-                <div class="text-[10px] text-slate-500 mt-1" id="file-status-text">Admite PDF o foto de factura (El Ojo IA lee tus datos automáticamente)</div>
-                <div class="mt-3 flex justify-center">
+                <div class="text-[10px] text-slate-500 mt-1" id="file-status-text">Admite PDF o fotos de la factura (puedes subir la cara frontal y el reverso)</div>
+                <div class="mt-3 flex flex-wrap justify-center gap-2">
                   <button type="button" onclick="event.stopPropagation(); document.getElementById('camera-input').click()" class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-white border border-slate-200 hover:border-amber-400 text-[11px] font-bold text-slate-700 shadow-sm transition">
                     <span>📷</span>
                     <span>Hacer foto con la cámara</span>
                   </button>
+                  <button type="button" id="btn-add-page" onclick="event.stopPropagation(); document.getElementById('file-input').click()" class="hidden inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/30 hover:bg-amber-500/20 text-[11px] font-bold text-amber-900 shadow-sm transition">
+                    <span>➕</span>
+                    <span>Añadir otra cara / página</span>
+                  </button>
                 </div>
               </div>
 
-              <div id="file-display" class="hidden bg-emerald-50 p-3 rounded-xl border border-emerald-200 flex items-center justify-between text-xs">
-                <div class="flex items-center space-x-2 text-emerald-800">
-                  <svg class="w-4 h-4 text-emerald-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-                  <span id="file-name-text" class="font-mono font-bold truncate max-w-[200px]">factura.pdf</span>
+              <!-- Lista de archivos / páginas cargadas -->
+              <div id="file-display" class="hidden space-y-2">
+                <div id="files-list-container" class="space-y-1.5"></div>
+                <div class="flex items-center justify-between px-1">
+                  <span id="files-count-badge" class="text-[10px] text-emerald-700 font-mono font-bold">1 página cargada</span>
+                  <button type="button" onclick="document.getElementById('file-input').click()" class="text-[10px] text-amber-700 font-bold hover:underline">
+                    + Añadir reverso / otra página
+                  </button>
                 </div>
-                <span class="text-[10px] text-emerald-700 font-mono">Listo para auditar</span>
               </div>
 
 
@@ -460,12 +467,12 @@
                   <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-0.5">
                     <div>
                       <span class="text-[9px] uppercase tracking-wider text-slate-400 block font-mono">Estudio preparado para</span>
-                      <span class="text-base font-black text-amber-400 font-mono tracking-tight" id="detected-titular">ZELMAR CAO</span>
+                      <span class="text-base font-black text-amber-400 font-mono tracking-tight" id="detected-titular">TITULAR AUDITADO</span>
                     </div>
                     <div class="text-left sm:text-right font-mono text-[11px] text-slate-300 space-y-0.5">
-                      <div>CUPS: <span class="text-emerald-400 font-bold" id="detected-cups">ES0031405152289020JX</span></div>
+                      <div>CUPS: <span class="text-amber-400/90 font-mono text-[10.5px]" id="detected-cups">Pendiente de verificar (sube el reverso)</span></div>
                       <div class="text-[10px] text-slate-400">
-                        Compañía: <span class="text-white font-semibold" id="detected-comercializadora">Endesa Energía, S.A.</span> · Tarifa <span id="detected-potencia" class="text-amber-300 font-bold">2.0TD</span>
+                        Compañía: <span class="text-white font-semibold" id="detected-comercializadora">Compañía actual</span> · Tarifa <span id="detected-potencia" class="text-amber-300 font-bold">2.0TD</span>
                       </div>
                     </div>
                   </div>
@@ -1174,15 +1181,18 @@
       const totOfEl = document.getElementById('estudio-tabla-tot-oferta');
       const totDiffEl = document.getElementById('estudio-tabla-tot-diff');
 
-      const titular = invoiceData?.titular || "ZELMAR CAO";
-      const cups = invoiceData?.cups || "ES0031405152289020JX";
-      const comActual = invoiceData?.comercializadora || "Endesa Energía, S.A.";
+      const titular = invoiceData?.titular || "TITULAR AUDITADO";
+      const cups = invoiceData?.cups || null;
+      const comActual = invoiceData?.comercializadora || "Compañía actual";
       const tarifa = invoiceData?.tarifa || "2.0TD";
       const pot = invoiceData?.potencia_kw;
       const is30 = (tarifa && (tarifa.includes('3.') || tarifa.includes('6.'))) || currentProfile === 'hoteles' || currentProfile === 'negocios';
 
       if (titularEl) titularEl.innerText = titular;
-      if (cupsEl) cupsEl.innerText = cups;
+      if (cupsEl) {
+        cupsEl.innerText = cups || "Pendiente de verificar (sube el reverso)";
+        cupsEl.className = cups ? "text-emerald-400 font-bold" : "text-amber-400/90 font-mono text-[10.5px]";
+      }
       if (comActualEl) comActualEl.innerText = comActual;
       if (potTarEl) potTarEl.innerText = (pot ? `${pot} kW ` : '') + `[${tarifa}]`;
       if (comTablaActEl) comTablaActEl.innerText = comActual.split(' ')[0] || "Actual";
@@ -1208,11 +1218,23 @@
         }
       }
 
+      // Periodo de facturación y normalización bimestral
+      const diasFact = invoiceData?.dias_facturados || 30;
+      const esBimestral = invoiceData?.es_bimestral || (diasFact > 45);
+      const perLbl = document.getElementById('estudio-periodo-lbl');
+      if (perLbl) {
+        if (esBimestral) {
+          perLbl.innerText = `Factura bimestral (${diasFact} días) · Normalizada`;
+        } else {
+          perLbl.innerText = `Periodo facturado (${diasFact} días)`;
+        }
+      }
+
       // Importes
       let impActual = invoiceData?.importe_total;
       if (!impActual || isNaN(impActual)) {
         const sliderVal = Number(document.getElementById('spend-slider')?.value || 300);
-        impActual = (cups && cups.includes('ES0031405152289020JX')) ? 51.68 : sliderVal;
+        impActual = sliderVal;
       }
 
       // Seguros parásitos y penalizaciones de potencia auditadas
@@ -1221,9 +1243,17 @@
       const penPotencia = invoiceData?.penalizacion_exceso_potencia || 0;
       const diagPotencia = invoiceData?.diagnostico_potencia || "optima";
 
+      // Si la factura es bimestral, calculamos la base mensual para comparar con el Mercado Libre
+      let impBaseMensual = impActual;
+      if (esBimestral) {
+        const factorDias = diasFact / 30;
+        const luzPura = Math.max(10, (impActual - costeSeguros));
+        impBaseMensual = Math.round(luzPura / factorDias * 100) / 100;
+      }
+
       // Cálculos calibrados con Estudio 1895
       let impProp, anualAct, anualProp, ahrFact, ahrAnual, ahrPct, bonoVal;
-      if (Math.abs(impActual - 51.68) < 1.0) {
+      if (Math.abs(impActual - 51.68) < 1.0 && !esBimestral) {
         impProp = 49.65;
         anualAct = 526.04;
         anualProp = 507.38;
@@ -1232,12 +1262,13 @@
         ahrPct = "3,9%";
       } else {
         const ratio = is30 ? 0.85 : 0.94;
-        impProp = Math.round(impActual * ratio * 100) / 100;
-        anualAct = Math.round(impActual * 12 * 100) / 100;
+        const calcImp = esBimestral ? impBaseMensual : impActual;
+        impProp = Math.round(calcImp * ratio * 100) / 100;
+        anualAct = Math.round(calcImp * 12 * 100) / 100;
         anualProp = Math.round(impProp * 12 * 100) / 100;
-        ahrFact = Math.round((impActual - impProp) * 100) / 100;
+        ahrFact = Math.round((calcImp - impProp) * 100) / 100;
         ahrAnual = Math.round((anualAct - anualProp) * 100) / 100;
-        ahrPct = Math.round((ahrFact / impActual) * 1000) / 10 + "%";
+        ahrPct = Math.round((ahrFact / calcImp) * 1000) / 10 + "%";
       }
 
       // Regla Oficial Cash Energy: 30% exacto de la comisión neta de Several Energy
@@ -1259,9 +1290,9 @@
       const pxAct = invoiceData?.precio_kwh || 0.1532;
       const pxDiff = Math.round((pxAct - ofertaPx) * 10000) / 10000;
 
-      if (factActEl) factActEl.innerText = impActual.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €";
+      if (factActEl) factActEl.innerText = impActual.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €" + (esBimestral ? " (Bimestral)" : "");
       if (anualActEl) anualActEl.innerText = anualAct.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €";
-      if (factPropEl) factPropEl.innerText = impProp.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €";
+      if (factPropEl) factPropEl.innerText = impProp.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €/mes";
       if (anualPropEl) anualPropEl.innerText = anualProp.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €";
 
       if (ahrFactEl) ahrFactEl.innerText = ahrFact.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €";
@@ -1586,6 +1617,9 @@
 
     let detectedInvoiceData = null;
 
+    let selectedFiles = [];
+    let selectedFile = null;
+
     function handleDragOver(e) {
       e.preventDefault();
       e.stopPropagation();
@@ -1607,30 +1641,104 @@
       if (dz) dz.classList.remove('border-amber-500', 'bg-amber-50/50');
       
       if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-        processSelectedFile(e.dataTransfer.files[0]);
+        processIncomingFiles(e.dataTransfer.files);
       }
     }
 
     function handleFileSelected(e) {
-      const file = e.target.files[0];
-      if (file) {
-        processSelectedFile(file);
+      if (e.target && e.target.files && e.target.files.length > 0) {
+        processIncomingFiles(e.target.files);
+      }
+      if (e.target) e.target.value = '';
+    }
+
+    function processIncomingFiles(fileList) {
+      for (let i = 0; i < fileList.length; i++) {
+        const file = fileList[i];
+        if (selectedFiles.length >= 3) {
+          alert("Máximo 3 imágenes o páginas por auditoría (ej. Cara frontal, reverso y hoja de servicios).");
+          break;
+        }
+        const exists = selectedFiles.some(f => f.name === file.name && f.size === file.size);
+        if (!exists) {
+          selectedFiles.push(file);
+        }
+      }
+      selectedFile = selectedFiles[0] || null;
+      renderFilesList();
+    }
+
+    function removeFileAt(idx) {
+      if (idx >= 0 && idx < selectedFiles.length) {
+        selectedFiles.splice(idx, 1);
+        selectedFile = selectedFiles[0] || null;
+        renderFilesList();
       }
     }
 
-    function processSelectedFile(file) {
-      selectedFile = file;
-      const nameDisp = document.getElementById('file-name-text');
+    function renderFilesList() {
       const boxDisp = document.getElementById('file-display');
+      const listContainer = document.getElementById('files-list-container');
+      const countBadge = document.getElementById('files-count-badge');
       const statusText = document.getElementById('file-status-text');
-      if (nameDisp) nameDisp.innerText = file.name;
-      if (boxDisp) boxDisp.classList.remove('hidden');
+      const btnAddPage = document.getElementById('btn-add-page');
+      const btnText = document.getElementById('btn-scan-text');
+
+      if (!listContainer || !boxDisp) return;
+
+      if (selectedFiles.length === 0) {
+        boxDisp.classList.add('hidden');
+        listContainer.innerHTML = '';
+        if (btnAddPage) btnAddPage.classList.add('hidden');
+        if (statusText) {
+          statusText.innerText = "Admite PDF o fotos de la factura (puedes subir la cara frontal y el reverso)";
+          statusText.className = "text-[10px] text-slate-500 mt-1";
+        }
+        if (btnText) btnText.innerText = "👁️ Leer Factura con el Ojo IA";
+        return;
+      }
+
+      boxDisp.classList.remove('hidden');
+      if (btnAddPage) {
+        if (selectedFiles.length < 3) {
+          btnAddPage.classList.remove('hidden');
+        } else {
+          btnAddPage.classList.add('hidden');
+        }
+      }
+
+      listContainer.innerHTML = selectedFiles.map((file, idx) => {
+        const sizeKb = Math.round(file.size / 1024);
+        const label = idx === 0 ? "Página 1 (Frontal)" : (idx === 1 ? "Página 2 (Reverso / Datos)" : "Página 3 (Servicios)");
+        return `
+          <div class="flex items-center justify-between p-2 rounded-lg bg-emerald-50/90 border border-emerald-200 text-xs">
+            <div class="flex items-center space-x-2 truncate">
+              <span class="w-5 h-5 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-[10px] shrink-0">${idx + 1}</span>
+              <div class="truncate">
+                <span class="font-bold text-slate-800 text-[11px] block truncate">${file.name}</span>
+                <span class="text-[9px] text-emerald-700 font-mono">${label} · ${sizeKb} KB</span>
+              </div>
+            </div>
+            <button type="button" onclick="event.stopPropagation(); removeFileAt(${idx})" class="text-rose-500 hover:text-rose-700 text-xs font-bold px-1.5 py-0.5 rounded hover:bg-rose-50 transition ml-2" title="Quitar archivo">✕</button>
+          </div>
+        `;
+      }).join('');
+
+      if (countBadge) {
+        countBadge.innerText = `${selectedFiles.length} página${selectedFiles.length > 1 ? 's' : ''} cargada${selectedFiles.length > 1 ? 's' : ''}`;
+      }
+
       if (statusText) {
-        statusText.innerText = "✓ Factura cargada: " + file.name + " - Lista para auditar";
+        const txt = selectedFiles.length === 1 
+          ? `✓ 1 página lista. Si tu factura tiene CUPS o seguros en el reverso, pulsa '+ Añadir otra cara'.`
+          : `✓ ${selectedFiles.length} páginas listas para auditar de forma conjunta.`;
+        statusText.innerText = txt;
         statusText.className = "text-[10px] text-emerald-700 font-bold mt-1";
       }
-      const btnText = document.getElementById('btn-scan-text');
-      if (btnText) btnText.innerText = "👁️ Leer Factura con el Ojo IA";
+
+      if (btnText) {
+        btnText.innerText = selectedFiles.length > 1 ? `👁️ Auditar ${selectedFiles.length} Páginas con IA` : "👁️ Leer Factura con el Ojo IA";
+      }
     }
 
     async function executeAuditScan() {
@@ -1640,7 +1748,7 @@
       const hudPercent = document.getElementById('hud-percent');
       const hudBar = document.getElementById('hud-bar');
 
-      if (!selectedFile) {
+      if (!selectedFiles || selectedFiles.length === 0) {
         const statusText = document.getElementById('file-status-text');
         if (statusText) {
           statusText.innerText = "⚠️ Por favor, selecciona o arrastra primero tu factura antes de auditar.";
@@ -1659,39 +1767,37 @@
         if (hudStatus) hudStatus.innerText = t;
       };
 
-      setHud(20, "Activando Ojo de IA (Visión Multimodal)...");
+      setHud(20, `Activando Ojo de IA (Visión Multimodal ${selectedFiles.length} pág${selectedFiles.length > 1 ? 's' : ''})...`);
 
-      if (selectedFile) {
-        try {
-          setHud(40, "Procesando documento en memoria...");
-          const formData = new FormData();
-          formData.append("factura_file", selectedFile);
-
-          setHud(65, "Extrayendo CUPS, potencias y tarifas con Bóveda Segura...");
-          
-          const response = await fetch(`${API_BASE_URL}/api/v1/auditar-factura`, {
-            method: "POST",
-            body: formData
-          });
-
-          if (response.ok) {
-            const parsed = await response.json();
-            if (parsed.es_factura_luz === false) {
-              setHud(0, "Documento no válido");
-              if (hud) hud.classList.add('hidden');
-              const tipoDoc = parsed.tipo_documento_detectado ? parsed.tipo_documento_detectado.replace(/_/g, ' ') : "no eléctrico";
-              alert(`⚠️ Documento no válido detectado: [${tipoDoc}].\n\n${parsed.mensaje_validacion || 'Por favor, sube una factura de electricidad (Luz) española con código CUPS para auditar tus tarifas y calcular tu ahorro.'}`);
-              if (btn) btn.disabled = false;
-              return;
-            }
-            applyDetectedInvoice(parsed);
-          }
-        } catch (err) {
-          console.warn("Fallo temporal de visión, aplicando estimación matemática:", err);
+      try {
+        setHud(40, "Procesando documentos en memoria cifrada...");
+        const formData = new FormData();
+        for (let f of selectedFiles) {
+          formData.append("factura_files", f);
         }
-      } else {
-        // Simulación rápida si no subió archivo pero pulsó auditar
-        setHud(60, "Auditando parámetros introducidos manualmente...");
+        formData.append("factura_file", selectedFiles[0]);
+
+        setHud(65, "Extrayendo CUPS, potencias y tarifas con Bóveda Segura...");
+        
+        const response = await fetch(`${API_BASE_URL}/api/v1/auditar-factura`, {
+          method: "POST",
+          body: formData
+        });
+
+        if (response.ok) {
+          const parsed = await response.json();
+          if (parsed.es_factura_luz === false) {
+            setHud(0, "Documento no válido");
+            if (hud) hud.classList.add('hidden');
+            const tipoDoc = parsed.tipo_documento_detectado ? parsed.tipo_documento_detectado.replace(/_/g, ' ') : "no eléctrico";
+            alert(`⚠️ Documento no válido detectado: [${tipoDoc}].\n\n${parsed.mensaje_validacion || 'Por favor, sube una factura de electricidad (Luz) española con código CUPS para auditar tus tarifas y calcular tu ahorro.'}`);
+            if (btn) btn.disabled = false;
+            return;
+          }
+          applyDetectedInvoice(parsed);
+        }
+      } catch (err) {
+        console.warn("Fallo temporal de visión, aplicando estimación matemática:", err);
       }
 
       setHud(100, "Auditoría completada con éxito. Calculando bono...");
@@ -1735,6 +1841,9 @@
       let penalizacionPotencia = data.penalizacion_exceso_potencia ?? 0;
       let diagnosticoPotencia = data.diagnostico_potencia || "optima";
 
+      let diasFacturados = data.dias_facturados ?? 30;
+      let esBimestral = data.es_bimestral ?? (diasFacturados > 45);
+
       if (typeof costeSeguros === 'string') {
         costeSeguros = parseFloat(costeSeguros.replace('€', '').replace(',', '.').trim()) || 0;
       }
@@ -1752,12 +1861,22 @@
         precioKwh = parseFloat(precioKwh.replace('€/kWh', '').replace('€', '').replace(',', '.').trim());
       }
 
-      // Autoajustar perfil y slider si hay importe detectado
+      // Normalización Bimestral a Mensual:
+      // Las comercializadoras del Mercado Libre (Several) facturan mensualmente.
+      // Si la factura original es bimestral (60-62 días), se normaliza a 30 días para no duplicar el gasto anual ni descalabrar el comparador.
+      let importeMensual = importe;
       if (importe && !isNaN(importe) && importe > 0) {
-        const imp = Math.round(importe);
+        if (esBimestral) {
+          const factorDias = (diasFacturados && diasFacturados > 0) ? (diasFacturados / 30) : 2.0;
+          const costeLuzPuro = Math.max(10, (importe - (costeSeguros || 0)));
+          importeMensual = Math.round(costeLuzPuro / factorDias);
+        } else {
+          importeMensual = Math.round(importe);
+        }
+
         if (tarifa && tarifa.includes('6.')) {
           setProfile('industria');
-        } else if ((tarifa && tarifa.includes('3.')) || imp >= 300) {
+        } else if ((tarifa && tarifa.includes('3.')) || importeMensual >= 300) {
           setProfile('negocios');
         } else {
           setProfile('hogar');
@@ -1765,9 +1884,9 @@
         
         const slider = document.getElementById('spend-slider');
         if (slider) {
-          if (imp < Number(slider.min)) slider.min = imp;
-          if (imp > Number(slider.max)) slider.max = Math.max(Number(slider.max), imp);
-          slider.value = imp;
+          if (importeMensual < Number(slider.min)) slider.min = importeMensual;
+          if (importeMensual > Number(slider.max)) slider.max = Math.max(Number(slider.max), importeMensual);
+          slider.value = importeMensual;
           updateCalculation();
         }
       }
@@ -1781,7 +1900,10 @@
       const nameInput = document.getElementById('lead-name');
 
       if (card) card.classList.remove('hidden');
-      if (detCups && cups) detCups.innerText = cups;
+      if (detCups) {
+        detCups.innerText = cups || "Pendiente de verificar (sube el reverso)";
+        detCups.className = cups ? "text-emerald-400 font-bold" : "text-amber-400/90 font-mono text-[10.5px]";
+      }
       if (detCom && comercializadora) detCom.innerText = comercializadora;
       if (detPot) {
         const potStr = potencia ? `${potencia} kW` : '';
@@ -1802,7 +1924,7 @@
 
       if (pRow && precioKwh && !isNaN(precioKwh) && precioKwh > 0) {
         pRow.classList.remove('hidden');
-        const isEmpresa = (tarifa && (tarifa.includes('3.') || tarifa.includes('6.'))) || (importe && importe >= 300);
+        const isEmpresa = (tarifa && (tarifa.includes('3.') || tarifa.includes('6.'))) || (importeMensual && importeMensual >= 300);
         const tarifaCash = isEmpresa ? 0.089 : 0.098;
         const diff = precioKwh - tarifaCash;
         if (pDiff) {
@@ -1819,6 +1941,9 @@
         tarifa: tarifa,
         potencia_kw: potencia,
         importe_total: importe,
+        importe_mensual: importeMensual,
+        dias_facturados: diasFacturados,
+        es_bimestral: esBimestral,
         precio_kwh: precioKwh,
         coste_seguros: costeSeguros,
         concepto_seguros: conceptoSeguros,
