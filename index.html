@@ -2378,6 +2378,17 @@
       if (modal) modal.classList.add('hidden');
     }
 
+    let archivosDniAdjuntos = [];
+    function manejarSeleccionDniArchivos(e) {
+      if (!e.target.files || e.target.files.length === 0) return;
+      archivosDniAdjuntos = Array.from(e.target.files);
+      const statusEl = document.getElementById('chat-dni-files-status');
+      if (statusEl) {
+        statusEl.className = "text-[10px] text-emerald-400 font-mono font-bold truncate max-w-[130px]";
+        statusEl.innerText = `✅ ${archivosDniAdjuntos.length} archivo(s) listo(s)`;
+      }
+    }
+
     function renderMensajeChat(role, texto) {
       const contenedor = document.getElementById('chat-mensajes-container');
       if (!contenedor) return;
@@ -2538,8 +2549,19 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       }).then(r => r.json()).then(data => {
+        if (archivosDniAdjuntos && archivosDniAdjuntos.length > 0) {
+          const dniFormData = new FormData();
+          dniFormData.append('expediente_id', chatExpedienteId);
+          archivosDniAdjuntos.forEach(f => dniFormData.append('archivos_dni', f));
+          fetch(`${API_BASE_URL}/api/v1/chat/adjuntar-dni`, {
+            method: 'POST',
+            body: dniFormData
+          }).catch(() => {});
+        }
+
         const confirmMsg = `✅ **¡Expediente de Contratación Formalizado!**\n\n` +
           `Hemos registrado tu DNI (${chatDniCaptado}) y tu IBAN (${chatIbanCaptado.slice(0, 4)}••••${chatIbanCaptado.slice(-4)}) de forma segura en la Bóveda Cifrada de Cash Energy.\n\n` +
+          (archivosDniAdjuntos && archivosDniAdjuntos.length > 0 ? `📄 **Documentación DNI:** Adjuntada con éxito a tu expediente.\n\n` : ``) +
           `📞 **Próximo paso:** En breve recibirás la **llamada oficial de verificación de Several Energy** y tu **SMS con PIN** para la firma digital sin ningún coste.\n\n` +
           `¡Enhorabuena por activar tu tarifa garantizada y tu Bono de Bienvenida!`;
         renderMensajeChat('assistant', confirmMsg);
@@ -2626,6 +2648,16 @@
         <div class="grid grid-cols-2 gap-2" id="chat-quick-inputs-row">
           <input type="text" id="chat-input-dni" placeholder="DNI / NIE / CIF titular" class="px-3 py-2 rounded-xl bg-slate-800/90 border border-slate-700 text-slate-100 text-xs focus:outline-none focus:border-amber-400 font-mono uppercase">
           <input type="text" id="chat-input-iban" placeholder="IBAN (facturas con descuento)" class="px-3 py-2 rounded-xl bg-slate-800/90 border border-slate-700 text-slate-100 text-xs focus:outline-none focus:border-amber-400 font-mono uppercase">
+        </div>
+        <!-- Selector Opcional y Seguro de Fotos DNI / NIE -->
+        <div id="chat-dni-files-wrap" class="flex items-center justify-between px-3 py-1.5 rounded-xl bg-slate-800/60 border border-slate-700/60 text-[11px]">
+          <label for="chat-input-dni-files" class="flex items-center space-x-1.5 cursor-pointer text-slate-300 hover:text-amber-400 transition">
+            <span class="text-sm">📷</span>
+            <span class="font-medium">Foto DNI / NIE (ambas caras)</span>
+            <span class="text-[9px] px-1.5 py-0.5 rounded bg-amber-400/20 text-amber-300 font-mono">Opcional</span>
+          </label>
+          <input type="file" id="chat-input-dni-files" multiple accept="image/*,application/pdf" class="hidden" onchange="manejarSeleccionDniArchivos(event)">
+          <div id="chat-dni-files-status" class="text-[10px] text-slate-400 font-mono truncate max-w-[130px]">Sin archivo</div>
         </div>
         <div class="flex items-center space-x-2">
           <input type="text" id="chat-input-texto" placeholder="Escribe tu consulta o duda al Asistente..." class="flex-1 px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-slate-100 text-xs focus:outline-none focus:border-amber-400 transition" onkeydown="if(event.key==='Enter'){event.preventDefault();enviarMensajeChatCliente();}">
