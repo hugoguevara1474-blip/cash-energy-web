@@ -1254,49 +1254,56 @@
 
       // Cálculos calibrados con Estudio 1895
       let impProp, anualAct, anualProp, ahrFact, ahrAnual, ahrPct, bonoVal;
-      if (Math.abs(impActual - 51.68) < 1.0 && !esBimestral) {
-        impProp = 49.65;
-        anualAct = 526.04;
-        anualProp = 507.38;
-        ahrFact = 2.03;
-        ahrAnual = 18.66;
-        ahrPct = "3,9%";
+      const factorDias = esBimestral ? (diasFact / 30) : 1;
+      const baseFacturaMes = Math.round((impActual / factorDias) * 100) / 100;
+      const segMes = costeSeguros > 0 ? Math.round((costeSeguros / factorDias) * 100) / 100 : 0;
+
+      // Consumo mensual real auditado
+      const consKwhMes = (invoiceData?.consumo_kwh !== undefined && invoiceData?.consumo_kwh !== null)
+        ? Math.round((Number(invoiceData.consumo_kwh) / factorDias) * 100) / 100
+        : Math.round(((esBimestral ? impBaseMensual : impActual) * 0.55 / (invoiceData?.precio_kwh || 0.15)) * 100) / 100;
+
+      // Potencias reales contratadas
+      const potP1 = Number(invoiceData?.potencia_p1_kw || invoiceData?.potencia_kw || 3.3);
+      const potP2 = Number(invoiceData?.potencia_p2_kw || potP1);
+
+      // Precios reales de potencia de Several CRM (€/kW/año)
+      const pxPotArr = selectedOffer?.precio_potencia_eur_kw_anio || [38.04, 10.45];
+      const pxPot1 = Number(pxPotArr[0] || 38.04);
+      const pxPot2 = Number(pxPotArr[1] || 10.45);
+
+      // 1. Coste mensual de potencia propuesto (base 30 días)
+      const costePotPropMes = Math.round(((potP1 * pxPot1 + potP2 * pxPot2) * (30 / 365)) * 100) / 100;
+
+      // 2. Coste mensual de energía propuesto
+      let costeEnePropMes = 0;
+      const pxEneArr = selectedOffer?.precio_energia_eur_kwh;
+      const hasTramos = Array.isArray(pxEneArr) && pxEneArr.length >= 3 && invoiceData?.consumo_p1_kwh !== undefined && invoiceData?.consumo_p1_kwh !== null;
+
+      if (hasTramos) {
+        const k1 = (Number(invoiceData.consumo_p1_kwh) || 0) / factorDias;
+        const k2 = (Number(invoiceData.consumo_p2_kwh) || 0) / factorDias;
+        const k3 = (Number(invoiceData.consumo_p3_kwh) || 0) / factorDias;
+        costeEnePropMes = Math.round((k1 * Number(pxEneArr[0]) + k2 * Number(pxEneArr[1]) + k3 * Number(pxEneArr[2])) * 100) / 100;
       } else {
-        const ratio = is30 ? 0.85 : 0.94;
-        const factorDias = esBimestral ? (diasFact / 30) : 1;
-        const baseFacturaMes = Math.round((impActual / factorDias) * 100) / 100;
-        
-        // Base de energía y potencia pura (sin seguros parásitos)
-        const segMes = costeSeguros > 0 ? Math.round((costeSeguros / factorDias) * 100) / 100 : 0;
-        const baseLuzMes = Math.round((baseFacturaMes - segMes) * 100) / 100;
-
-        // Consumo mensual estimado o real para cálculo de energía
-        const pxAct = invoiceData?.precio_kwh || 0.1532;
-        const consKwhMes = invoiceData?.consumo_kwh 
-          ? (esBimestral ? (invoiceData.consumo_kwh / (diasFact / 30)) : invoiceData.consumo_kwh)
-          : ((esBimestral ? impBaseMensual : impActual) * 0.48 / (pxAct || 0.15));
-        
-        // Propuesta base optimizada (opción #1 por defecto intacta)
-        const impPropBase = Math.round(baseLuzMes * ratio * 100) / 100;
-
-        // Si se selecciona otra opción (opción 2 u opción 3), ajustar por la diferencia de precio de energía
-        let deltaEne = 0;
-        if (currentSeveralOffers && currentSeveralOffers.length > 0 && selectedOffer && selectedOffer !== currentSeveralOffers[0]) {
-          const pxTop = currentSeveralOffers[0].precio_energia_promedio || ofertaPx;
-          deltaEne = Math.round(consKwhMes * (ofertaPx - pxTop) * 100) / 100;
-        }
-
-        impProp = Math.round((impPropBase + deltaEne) * 100) / 100;
-        
-        // Ahorro mensual estricto: Total factura actual menos nueva factura propuesta
-        ahrFact = Math.round((baseFacturaMes - impProp) * 100) / 100;
-        
-        // REGLA MATEMÁTICA INVIOLABLE: Ahorro Anual = Ahorro Mensual * 12
-        ahrAnual = Math.round(ahrFact * 12 * 100) / 100;
-        anualAct = Math.round(baseFacturaMes * 12 * 100) / 100;
-        anualProp = Math.round((anualAct - ahrAnual) * 100) / 100;
-        ahrPct = Math.round((ahrFact / baseFacturaMes) * 1000) / 10 + "%";
+        costeEnePropMes = Math.round((consKwhMes * ofertaPx) * 100) / 100;
       }
+
+      // 3. Alquiler de contador e impuestos oficiales (IEE 5.1127% e IVA 21%)
+      const alquilerMes = 0.80;
+      const subtotalProp = costePotPropMes + costeEnePropMes + alquilerMes;
+      const iee = subtotalProp * 0.051127;
+      const iva = (subtotalProp + iee) * 0.21;
+      impProp = Math.round((subtotalProp + iee + iva) * 100) / 100;
+
+      // 4. Ahorro mensual estricto: Factura actual menos nueva propuesta
+      ahrFact = Math.round((baseFacturaMes - impProp) * 100) / 100;
+      ahrAnual = Math.round(ahrFact * 12 * 100) / 100;
+      anualAct = Math.round(baseFacturaMes * 12 * 100) / 100;
+      anualProp = Math.round((anualAct - ahrAnual) * 100) / 100;
+
+      const esAhorroPositivo = ahrFact > 0;
+      ahrPct = esAhorroPositivo ? (Math.round((ahrFact / baseFacturaMes) * 1000) / 10 + "%") : "0%";
 
       // Regla Oficial Cash Energy: 30% exacto de la comisión neta de Several Energy
       const comisionSeveral = (selectedOffer && selectedOffer.comision_cash_energy_eur !== undefined && selectedOffer.comision_cash_energy_eur !== null)
@@ -1315,10 +1322,22 @@
       if (factPropEl) factPropEl.innerText = impProp.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €/mes";
       if (anualPropEl) anualPropEl.innerText = anualProp.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €";
 
-      if (ahrFactEl) ahrFactEl.innerText = ahrFact.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €";
-      if (ahrFactPctEl) ahrFactPctEl.innerText = ahrPct + " Ahorro";
-      if (ahrAnualEl) ahrAnualEl.innerText = ahrAnual.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €";
-      if (ahrAnualPctEl) ahrAnualPctEl.innerText = ahrPct + " Ahorro";
+      if (ahrFactEl) {
+        ahrFactEl.innerText = esAhorroPositivo 
+          ? ahrFact.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €"
+          : "0,00 €";
+      }
+      if (ahrFactPctEl) {
+        ahrFactPctEl.innerText = esAhorroPositivo ? (ahrPct + " Ahorro") : "Tarifa Actual Óptima";
+      }
+      if (ahrAnualEl) {
+        ahrAnualEl.innerText = esAhorroPositivo 
+          ? ahrAnual.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €"
+          : "0,00 €";
+      }
+      if (ahrAnualPctEl) {
+        ahrAnualPctEl.innerText = esAhorroPositivo ? (ahrPct + " Ahorro") : "Tarifa Actual Óptima";
+      }
       if (bonoEl) bonoEl.innerText = bonoVal;
       sincronizarBonoEnTodaLaUI(bonoVal);
 
@@ -1339,11 +1358,10 @@
       }
 
       // 2. Total Energía Factura calculado dinámicamente según consumo mensual
-      const consKwhMes = invoiceData?.consumo_kwh 
-        ? (esBimestral ? (invoiceData.consumo_kwh / (diasFact / 30)) : invoiceData.consumo_kwh)
-        : ((esBimestral ? impBaseMensual : impActual) * 0.48 / (pxAct || 0.15));
-      const valEneAct = Math.round(consKwhMes * pxAct * 100) / 100;
-      const valEneOf = Math.round(consKwhMes * ofertaPx * 100) / 100;
+      const valEneAct = (invoiceData?.importe_energia !== undefined && invoiceData?.importe_energia !== null)
+        ? Math.round((Number(invoiceData.importe_energia) / factorDias) * 100) / 100
+        : Math.round(consKwhMes * pxAct * 100) / 100;
+      const valEneOf = costeEnePropMes;
       const valEneDiff = Math.round((valEneAct - valEneOf) * 100) / 100;
 
       if (eneActEl) eneActEl.innerText = valEneAct.toFixed(2) + " €";
@@ -1362,13 +1380,20 @@
       }
 
       // 3. Total Factura normalizado a mensual si es bimestral (congruencia 100%)
-      const factorDias = diasFact / 30;
       const valTotAct = esBimestral ? Math.round((impActual / factorDias) * 100) / 100 : impActual;
       if (totActEl) totActEl.innerText = valTotAct.toFixed(2) + " €" + (esBimestral ? "/mes" : "");
       if (totOfEl) totOfEl.innerText = impProp.toFixed(2) + " €" + (esBimestral ? "/mes" : "");
       if (totDiffEl) {
-        totDiffEl.className = "py-2 text-right text-emerald-600 font-bold font-mono";
-        totDiffEl.innerText = "-" + ahrFact.toFixed(2) + " €" + (esBimestral ? "/mes" : "");
+        if (ahrFact > 0) {
+          totDiffEl.className = "py-2 text-right text-emerald-600 font-bold font-mono";
+          totDiffEl.innerText = "-" + ahrFact.toFixed(2) + " €" + (esBimestral ? "/mes" : "");
+        } else if (ahrFact < 0) {
+          totDiffEl.className = "py-2 text-right text-slate-500 font-medium font-mono";
+          totDiffEl.innerText = "+" + Math.abs(ahrFact).toFixed(2) + " €" + (esBimestral ? "/mes" : "");
+        } else {
+          totDiffEl.className = "py-2 text-right text-slate-500 font-mono";
+          totDiffEl.innerText = "0,00 €";
+        }
       }
       const totLblEl = document.getElementById('estudio-tabla-tot-lbl');
       if (totLblEl) totLblEl.innerText = esBimestral ? "Total Mensual (Normalizado)" : "Total Factura Periodo";
@@ -1376,7 +1401,11 @@
       // 4. Actualizar badge de ahorro del acordeón técnico dinámicamente
       const ahrBadgeEl = document.getElementById('estudio-ahorro-ene-badge');
       if (ahrBadgeEl) {
-        ahrBadgeEl.innerText = `Ahorro global del ${ahrPct} certificado`;
+        if (esAhorroPositivo) {
+          ahrBadgeEl.innerText = `Ahorro global del ${ahrPct} certificado`;
+        } else {
+          ahrBadgeEl.innerText = "Tarifa actual altamente competitiva (0 € sobrecoste)";
+        }
       }
 
       // Actualizar tarjeta de seguros parásitos
@@ -1502,17 +1531,36 @@
 
       const cups = detectedInvoiceData?.cups || "";
       const tarifa = detectedInvoiceData?.tarifa || (currentProfile === 'industria' ? '6.1TD' : (currentProfile === 'hoteles' || currentProfile === 'negocios' ? '3.0TD' : '2.0TD'));
-      const potVal = detectedInvoiceData?.potencia_kw || (currentProfile === 'hoteles' ? 25 : (currentProfile === 'negocios' ? 15 : 4.6));
-      const sliderVal = Number(document.getElementById('spend-slider')?.value || 300);
-      const consEst = Math.round(sliderVal * 4.5);
+      const p1Pot = Number(detectedInvoiceData?.potencia_p1_kw || detectedInvoiceData?.potencia_kw || (currentProfile === 'hoteles' ? 25 : (currentProfile === 'negocios' ? 15 : 4.6)));
+      const p2Pot = Number(detectedInvoiceData?.potencia_p2_kw || p1Pot);
+
+      let cP1 = detectedInvoiceData?.consumo_p1_kwh;
+      let cP2 = detectedInvoiceData?.consumo_p2_kwh;
+      let cP3 = detectedInvoiceData?.consumo_p3_kwh;
+      let cTot = detectedInvoiceData?.consumo_kwh;
+
+      const diasF = Number(detectedInvoiceData?.dias_facturados || 30);
+      const factorD = (detectedInvoiceData?.es_bimestral || diasF > 45) ? (diasF / 30) : 1;
+
+      let consTramos;
+      if (cP1 !== undefined && cP1 !== null && cP2 !== undefined && cP3 !== undefined) {
+        consTramos = [Math.round((Number(cP1) / factorD) * 12), Math.round((Number(cP2) / factorD) * 12), Math.round((Number(cP3) / factorD) * 12)];
+      } else if (cTot) {
+        const cNorm = (Number(cTot) / factorD) * 12;
+        consTramos = [Math.round(cNorm * 0.3), Math.round(cNorm * 0.3), Math.round(cNorm * 0.4)];
+      } else {
+        const sliderVal = Number(document.getElementById('spend-slider')?.value || 300);
+        const consEst = Math.round(sliderVal * 4.5);
+        consTramos = [Math.round(consEst * 0.3), Math.round(consEst * 0.3), Math.round(consEst * 0.4)];
+      }
 
       const payload = {
         cups: cups,
         tipo_suministro: 'luz',
         tarifa: tarifa,
         zona: 'PENINSULAR',
-        potencias: [potVal, potVal],
-        consumos: [Math.round(consEst * 0.3), Math.round(consEst * 0.3), Math.round(consEst * 0.4)]
+        potencias: [p1Pot, p2Pot],
+        consumos: consTramos
       };
 
       try {
@@ -1550,7 +1598,7 @@
               );
             }
             if (comp.length > 0) {
-              const comAct = (detectedInvoiceData?.compania || '').toUpperCase();
+              const comAct = (detectedInvoiceData?.comercializadora || detectedInvoiceData?.compania || '').toUpperCase();
               const pxCliente = detectedInvoiceData?.precio_kwh;
               // Regla de Oro Cash Energy: Si se conoce el precio del cliente, priorizar tarifas que mejoren su kWh
               const mejoresTarifas = pxCliente ? comp.filter(o => o.precio_energia_promedio && o.precio_energia_promedio <= pxCliente) : [];
@@ -1952,8 +2000,23 @@
       const titular = data.titular || data.Titular || data.nombre || data.razon_social || data.cliente || "";
       const tarifa = data.tarifa || data.Tarifa || data.peaje || "";
       let potencia = data.potencia_kw ?? data.potencia ?? data.Potencia ?? null;
+      let potP1 = data.potencia_p1_kw ?? potencia ?? null;
+      let potP2 = data.potencia_p2_kw ?? potencia ?? null;
+
+      let consumoTotal = data.consumo_kwh ?? data.consumo ?? null;
+      let consumoP1 = data.consumo_p1_kwh ?? null;
+      let consumoP2 = data.consumo_p2_kwh ?? null;
+      let consumoP3 = data.consumo_p3_kwh ?? null;
+
+      let impPotencia = data.importe_potencia ?? null;
+      let impEnergia = data.importe_energia ?? null;
       let importe = data.importe_total ?? data.importe ?? data.total ?? null;
+
       let precioKwh = data.precio_kwh ?? data.precio_kwh_actual ?? null;
+      let pxP1 = data.precio_p1_kwh ?? null;
+      let pxP2 = data.precio_p2_kwh ?? null;
+      let pxP3 = data.precio_p3_kwh ?? null;
+
       let costeSeguros = data.coste_seguros ?? data.seguros ?? 0;
       let conceptoSeguros = data.concepto_seguros ?? null;
       let penalizacionPotencia = data.penalizacion_exceso_potencia ?? 0;
@@ -1975,9 +2038,23 @@
       if (typeof potencia === 'string') {
         potencia = parseFloat(potencia.replace('kW', '').replace(',', '.').trim());
       }
+      if (typeof potP1 === 'string') potP1 = parseFloat(potP1.replace('kW', '').replace(',', '.').trim());
+      if (typeof potP2 === 'string') potP2 = parseFloat(potP2.replace('kW', '').replace(',', '.').trim());
+
+      if (typeof consumoTotal === 'string') consumoTotal = parseFloat(consumoTotal.replace('kWh', '').replace(',', '.').trim());
+      if (typeof consumoP1 === 'string') consumoP1 = parseFloat(consumoP1.replace('kWh', '').replace(',', '.').trim());
+      if (typeof consumoP2 === 'string') consumoP2 = parseFloat(consumoP2.replace('kWh', '').replace(',', '.').trim());
+      if (typeof consumoP3 === 'string') consumoP3 = parseFloat(consumoP3.replace('kWh', '').replace(',', '.').trim());
+
+      if (typeof impPotencia === 'string') impPotencia = parseFloat(impPotencia.replace('€', '').replace(',', '.').trim());
+      if (typeof impEnergia === 'string') impEnergia = parseFloat(impEnergia.replace('€', '').replace(',', '.').trim());
+
       if (typeof precioKwh === 'string') {
         precioKwh = parseFloat(precioKwh.replace('€/kWh', '').replace('€', '').replace(',', '.').trim());
       }
+      if (typeof pxP1 === 'string') pxP1 = parseFloat(pxP1.replace('€/kWh', '').replace('€', '').replace(',', '.').trim());
+      if (typeof pxP2 === 'string') pxP2 = parseFloat(pxP2.replace('€/kWh', '').replace('€', '').replace(',', '.').trim());
+      if (typeof pxP3 === 'string') pxP3 = parseFloat(pxP3.replace('€/kWh', '').replace('€', '').replace(',', '.').trim());
 
       // Normalización Bimestral a Mensual:
       // Las comercializadoras del Mercado Libre (Several) facturan mensualmente.
@@ -2042,22 +2119,42 @@
 
       if (pRow && precioKwh && !isNaN(precioKwh) && precioKwh > 0) {
         pRow.classList.remove('hidden');
-        const isEmpresa = (tarifa && (tarifa.includes('3.') || tarifa.includes('6.'))) || (importeMensual && importeMensual >= 300);
-        const tarifaCash = isEmpresa ? 0.089 : 0.098;
-        const diff = precioKwh - tarifaCash;
+        const ofertaPx = selectedSeveralTariff?.precio_energia_promedio || 0.1230;
+        const diff = Math.round((precioKwh - ofertaPx) * 10000) / 10000;
         if (pDiff) {
-          pDiff.innerText = diff > 0 ? `Ahorras ${diff.toFixed(3)} €/kWh` : "Tarifa Optimizada";
+          if (diff > 0.001) {
+            pDiff.className = "text-xs font-mono font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded";
+            pDiff.innerText = `Ahorras ${diff.toFixed(4)} €/kWh`;
+          } else if (diff < -0.001) {
+            pDiff.className = "text-xs font-mono font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded";
+            pDiff.innerText = `Tarifa actual muy económica`;
+          } else {
+            pDiff.className = "text-xs font-mono font-bold text-slate-300 bg-slate-700/50 px-2 py-0.5 rounded";
+            pDiff.innerText = "Tarifa Optimizada";
+          }
         }
-        if (pAct) pAct.innerText = `Actual: ${precioKwh.toFixed(3)} €/kWh`;
-        if (pCash) pCash.innerText = `Cash Energy: ${tarifaCash.toFixed(3)} €/kWh`;
+        if (pAct) pAct.innerText = `Actual: ${precioKwh.toFixed(4)} €/kWh`;
+        if (pCash) pCash.innerText = `Mercado Libre: ${ofertaPx.toFixed(4)} €/kWh`;
       }
 
       detectedInvoiceData = {
         cups: cups,
         comercializadora: comercializadora,
+        compania: comercializadora,
         titular: titular,
         tarifa: tarifa,
         potencia_kw: potencia,
+        potencia_p1_kw: potP1,
+        potencia_p2_kw: potP2,
+        consumo_kwh: consumoTotal,
+        consumo_p1_kwh: consumoP1,
+        consumo_p2_kwh: consumoP2,
+        consumo_p3_kwh: consumoP3,
+        importe_potencia: impPotencia,
+        importe_energia: impEnergia,
+        precio_p1_kwh: pxP1,
+        precio_p2_kwh: pxP2,
+        precio_p3_kwh: pxP3,
         importe_total: importe,
         importe_mensual: importeMensual,
         dias_facturados: diasFacturados,
