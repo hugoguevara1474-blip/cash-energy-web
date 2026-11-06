@@ -1269,9 +1269,24 @@
         // Base de energía y potencia pura (sin seguros parásitos)
         const segMes = costeSeguros > 0 ? Math.round((costeSeguros / factorDias) * 100) / 100 : 0;
         const baseLuzMes = Math.round((baseFacturaMes - segMes) * 100) / 100;
+
+        // Consumo mensual estimado o real para cálculo de energía
+        const pxAct = invoiceData?.precio_kwh || 0.1532;
+        const consKwhMes = invoiceData?.consumo_kwh 
+          ? (esBimestral ? (invoiceData.consumo_kwh / (diasFact / 30)) : invoiceData.consumo_kwh)
+          : ((esBimestral ? impBaseMensual : impActual) * 0.48 / (pxAct || 0.15));
         
-        // Propuesta optimizada de luz pura en Mercado Libre
-        impProp = Math.round(baseLuzMes * ratio * 100) / 100;
+        // Propuesta base optimizada (opción #1 por defecto intacta)
+        const impPropBase = Math.round(baseLuzMes * ratio * 100) / 100;
+
+        // Si se selecciona otra opción (opción 2 u opción 3), ajustar por la diferencia de precio de energía
+        let deltaEne = 0;
+        if (currentSeveralOffers && currentSeveralOffers.length > 0 && selectedOffer && selectedOffer !== currentSeveralOffers[0]) {
+          const pxTop = currentSeveralOffers[0].precio_energia_promedio || ofertaPx;
+          deltaEne = Math.round(consKwhMes * (ofertaPx - pxTop) * 100) / 100;
+        }
+
+        impProp = Math.round((impPropBase + deltaEne) * 100) / 100;
         
         // Ahorro mensual estricto: Total factura actual menos nueva factura propuesta
         ahrFact = Math.round((baseFacturaMes - impProp) * 100) / 100;
@@ -1649,6 +1664,14 @@
       });
 
       updateEstudio1895View(detectedInvoiceData, selectedSeveralTariff);
+
+      // Abrir el panel de desglose para que el usuario vea todos los detalles de esta opción seleccionada
+      const panel = document.getElementById('desglose-tecnico-panel');
+      const arrow = document.getElementById('desglose-tecnico-arrow');
+      if (panel && panel.classList.contains('hidden')) {
+        panel.classList.remove('hidden');
+        if (arrow) arrow.style.transform = 'rotate(180deg)';
+      }
     }
 
     function renderFallbackSeveralOffers() {
