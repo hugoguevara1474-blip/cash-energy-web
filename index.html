@@ -628,6 +628,18 @@
                             <td class="py-2 text-center text-emerald-700 font-bold font-mono" id="estudio-tabla-ene-oferta">15,42 €</td>
                             <td class="py-2 text-right text-emerald-600 font-bold font-mono" id="estudio-tabla-ene-diff">+3,79 €</td>
                           </tr>
+                          <tr>
+                            <td class="py-2 text-slate-800 font-semibold font-sans">Término de Potencia</td>
+                            <td class="py-2 text-center text-slate-600 font-mono" id="estudio-tabla-pot-actual">18,50 €</td>
+                            <td class="py-2 text-center text-emerald-700 font-bold font-mono" id="estudio-tabla-pot-oferta">13,20 €</td>
+                            <td class="py-2 text-right text-emerald-600 font-bold font-mono" id="estudio-tabla-pot-diff">-5,30 €</td>
+                          </tr>
+                          <tr id="estudio-tabla-seg-row">
+                            <td class="py-2 text-slate-800 font-semibold font-sans">Seguros y Mantenimientos</td>
+                            <td class="py-2 text-center text-slate-600 font-mono" id="estudio-tabla-seg-actual">0,00 €</td>
+                            <td class="py-2 text-center text-emerald-700 font-bold font-mono" id="estudio-tabla-seg-oferta">0,00 €</td>
+                            <td class="py-2 text-right text-emerald-600 font-bold font-mono" id="estudio-tabla-seg-diff">0,00 €</td>
+                          </tr>
                           <tr class="bg-slate-50 font-bold font-mono">
                             <td class="py-2 px-1 text-slate-900 font-sans" id="estudio-tabla-tot-lbl">Total Factura Periodo</td>
                             <td class="py-2 text-center text-slate-900" id="estudio-tabla-tot-actual">51,68 €</td>
@@ -1178,6 +1190,12 @@
       const eneActEl = document.getElementById('estudio-tabla-ene-actual');
       const eneOfEl = document.getElementById('estudio-tabla-ene-oferta');
       const eneDiffEl = document.getElementById('estudio-tabla-ene-diff');
+      const potActEl = document.getElementById('estudio-tabla-pot-actual');
+      const potOfEl = document.getElementById('estudio-tabla-pot-oferta');
+      const potDiffEl = document.getElementById('estudio-tabla-pot-diff');
+      const segActEl = document.getElementById('estudio-tabla-seg-actual');
+      const segOfEl = document.getElementById('estudio-tabla-seg-oferta');
+      const segDiffEl = document.getElementById('estudio-tabla-seg-diff');
       const totActEl = document.getElementById('estudio-tabla-tot-actual');
       const totOfEl = document.getElementById('estudio-tabla-tot-oferta');
       const totDiffEl = document.getElementById('estudio-tabla-tot-diff');
@@ -1381,6 +1399,45 @@
         } else {
           eneDiffEl.className = "py-2 text-right text-slate-500 font-mono";
           eneDiffEl.innerText = "0,00 €";
+        }
+      }
+
+      // 2b. Término de Potencia (€/mes o periodo)
+      const valPotAct = (invoiceData?.importe_potencia !== undefined && invoiceData?.importe_potencia !== null)
+        ? Math.round((Number(invoiceData.importe_potencia) / factorDias) * 100) / 100
+        : Math.round(((potP1 * 44.0 + potP2 * 14.0) * (30 / 365)) * 100) / 100;
+      const valPotOf = costePotPropMes;
+      const valPotDiff = Math.round((valPotAct - valPotOf) * 100) / 100;
+
+      if (potActEl) potActEl.innerText = valPotAct.toFixed(2) + " €";
+      if (potOfEl) potOfEl.innerText = valPotOf.toFixed(2) + " €";
+      if (potDiffEl) {
+        if (valPotDiff > 0) {
+          potDiffEl.className = "py-2 text-right text-emerald-600 font-bold font-mono";
+          potDiffEl.innerText = "-" + valPotDiff.toFixed(2) + " €";
+        } else if (valPotDiff < 0) {
+          potDiffEl.className = "py-2 text-right text-slate-500 font-medium font-mono";
+          potDiffEl.innerText = "+" + Math.abs(valPotDiff).toFixed(2) + " €";
+        } else {
+          potDiffEl.className = "py-2 text-right text-slate-500 font-mono";
+          potDiffEl.innerText = "0,00 €";
+        }
+      }
+
+      // 2c. Seguros y Servicios Parásitos (€/mes o periodo)
+      const valSegAct = esBimestral ? Math.round((costeSeguros / factorDias) * 100) / 100 : costeSeguros;
+      const valSegOf = 0.00;
+      const valSegDiff = valSegAct;
+
+      if (segActEl) segActEl.innerText = valSegAct.toFixed(2) + " €";
+      if (segOfEl) segOfEl.innerText = "0,00 €";
+      if (segDiffEl) {
+        if (valSegDiff > 0) {
+          segDiffEl.className = "py-2 text-right text-emerald-600 font-bold font-mono";
+          segDiffEl.innerText = "-" + valSegDiff.toFixed(2) + " €";
+        } else {
+          segDiffEl.className = "py-2 text-right text-slate-500 font-mono";
+          segDiffEl.innerText = "0,00 €";
         }
       }
 
