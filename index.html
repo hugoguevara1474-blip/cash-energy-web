@@ -2540,11 +2540,31 @@
     let archivosDniAdjuntos = [];
     function manejarSeleccionDniArchivos(e) {
       if (!e.target.files || e.target.files.length === 0) return;
-      archivosDniAdjuntos = Array.from(e.target.files);
+      const nuevos = [];
+      for (const f of Array.from(e.target.files)) {
+        if (archivosDniAdjuntos.length >= 4) break;
+        if (!archivosDniAdjuntos.some(x => x.name === f.name && x.size === f.size)) {
+          archivosDniAdjuntos.push(f);
+          nuevos.push(f);
+        }
+      }
+      e.target.value = "";
       const statusEl = document.getElementById('chat-dni-files-status');
       if (statusEl) {
         statusEl.className = "text-[10px] text-emerald-400 font-mono font-bold truncate max-w-[130px]";
         statusEl.innerText = `✅ ${archivosDniAdjuntos.length} archivo(s) listo(s)`;
+      }
+      if (chatFormalizadoNotificado && chatExpedienteId && nuevos.length > 0) {
+        const dniFormData = new FormData();
+        dniFormData.append('expediente_id', chatExpedienteId);
+        nuevos.forEach(f => dniFormData.append('archivos_dni', f));
+        fetch(`${API_BASE_URL}/api/v1/chat/adjuntar-dni`, {
+          method: 'POST',
+          body: dniFormData
+        }).then(() => {
+          if (statusEl) statusEl.innerText = `✅ ${archivosDniAdjuntos.length} DNI enviado(s)`;
+          renderMensajeChat('assistant', `📄 **Documentación DNI recibida (${nuevos.length} archivo${nuevos.length > 1 ? 's' : ''}):** Adjuntada y cifrada correctamente en tu expediente.`);
+        }).catch(() => {});
       }
     }
 
