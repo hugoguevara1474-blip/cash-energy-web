@@ -2708,10 +2708,11 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       }).then(r => r.json()).then(data => {
-        if (archivosDniAdjuntos && archivosDniAdjuntos.length > 0) {
+        if ((archivosDniAdjuntos && archivosDniAdjuntos.length > 0) || (selectedFiles && selectedFiles.length > 0)) {
           const dniFormData = new FormData();
           dniFormData.append('expediente_id', chatExpedienteId);
-          archivosDniAdjuntos.forEach(f => dniFormData.append('archivos_dni', f));
+          (archivosDniAdjuntos || []).forEach(f => dniFormData.append('archivos_dni', f));
+          (selectedFiles || []).forEach(f => dniFormData.append('archivos_factura', f));
           fetch(`${API_BASE_URL}/api/v1/chat/adjuntar-dni`, {
             method: 'POST',
             body: dniFormData
