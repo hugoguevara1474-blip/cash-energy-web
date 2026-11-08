@@ -2440,6 +2440,7 @@
     // =========================================================================
     let chatHistorial = [];
     let chatExpedienteId = null;
+    let chatTelefonoCaptado = "";
     let chatDniCaptado = "";
     let chatIbanCaptado = "";
     let chatFormalizadoNotificado = false;
@@ -2520,14 +2521,17 @@
           `Hemos auditado tu suministro y tienes un ahorro anual estimado de **${ahorroTxt}** con la tarifa oficial de **${compa}**, más un **Bono de Bienvenida de ${bonoTxt}**.\n\n` +
           `📌 **¿Cómo se cobra tu bono?** Se abona fraccionado a mes vencido directamente por **Bizum** a tu teléfono móvil mientras el contrato se mantenga activo, premiando tu fidelidad.\n\n` +
           `📞 **Aviso de verificación:** Several Energy te llamará por teléfono para una rápida comprobación de seguridad y te enviará un **SMS con PIN** para la firma digital oficial.\n\n` +
-          `Para preparar tu expediente de alta ahora mismo, por favor indícame tu **DNI/CIF** y el **IBAN** bancario para las facturas con descuento, o pregúntame cualquier duda que tengas.`;
+          `Para preparar tu expediente de alta ahora mismo, completa abajo tu **Móvil**, **DNI/CIF**, **IBAN** y adjunta la **Foto de tu DNI por ambas caras (📷)**, o pregúntame cualquier duda que tengas.`;
 
         renderMensajeChat('assistant', saludoInicial);
         chatHistorial.push({ role: 'assistant', content: saludoInicial });
       }
 
+      if (telCliente && !chatTelefonoCaptado) chatTelefonoCaptado = telCliente;
+      const quickTel = document.getElementById('chat-input-telefono');
       const quickDni = document.getElementById('chat-input-dni');
       const quickIban = document.getElementById('chat-input-iban');
+      if (quickTel && chatTelefonoCaptado) quickTel.value = chatTelefonoCaptado;
       if (quickDni && chatDniCaptado) quickDni.value = chatDniCaptado;
       if (quickIban && chatIbanCaptado) quickIban.value = chatIbanCaptado;
     }
@@ -2565,6 +2569,8 @@
           if (statusEl) statusEl.innerText = `✅ ${archivosDniAdjuntos.length} DNI enviado(s)`;
           renderMensajeChat('assistant', `📄 **Documentación DNI recibida (${nuevos.length} archivo${nuevos.length > 1 ? 's' : ''}):** Adjuntada y cifrada correctamente en tu expediente.`);
         }).catch(() => {});
+      } else if (!chatFormalizadoNotificado && nuevos.length > 0) {
+        verificarYDispararFormalizacion(false);
       }
     }
 
@@ -2612,30 +2618,80 @@
       await consultarDeepSeekYResponder(pregunta);
     }
 
+    function verificarYDispararFormalizacion(mostrarFaltantes) {
+      if (chatFormalizadoNotificado) return;
+      const telInput = document.getElementById('chat-input-telefono');
+      const leadPhone = document.getElementById('lead-phone');
+      const dniInput = document.getElementById('chat-input-dni');
+      const ibanInput = document.getElementById('chat-input-iban');
+
+      const tVal = (telInput && telInput.value ? telInput.value.trim() : '') || (leadPhone && leadPhone.value ? leadPhone.value.trim() : '');
+      if (tVal && tVal.replace(/\D/g, '').length >= 9) {
+        chatTelefonoCaptado = tVal;
+        if (telInput && !telInput.value) telInput.value = tVal;
+        if (leadPhone && !leadPhone.value) leadPhone.value = tVal;
+      }
+      if (dniInput && dniInput.value.trim()) chatDniCaptado = dniInput.value.trim().toUpperCase();
+      if (ibanInput && ibanInput.value.trim()) chatIbanCaptado = ibanInput.value.trim().replace(/\s+/g, '').toUpperCase();
+
+      const telOk = chatTelefonoCaptado && chatTelefonoCaptado.replace(/\D/g, '').length >= 9;
+      const dniOk = Boolean(chatDniCaptado);
+      const ibanOk = Boolean(chatIbanCaptado);
+      const fotosOk = archivosDniAdjuntos && archivosDniAdjuntos.length > 0;
+
+      if (telOk && dniOk && ibanOk && fotosOk) {
+        formalizarExpedienteEnTelegram();
+      } else if (mostrarFaltantes && (telOk || dniOk || ibanOk || fotosOk)) {
+        const faltan = [];
+        if (!telOk) faltan.push('📱 **Teléfono móvil del titular** (casilla Móvil abajo)');
+        if (!dniOk) faltan.push('🆔 **DNI / NIE / CIF**');
+        if (!ibanOk) faltan.push('🏦 **IBAN bancario**');
+        if (!fotosOk) faltan.push('📷 **Foto del DNI / NIE por ambas caras** (pulsa el botón Foto DNI abajo)');
+        renderMensajeChat('assistant', `📋 **¡Datos anotados!** Para enviar y activar tu expediente completo, por favor añade abajo:\n• ${faltan.join('\n• ')}`);
+      }
+    }
+
     async function enviarMensajeChatCliente() {
       const textInput = document.getElementById('chat-input-texto');
+      const telInput = document.getElementById('chat-input-telefono');
+      const leadPhone = document.getElementById('lead-phone');
       const dniInput = document.getElementById('chat-input-dni');
       const ibanInput = document.getElementById('chat-input-iban');
 
       let texto = textInput ? textInput.value.trim() : "";
+      const telVal = telInput ? telInput.value.trim() : "";
       const dniVal = dniInput ? dniInput.value.trim().toUpperCase() : "";
       const ibanVal = ibanInput ? ibanInput.value.trim().replace(/\s+/g, '').toUpperCase() : "";
 
-      if (dniVal && !chatDniCaptado) chatDniCaptado = dniVal;
-      if (ibanVal && !chatIbanCaptado) chatIbanCaptado = ibanVal;
+      if (telVal && telVal.replace(/\D/g, '').length >= 9) {
+        chatTelefonoCaptado = telVal;
+        if (leadPhone) leadPhone.value = telVal;
+      }
+      if (dniVal) chatDniCaptado = dniVal;
+      if (ibanVal) chatIbanCaptado = ibanVal;
 
-      if (!texto && (dniVal || ibanVal)) {
-        texto = `Te facilito mis datos: ${dniVal ? 'DNI ' + dniVal + ' ' : ''}${ibanVal ? 'IBAN ' + ibanVal : ''}`.trim();
+      const intentoDatos = Boolean(telVal || dniVal || ibanVal);
+      if (!texto && intentoDatos) {
+        texto = `Te facilito mis datos: ${telVal ? 'Móvil ' + telVal + ' ' : ''}${dniVal ? 'DNI ' + dniVal + ' ' : ''}${ibanVal ? 'IBAN ' + ibanVal : ''}`.trim();
       }
 
-      if (!texto) return;
+      if (!texto) {
+        verificarYDispararFormalizacion(true);
+        return;
+      }
 
       if (textInput) textInput.value = "";
 
       renderMensajeChat('user', texto);
       chatHistorial.push({ role: 'user', content: texto });
 
-      // Detección automática de DNI e IBAN en texto
+      // Detección automática de Móvil, DNI e IBAN en texto
+      const telMatch = texto.match(/\b(\+?34\s?)?([6789][0-9]{8})\b/);
+      if (telMatch) {
+        chatTelefonoCaptado = telMatch[2];
+        if (telInput) telInput.value = chatTelefonoCaptado;
+        if (leadPhone) leadPhone.value = chatTelefonoCaptado;
+      }
       const dniMatch = texto.match(/\b([0-9]{8}[A-Za-z]|[XYZxyz][0-9]{7}[A-Za-z]|[ABCDEFGHJNPQRSUVWabcdefghjnpqrsuvw][0-9]{7}[0-9A-Ja-j])\b/);
       if (dniMatch) {
         chatDniCaptado = dniMatch[1].toUpperCase();
@@ -2648,11 +2704,7 @@
       }
 
       await consultarDeepSeekYResponder(texto);
-
-      // Si captamos DNI e IBAN, formalizar en Telegram
-      if (chatDniCaptado && chatIbanCaptado && !chatFormalizadoNotificado) {
-        formalizarExpedienteEnTelegram();
-      }
+      verificarYDispararFormalizacion(intentoDatos || Boolean(telMatch || dniMatch || ibanMatch));
     }
 
     async function consultarDeepSeekYResponder(mensajeUsuario) {
@@ -2709,13 +2761,15 @@
       const fA = document.getElementById('final-ahorro');
       const fB = document.getElementById('final-bono');
 
+      const telInputChat = document.getElementById('chat-input-telefono');
+      const telFinal = chatTelefonoCaptado || (telInputChat && telInputChat.value ? telInputChat.value.trim() : "") || (phoneInput && phoneInput.value ? phoneInput.value.trim() : "");
       const payload = {
         expediente_id: chatExpedienteId,
         nombre: (nameInput && nameInput.value) ? nameInput.value.trim() : "Cliente",
-        telefono: (phoneInput && phoneInput.value) ? phoneInput.value.trim() : "",
+        telefono: telFinal,
         dni: chatDniCaptado,
         iban: chatIbanCaptado,
-        telefono_bizum: (phoneInput && phoneInput.value) ? phoneInput.value.trim() : "",
+        telefono_bizum: telFinal,
         cups: detectedInvoiceData?.cups || "",
         compania: selectedSeveralTariff?.comercializadora || "Several Energy",
         ahorro: fA ? fA.innerText : "",
@@ -2826,15 +2880,16 @@
       <!-- Formulario de Entrada: DNI, IBAN y Texto -->
       <div id="chat-input-bar-wrap" class="p-3 bg-slate-950 border-t border-slate-800 space-y-2 shrink-0">
         <div class="grid grid-cols-2 gap-2" id="chat-quick-inputs-row">
+          <input type="tel" id="chat-input-telefono" placeholder="📱 Móvil titular (SMS y Bizum)" class="px-3 py-2 rounded-xl bg-slate-800/90 border border-slate-700 text-slate-100 text-xs focus:outline-none focus:border-amber-400 font-mono">
           <input type="text" id="chat-input-dni" placeholder="DNI / NIE / CIF titular" class="px-3 py-2 rounded-xl bg-slate-800/90 border border-slate-700 text-slate-100 text-xs focus:outline-none focus:border-amber-400 font-mono uppercase">
-          <input type="text" id="chat-input-iban" placeholder="IBAN (facturas con descuento)" class="px-3 py-2 rounded-xl bg-slate-800/90 border border-slate-700 text-slate-100 text-xs focus:outline-none focus:border-amber-400 font-mono uppercase">
         </div>
-        <!-- Selector Opcional y Seguro de Fotos DNI / NIE -->
+        <input type="text" id="chat-input-iban" placeholder="IBAN bancario (ES00 0000 0000 0000 0000 0000)" class="w-full px-3 py-2 rounded-xl bg-slate-800/90 border border-slate-700 text-slate-100 text-xs focus:outline-none focus:border-amber-400 font-mono uppercase">
+        <!-- Selector Seguro de Fotos DNI / NIE -->
         <div id="chat-dni-files-wrap" class="flex items-center justify-between px-3 py-1.5 rounded-xl bg-slate-800/60 border border-slate-700/60 text-[11px]">
           <label for="chat-input-dni-files" class="flex items-center space-x-1.5 cursor-pointer text-slate-300 hover:text-amber-400 transition">
             <span class="text-sm">📷</span>
             <span class="font-medium">Foto DNI / NIE (ambas caras)</span>
-            <span class="text-[9px] px-1.5 py-0.5 rounded bg-amber-400/20 text-amber-300 font-mono">Opcional</span>
+            <span class="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono">Requerido</span>
           </label>
           <input type="file" id="chat-input-dni-files" multiple accept="image/*,application/pdf" class="hidden" onchange="manejarSeleccionDniArchivos(event)">
           <div id="chat-dni-files-status" class="text-[10px] text-slate-400 font-mono truncate max-w-[130px]">Sin archivo</div>
