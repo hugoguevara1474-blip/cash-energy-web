@@ -742,6 +742,11 @@
                 <span>⚡ Continuar con la Contratación y Activar Bono</span>
               </button>
 
+              <button type="button" onclick="iniciarNuevaAuditoriaLimpia()" class="w-full py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 font-bold text-xs transition flex items-center justify-center space-x-1.5 cursor-pointer">
+                <span>🔄</span>
+                <span>¿Tienes otra vivienda o local? Auditar otra factura</span>
+              </button>
+
               <p class="text-[10px] text-slate-500 text-center">
                 * El bono de bienvenida en efectivo se abona fraccionado a mes vencido directamente por Bizum a tu teléfono móvil mientras el contrato permanezca activo tras la activación oficial de la distribuidora.
               </p>
@@ -1881,6 +1886,10 @@
     }
 
     function processIncomingFiles(fileList) {
+      if (chatFormalizadoNotificado) {
+        selectedFiles = [];
+        selectedFile = null;
+      }
       for (let i = 0; i < fileList.length; i++) {
         const file = fileList[i];
         if (selectedFiles.length >= 3) {
@@ -2844,7 +2853,46 @@
           `¡Enhorabuena por activar tu tarifa garantizada y tu Bono de Bienvenida!`;
         renderMensajeChat('assistant', confirmMsg);
         chatHistorial.push({ role: 'assistant', content: confirmMsg });
+        const contenedor = document.getElementById('chat-mensajes-container');
+        if (contenedor) {
+          const btnOtra = document.createElement('div');
+          btnOtra.className = "pt-1 flex justify-center";
+          btnOtra.innerHTML = `<button type="button" onclick="iniciarNuevaAuditoriaLimpia()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-amber-400/40 text-amber-300 text-xs font-bold transition cursor-pointer">🔄 ¿Tienes otro suministro? Auditar y contratar otra factura</button>`;
+          contenedor.appendChild(btnOtra);
+          contenedor.scrollTop = contenedor.scrollHeight;
+        }
       }).catch(() => {});
+    }
+
+    function iniciarNuevaAuditoriaLimpia() {
+      cerrarModalContratacionChat();
+      selectedFiles = [];
+      selectedFile = null;
+      detectedInvoiceData = null;
+      selectedSeveralTariff = null;
+      currentSeveralOffers = [];
+      chatExpedienteId = null;
+      chatHistorial = [];
+      chatDniCaptado = "";
+      chatIbanCaptado = "";
+      chatUltimoCups = "";
+      chatFormalizadoNotificado = false;
+      archivosDniAdjuntos = [];
+      renderFilesList();
+      const nameInput = document.getElementById('lead-name');
+      if (nameInput) nameInput.value = "";
+      const cMsg = document.getElementById('chat-mensajes-container');
+      if (cMsg) cMsg.innerHTML = "";
+      const stDni = document.getElementById('chat-dni-files-status');
+      if (stDni) {
+        stDni.className = "text-[10px] text-slate-400 font-mono truncate max-w-[130px]";
+        stDni.innerText = "Sin archivo";
+      }
+      ['chat-input-dni', 'chat-input-iban'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = "";
+      });
+      goToStep(2);
     }
   </script>
 
