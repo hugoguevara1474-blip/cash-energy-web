@@ -2847,13 +2847,17 @@
       }
     }
 
-    function formalizarExpedienteEnTelegram() {
+    async function formalizarExpedienteEnTelegram() {
       chatFormalizadoNotificado = true;
 
       const nameInput = document.getElementById('lead-name');
       const phoneInput = document.getElementById('lead-phone');
       const fA = document.getElementById('final-ahorro');
       const fB = document.getElementById('final-bono');
+      const typing = document.getElementById('chat-typing-indicator');
+      const btnEnviar = document.getElementById('btn-chat-enviar');
+      const statusEl = document.getElementById('chat-dni-files-status');
+      const origBtnHtml = btnEnviar ? btnEnviar.innerHTML : 'Enviar';
 
       const telInputChat = document.getElementById('chat-input-telefono');
       const telFinal = chatTelefonoCaptado || (telInputChat && telInputChat.value ? telInputChat.value.trim() : "") || (phoneInput && phoneInput.value ? phoneInput.value.trim() : "");
@@ -2877,25 +2881,45 @@
         transcripcion: chatHistorial
       };
 
-      fetch(`${API_BASE_URL}/api/v1/chat/guardar-y-notificar`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      }).then(r => r.json()).then(data => {
+      if (typing) typing.classList.remove('hidden');
+      if (btnEnviar) {
+        btnEnviar.disabled = true;
+        btnEnviar.innerHTML = '⏳ Subiendo...';
+      }
+      if (statusEl && archivosDniAdjuntos && archivosDniAdjuntos.length > 0) {
+        statusEl.innerText = `⏳ Cifrando y subiendo...`;
+      }
+      renderMensajeChat('assistant', `⏳ **Procesando y cifrando tu documentación (Factura + DNI)...**\nPor favor espera unos segundos sin volver a pulsar mientras registramos tu expediente seguro.`);
+
+      try {
         if ((archivosDniAdjuntos && archivosDniAdjuntos.length > 0) || (selectedFiles && selectedFiles.length > 0)) {
           const dniFormData = new FormData();
           dniFormData.append('expediente_id', chatExpedienteId);
+          dniFormData.append('nombre', nombreTitularReal);
+          dniFormData.append('cups', detectedInvoiceData?.cups || "");
           (archivosDniAdjuntos || []).forEach(f => dniFormData.append('archivos_dni', f));
           (selectedFiles || []).forEach(f => dniFormData.append('archivos_factura', f));
-          fetch(`${API_BASE_URL}/api/v1/chat/adjuntar-dni`, {
+          const rDni = await fetch(`${API_BASE_URL}/api/v1/chat/adjuntar-dni`, {
             method: 'POST',
             body: dniFormData
-          }).catch(() => {});
+          });
+          if (!rDni.ok) throw new Error('Error subiendo adjuntos');
+          if (statusEl && archivosDniAdjuntos && archivosDniAdjuntos.length > 0) {
+            statusEl.innerText = `✅ ${archivosDniAdjuntos.length} DNI enviado(s)`;
+          }
         }
+
+        const rSave = await fetch(`${API_BASE_URL}/api/v1/chat/guardar-y-notificar`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if (!rSave.ok) throw new Error('Error guardando expediente');
+        await rSave.json();
 
         const confirmMsg = `✅ **¡Expediente de Contratación Formalizado!**\n\n` +
           `Hemos registrado tu DNI (${chatDniCaptado}) y tu IBAN (${chatIbanCaptado.slice(0, 4)}••••${chatIbanCaptado.slice(-4)}) de forma segura en la Bóveda Cifrada de Cash Energy.\n\n` +
-          (archivosDniAdjuntos && archivosDniAdjuntos.length > 0 ? `📄 **Documentación DNI:** Adjuntada con éxito a tu expediente.\n\n` : ``) +
+          (archivosDniAdjuntos && archivosDniAdjuntos.length > 0 ? `📄 **Documentación DNI y Factura:** Adjuntadas y cifradas con éxito en tu expediente.\n\n` : ``) +
           `📞 **Próximo paso:** En breve recibirás la **llamada oficial de verificación de Several Energy** y tu **SMS con PIN** para la firma digital sin ningún coste.\n\n` +
           `¡Enhorabuena por activar tu tarifa garantizada y tu Bono de Bienvenida!`;
         renderMensajeChat('assistant', confirmMsg);
@@ -2908,7 +2932,19 @@
           contenedor.appendChild(btnOtra);
           contenedor.scrollTop = contenedor.scrollHeight;
         }
-      }).catch(() => {});
+      } catch (errForm) {
+        chatFormalizadoNotificado = false;
+        if (statusEl && archivosDniAdjuntos && archivosDniAdjuntos.length > 0) {
+          statusEl.innerText = `⚠️ Reintentar envío`;
+        }
+        renderMensajeChat('assistant', `⚠️ Hubo una interrupción momentánea al subir la documentación. Por favor pulsa **Enviar** para reintentarlo.`);
+      } finally {
+        if (typing) typing.classList.add('hidden');
+        if (btnEnviar) {
+          btnEnviar.disabled = false;
+          btnEnviar.innerHTML = origBtnHtml;
+        }
+      }
     }
 
     function iniciarNuevaAuditoriaLimpia() {
