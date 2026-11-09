@@ -1267,7 +1267,7 @@
         if (eneActEl) eneActEl.innerText = (invoiceData?.importe_energia != null) ? (Math.round((Number(invoiceData.importe_energia) / factorDias) * 100) / 100).toFixed(2) + " €" : "--";
         if (eneOfEl) eneOfEl.innerText = "--";
         if (eneDiffEl) eneDiffEl.innerText = "--";
-        if (potActEl) potActEl.innerText = (invoiceData?.importe_potencia != null) ? valPotActWait.toFixed(2) + " €" : "--";
+        if (potActEl) potActEl.innerText = (invoiceData?.importe_potencia != null) ? (Math.round((Number(invoiceData.importe_potencia) / factorDias) * 100) / 100).toFixed(2) + " €" : "--";
         if (potOfEl) potOfEl.innerText = "--";
         if (potDiffEl) potDiffEl.innerText = "--";
         if (totActEl) totActEl.innerText = baseFacturaMes.toFixed(2) + " €" + (esBimestral ? "/mes" : "");
@@ -2014,13 +2014,13 @@
 
       setHud(20, `Activando Ojo de IA (Visión Multimodal ${selectedFiles.length} pág${selectedFiles.length > 1 ? 's' : ''})...`);
 
+      let parsed = null;
       try {
         setHud(40, "Procesando documentos en memoria cifrada...");
         const formData = new FormData();
         for (let f of selectedFiles) {
           formData.append("factura_files", f);
         }
-        formData.append("factura_file", selectedFiles[0]);
 
         setHud(65, "Extrayendo CUPS, potencias y tarifas con Bóveda Segura...");
         
@@ -2039,7 +2039,7 @@
           throw new Error(`HTTP ${response.status}`);
         }
 
-        const parsed = await response.json();
+        parsed = await response.json();
         if (parsed.es_factura_luz === false) {
           setHud(0, "Documento no válido");
           if (hud) hud.classList.add('hidden');
@@ -2075,10 +2075,6 @@
           return;
         }
 
-        selectedSeveralTariff = null;
-        currentSeveralOffers = [];
-        lastSeveralSipsData = null;
-        applyDetectedInvoice(parsed);
       } catch (err) {
         console.warn("Fallo temporal de visión:", err);
         if (hud) hud.classList.add('hidden');
@@ -2090,6 +2086,11 @@
         }
         return;
       }
+
+      selectedSeveralTariff = null;
+      currentSeveralOffers = [];
+      lastSeveralSipsData = null;
+      applyDetectedInvoice(parsed);
 
       setHud(100, "Auditoría completada con éxito. Calculando bono...");
       setTimeout(() => {
@@ -2506,16 +2507,14 @@
     function sincronizarBonoEnTodaLaUI(bonoVal) {
       if (!bonoVal) return;
       const bStr = bonoVal.toString().trim();
-      const bonoFormateado = bStr.startsWith('+') ? bStr : '+' + bStr;
+      const bonoFormateado = (bStr.startsWith('+') || bStr === '--' || bStr === '0 €') ? bStr : '+' + bStr;
       
       const fB = document.getElementById('final-bono');
-      const lB = document.getElementById('live-bono');
       const bF = document.getElementById('btn-flotante-bono-tag');
       const pB = document.getElementById('propuesta-btn-bono');
       const cB = document.getElementById('chat-ctx-bono');
 
       if (fB) fB.innerText = bonoFormateado;
-      if (lB) lB.innerText = bonoFormateado;
       if (bF) bF.innerText = `(${bonoFormateado})`;
       if (pB) pB.innerText = `(${bonoFormateado})`;
       if (cB) cB.innerText = bonoFormateado;
@@ -2597,7 +2596,7 @@
       const contenedor = document.getElementById('chat-mensajes-container');
       if (contenedor && contenedor.children.length === 0) {
         // Mensaje inicial del Asistente guiado y perfectamente blindado
-        const compa = selectedSeveralTariff?.comercializadora || "Several Energy (Naturgy Compromiso)";
+        const compa = selectedSeveralTariff?.comercializadora || "Several Energy";
         const saludoInicial = `¡Hola ${nombreCliente}! Soy el Asistente Oficial de Contratación de Cash Energy.\n\n` +
           `Hemos auditado tu suministro y tienes un ahorro anual estimado de **${ahorroTxt}** con la tarifa oficial de **${compa}**, más un **Bono de Bienvenida de ${bonoTxt}**.\n\n` +
           `📌 **¿Cómo se cobra tu bono?** Se abona fraccionado a mes vencido directamente por **Bizum** a tu teléfono móvil mientras el contrato se mantenga activo, premiando tu fidelidad.\n\n` +
