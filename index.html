@@ -1663,42 +1663,50 @@
           // filtramos ofertas viables con precio de energía competitivo (<= 0.160 €/kWh)
           // para evitar tarifas infladas como Plan Exclusivo 0.1999 €/kWh
           if (data.ofertas && Array.isArray(data.ofertas) && data.ofertas.length > 0) {
-            let comp = data.ofertas.filter(o => 
-              o.comision_cash_energy_eur !== null && 
-              o.comision_cash_energy_eur !== undefined && 
-              !o.bloqueada && 
-              o.precio_energia_promedio && 
-              o.precio_energia_promedio >= 0.05 && 
-              o.precio_energia_promedio <= 0.140
-            );
-            if (comp.length === 0) {
-              comp = data.ofertas.filter(o => 
-                o.comision_cash_energy_eur !== null && 
-                o.comision_cash_energy_eur !== undefined && 
-                !o.bloqueada && 
-                o.precio_energia_promedio && 
-                o.precio_energia_promedio >= 0.05 && 
-                o.precio_energia_promedio <= 0.160
-              );
+            const grupoComp = (n) => {
+              const s = (n || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase().trim();
+              if (!s) return '';
+              if (s.includes('IBERDROLA') || s.includes('CURENERG')) return 'IBERDROLA';
+              if (s.includes('ENDESA') || s.includes('ENERGIA XXI')) return 'ENDESA';
+              if (s.includes('NATURGY') || s.includes('GAS & POWER') || s.includes('GAS NATURAL') || s.includes('COMERCIALIZADORA REGULADA')) return 'NATURGY';
+              if (s.includes('REPSOL') || s.includes('REGSITI')) return 'REPSOL';
+              if (s.includes('TOTAL') || s.includes('BASER')) return 'TOTALENERGIES';
+              if (s.includes('PLENITUDE') || s.includes('ALDRO')) return 'PLENITUDE';
+              if (s.includes('GANA')) return 'GANA';
+              if (s.includes('ELEGA')) return 'ELEGA';
+              if (s.includes('VISALIA')) return 'VISALIA';
+              return s.split(/\s+/)[0];
+            };
+            const gCliente = grupoComp(detectedInvoiceData?.comercializadora || detectedInvoiceData?.compania || '');
+            const sinMismaYSinSva = data.ofertas.filter(o => {
+              if (o.comision_cash_energy_eur === null || o.comision_cash_energy_eur === undefined || o.bloqueada) return false;
+              if (gCliente && grupoComp(o.comercializadora) === gCliente) return false;
+              const tNom = (o.nombre_tarifa || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase();
+              if (tNom.includes('RENOVACI') || tNom.includes('+ SVA') || tNom.includes('+SVA')) return false;
+              return true;
+            });
+            const conBonoMayor10 = sinMismaYSinSva.filter(o => Math.round(Number(o.comision_cash_energy_eur) * 0.30) > 10);
+            const baseViables = conBonoMayor10.length > 0 ? conBonoMayor10 : sinMismaYSinSva;
+
+            const c150 = baseViables.filter(o => o.precio_energia_promedio && o.precio_energia_promedio >= 0.05 && o.precio_energia_promedio <= 0.150);
+            const c160 = baseViables.filter(o => o.precio_energia_promedio && o.precio_energia_promedio >= 0.05 && o.precio_energia_promedio <= 0.160);
+            const numGrupos = (arr) => new Set(arr.map(x => grupoComp(x.comercializadora))).size;
+            let pool = numGrupos(c150) >= 2 ? c150 : (c160.length > 0 ? c160 : baseViables);
+
+            const pxCliente = detectedInvoiceData?.precio_kwh;
+            if (pxCliente) {
+              const mejores = pool.filter(o => o.precio_energia_promedio && o.precio_energia_promedio <= pxCliente);
+              if (numGrupos(mejores) >= 2) pool = mejores;
             }
-            if (comp.length > 0) {
-              const comAct = (detectedInvoiceData?.comercializadora || detectedInvoiceData?.compania || '').toUpperCase();
-              const pxCliente = detectedInvoiceData?.precio_kwh;
-              // Regla de Oro Cash Energy: Si se conoce el precio del cliente, priorizar tarifas que mejoren su kWh
-              const mejoresTarifas = pxCliente ? comp.filter(o => o.precio_energia_promedio && o.precio_energia_promedio <= pxCliente) : [];
-              const restoTarifas = pxCliente ? comp.filter(o => !o.precio_energia_promedio || o.precio_energia_promedio > pxCliente) : comp;
 
-              const ordenarComision = (arr) => arr.sort((a, b) => {
-                const aEsMisma = comAct && (a.comercializadora || '').toUpperCase().includes(comAct);
-                const bEsMisma = comAct && (b.comercializadora || '').toUpperCase().includes(comAct);
-                if (aEsMisma && !bEsMisma) return 1;
-                if (!aEsMisma && bEsMisma) return -1;
-                return (b.comision_cash_energy_eur || 0) - (a.comision_cash_energy_eur || 0);
-              });
-
-              offers = mejoresTarifas.length > 0 
-                ? [...ordenarComision(mejoresTarifas), ...ordenarComision(restoTarifas)]
-                : ordenarComision(comp);
+            if (pool.length > 0) {
+              const porPrecio = [...pool].sort((a, b) => (a.precio_energia_promedio || 99) - (b.precio_energia_promedio || 99) || (b.comision_cash_energy_eur || 0) - (a.comision_cash_energy_eur || 0));
+              const op1 = porPrecio[0];
+              const g1 = grupoComp(op1.comercializadora);
+              const otraComp = pool.filter(o => grupoComp(o.comercializadora) !== g1)
+                .sort((a, b) => (b.comision_cash_energy_eur || 0) - (a.comision_cash_energy_eur || 0) || (a.precio_energia_promedio || 99) - (b.precio_energia_promedio || 99));
+              const resto = pool.filter(o => o !== op1 && o !== otraComp[0]);
+              offers = otraComp.length > 0 ? [op1, otraComp[0], ...resto] : [op1, ...resto];
             }
           }
 
@@ -2873,6 +2881,7 @@
         iban: chatIbanCaptado,
         telefono_bizum: telFinal,
         cups: detectedInvoiceData?.cups || "",
+        compania_actual: detectedInvoiceData?.comercializadora || detectedInvoiceData?.compania || "",
         compania: selectedSeveralTariff?.comercializadora || "Several Energy",
         producto_id: selectedSeveralTariff?.producto_id || "",
         nombre_tarifa: selectedSeveralTariff?.nombre_tarifa || "",
