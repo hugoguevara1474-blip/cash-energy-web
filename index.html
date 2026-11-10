@@ -1300,11 +1300,12 @@
       const potP1 = Number(invoiceData?.potencia_p1_kw || invoiceData?.potencia_kw || sipsPots[0] || 0);
       const potP2 = Number(invoiceData?.potencia_p2_kw || sipsPots[1] || potP1 || 0);
 
-      // Precios reales de potencia y energía de la tarifa de Several CRM
+      // Precios reales de potencia y energía de la tarifa de Several CRM (usando días exactos del ciclo igual que Estudio 1895)
+      const diasCalculo = esBimestral ? 30 : (diasFact > 0 ? diasFact : 30);
       const pxPotArr = Array.isArray(selectedOffer.precio_potencia_eur_kw_anio) ? selectedOffer.precio_potencia_eur_kw_anio : [];
       const pxPot1 = Number(pxPotArr[0] || 0);
       const pxPot2 = Number(pxPotArr[1] ?? pxPot1);
-      const costePotPropMes = Math.round(((potP1 * pxPot1 + potP2 * pxPot2) * (30 / 365)) * 100) / 100;
+      const costePotPropMes = Math.round(((potP1 * pxPot1 + potP2 * pxPot2) * (diasCalculo / 365)) * 100) / 100;
 
       let costeEnePropMes = 0;
       const pxEneArr = selectedOffer.precio_energia_eur_kwh;
@@ -1318,21 +1319,28 @@
         costeEnePropMes = Math.round((consKwhMes * ofertaPx) * 100) / 100;
       }
 
-      let impProp;
-      if (consKwhMes > 0 || costePotPropMes > 0) {
-        const alquilerMes = 0.80;
-        const subtotalProp = costePotPropMes + costeEnePropMes + alquilerMes;
-        const iee = subtotalProp * 0.051127;
+      // Fórmula Oficial Estudio 1895 Several: Diferencia Energía + Diferencia Potencia (con IE + IVA) + Seguros suprimidos
+      const eneActCiclo = (invoiceData?.importe_energia != null) ? (Number(invoiceData.importe_energia) / factorDias) : null;
+      const potActCiclo = (invoiceData?.importe_potencia != null) ? (Number(invoiceData.importe_potencia) / factorDias) : null;
+      const segActCiclo = esBimestral ? (costeSeguros / factorDias) : costeSeguros;
+      let impProp, ahrFact;
+      if (eneActCiclo !== null && potActCiclo !== null && (consKwhMes > 0 || costePotPropMes > 0)) {
+        const diffBase = (eneActCiclo - costeEnePropMes) + (potActCiclo - costePotPropMes);
+        ahrFact = Math.round((diffBase * 1.051126963 * 1.21 + segActCiclo) * 100) / 100;
+        impProp = Math.round((baseFacturaMes - ahrFact) * 100) / 100;
+      } else if (consKwhMes > 0 || costePotPropMes > 0) {
+        const alquilerCiclo = Math.round((0.026557 * diasCalculo) * 100) / 100;
+        const subtotalProp = costePotPropMes + costeEnePropMes + alquilerCiclo;
+        const iee = subtotalProp * 0.051126963;
         const iva = (subtotalProp + iee) * 0.21;
         impProp = Math.round((subtotalProp + iee + iva) * 100) / 100;
-      } else if (selectedOffer.coste_anual_eur) {
-        impProp = Math.round((Number(selectedOffer.coste_anual_eur) / 12) * 100) / 100;
+        ahrFact = Math.round((baseFacturaMes - impProp) * 100) / 100;
       } else {
         impProp = baseFacturaMes;
+        ahrFact = 0;
       }
-
-      const ahrFact = Math.round((baseFacturaMes - impProp) * 100) / 100;
-      const ahrAnual = Math.round(ahrFact * 12 * 100) / 100;
+      const factorAnualCiclo = esBimestral ? 12 : (365 / diasCalculo);
+      const ahrAnual = Math.round(ahrFact * factorAnualCiclo * 100) / 100;
       const esAhorroPositivo = ahrFact > 0;
       const anualProp = esAhorroPositivo ? Math.round((anualAct - ahrAnual) * 100) / 100 : anualAct;
       const ahrPct = (esAhorroPositivo && baseFacturaMes > 0) ? (Math.round((ahrFact / baseFacturaMes) * 1000) / 10 + "%") : "0%";
@@ -1697,11 +1705,20 @@
             }
 
             if (pool.length > 0) {
-              const porPrecio = [...pool].sort((a, b) => (a.precio_energia_promedio || 99) - (b.precio_energia_promedio || 99) || (b.comision_cash_energy_eur || 0) - (a.comision_cash_energy_eur || 0));
-              const op1 = porPrecio[0];
+              const diasCalc = (detectedInvoiceData?.es_bimestral || diasF > 45) ? 30 : (diasF > 0 ? diasF : 30);
+              const kwhCiclo = cTot ? (Number(cTot) / factorD) : 200;
+              const costeNetoCiclo = (o) => {
+                const pxE = Number(o.precio_energia_promedio || 99);
+                const pArr = Array.isArray(o.precio_potencia_eur_kw_anio) ? o.precio_potencia_eur_kw_anio : [40, 20];
+                const pot1 = Number(pArr[0] || 40);
+                const pot2 = Number(pArr[1] ?? pot1);
+                return (kwhCiclo * pxE) + ((p1Pot * pot1 + p2Pot * pot2) * (diasCalc / 365));
+              };
+              const porCosteTotal = [...pool].sort((a, b) => costeNetoCiclo(a) - costeNetoCiclo(b) || (b.comision_cash_energy_eur || 0) - (a.comision_cash_energy_eur || 0));
+              const op1 = porCosteTotal[0];
               const g1 = grupoComp(op1.comercializadora);
               const otraComp = pool.filter(o => grupoComp(o.comercializadora) !== g1)
-                .sort((a, b) => (b.comision_cash_energy_eur || 0) - (a.comision_cash_energy_eur || 0) || (a.precio_energia_promedio || 99) - (b.precio_energia_promedio || 99));
+                .sort((a, b) => costeNetoCiclo(a) - costeNetoCiclo(b) || (b.comision_cash_energy_eur || 0) - (a.comision_cash_energy_eur || 0));
               const resto = pool.filter(o => o !== op1 && o !== otraComp[0]);
               offers = otraComp.length > 0 ? [op1, otraComp[0], ...resto] : [op1, ...resto];
             }
