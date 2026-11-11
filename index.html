@@ -297,7 +297,7 @@
         <div id="video" class="mb-6 rounded-3xl overflow-hidden border border-amber-400/60 shadow-xl bg-slate-900">
           <video id="pitch-video" src="video_pitch.mp4" poster="video_poster.jpg" controls playsinline preload="metadata" class="w-full h-auto block"></video>
         </div>
-        <div class="card-clean-luxury p-6 sm:p-8 rounded-3xl relative overflow-hidden">
+        <div class="card-clean-luxury p-3.5 sm:p-8 rounded-3xl relative overflow-hidden">
           
           <!-- Mini sello de agua en esquina interior del simulador -->
           <div class="absolute -right-8 -bottom-8 w-44 h-44 opacity-[0.06] pointer-events-none select-none z-0">
@@ -582,46 +582,89 @@
                 </div>
 
                 <!-- 4. ACORDEÓN TÉCNICO DESPLEGABLE (NO SATURA LA VISTA PRINCIPAL) -->
-                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+                <div class="bg-white p-2.5 sm:p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
                   <div id="btn-toggle-desglose-wrap" class="flex items-center justify-between">
-                    <button type="button" onclick="toggleDesgloseTecnico()" id="btn-toggle-desglose" class="w-full py-2.5 px-3.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-bold font-mono flex items-center justify-between transition cursor-pointer border border-slate-200">
-                      <span class="flex items-center space-x-2">
+                    <button type="button" onclick="toggleDesgloseTecnico()" id="btn-toggle-desglose" class="w-full py-2.5 px-3 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 text-[11px] sm:text-xs font-bold font-mono flex items-center justify-between transition cursor-pointer border border-slate-200">
+                      <span class="flex items-center space-x-2 text-left">
                         <span>📋</span>
                         <span>Desglose Oficial de la Propuesta (Periodos e Importes)</span>
                       </span>
-                      <span id="desglose-tecnico-arrow" class="text-xs transition-transform duration-200 font-bold" style="transform: rotate(180deg);">▾</span>
+                      <span id="desglose-tecnico-arrow" class="text-xs transition-transform duration-200 font-bold shrink-0 ml-1" style="transform: rotate(180deg);">▾</span>
                     </button>
                   </div>
 
-                  <!-- DESGLOSE OFICIAL IDÉNTICO A PÁGINA 2 DE ESTUDIO 1895 -->
-                  <div id="desglose-tecnico-panel" class="space-y-3.5 pt-2">
-                    <!-- BLOQUE A: PRECIOS PROPUESTOS POR PERIODO (P1 | P2 | P3) -->
-                    <div class="p-3.5 rounded-xl bg-slate-50/80 border border-slate-200 space-y-2">
+                  <!-- DESGLOSE OFICIAL IDÉNTICO A PÁGINA 2 DE ESTUDIO 1895 + 6 PERIODOS 3.0TD/6.1TD -->
+                  <div id="desglose-tecnico-panel" class="space-y-3 pt-2">
+                    <!-- BLOQUE A: PRECIOS PROPUESTOS POR PERIODO (P1..P3 en 2.0TD | P1..P6 en 3.0TD/6.1TD · CERO SOLAPAMIENTO EN MÓVIL) -->
+                    <div class="p-2.5 sm:p-3.5 rounded-xl bg-slate-50/80 border border-slate-200 space-y-2">
                       <div class="text-[10px] font-bold text-slate-500 uppercase tracking-wider font-mono">Precios propuestos por periodo</div>
-                      <table class="w-full text-xs font-mono table-fixed">
-                        <thead>
-                          <tr class="border-b border-slate-200 text-rose-600 text-[10px]">
-                            <th class="pb-1 text-left w-[34%]"></th>
-                            <th class="pb-1 text-right">P1</th>
-                            <th class="pb-1 text-right">P2</th>
-                            <th class="pb-1 text-right">P3</th>
-                          </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-200/70 text-[11px]">
-                          <tr>
-                            <td class="py-2 font-sans font-semibold text-slate-700 leading-tight">Potencia<span class="block text-[9px] text-slate-400 font-normal">€/kW·día (y €/kW·año)</span></td>
-                            <td class="py-2 text-right text-slate-800 leading-tight"><span id="prop-pot-p1">0,120714</span><span class="block text-[9px] text-slate-400 font-normal" id="prop-pot-p1-anio">44,06 €/año</span></td>
-                            <td class="py-2 text-right text-slate-800 leading-tight"><span id="prop-pot-p2">0,060404</span><span class="block text-[9px] text-slate-400 font-normal" id="prop-pot-p2-anio">22,05 €/año</span></td>
-                            <td class="py-2 text-right text-slate-400 leading-tight"><span id="prop-pot-p3">—</span><span class="block text-[9px] text-slate-400 font-normal" id="prop-pot-p3-anio"></span></td>
-                          </tr>
-                          <tr>
-                            <td class="py-2 font-sans font-semibold text-slate-700 leading-tight">Energía<span class="block text-[9px] text-slate-400 font-normal">€/kWh</span></td>
-                            <td class="py-2 text-right text-slate-800" id="prop-ene-p1">0,123000</td>
-                            <td class="py-2 text-right text-slate-800" id="prop-ene-p2">0,123000</td>
-                            <td class="py-2 text-right text-slate-800" id="prop-ene-p3">0,123000</td>
-                          </tr>
-                        </tbody>
-                      </table>
+
+                      <div class="space-y-1">
+                        <div class="text-[10px] font-sans font-semibold text-slate-700">Potencia <span class="text-[9px] text-slate-400 font-normal">· €/kW·día (y €/kW·año)</span></div>
+                        <div id="grid-prop-pot" class="grid grid-cols-3 gap-1.5 font-mono text-center">
+                          <div class="bg-white rounded-lg border border-slate-200/80 px-1.5 py-1.5 overflow-hidden">
+                            <div class="text-[9px] font-bold text-rose-600">P1</div>
+                            <div class="text-[10.5px] sm:text-[11px] font-semibold text-slate-800 leading-tight truncate" id="prop-pot-p1">0,120714</div>
+                            <div class="text-[8.5px] text-slate-400 leading-tight truncate" id="prop-pot-p1-anio">44,06 €/kW·año</div>
+                          </div>
+                          <div class="bg-white rounded-lg border border-slate-200/80 px-1.5 py-1.5 overflow-hidden">
+                            <div class="text-[9px] font-bold text-rose-600">P2</div>
+                            <div class="text-[10.5px] sm:text-[11px] font-semibold text-slate-800 leading-tight truncate" id="prop-pot-p2">0,060404</div>
+                            <div class="text-[8.5px] text-slate-400 leading-tight truncate" id="prop-pot-p2-anio">22,05 €/kW·año</div>
+                          </div>
+                          <div class="bg-white rounded-lg border border-slate-200/80 px-1.5 py-1.5 overflow-hidden">
+                            <div class="text-[9px] font-bold text-rose-600">P3</div>
+                            <div class="text-[10.5px] sm:text-[11px] font-semibold text-slate-800 leading-tight truncate" id="prop-pot-p3">—</div>
+                            <div class="text-[8.5px] text-slate-400 leading-tight truncate" id="prop-pot-p3-anio"></div>
+                          </div>
+                          <div id="prop-pot-box-p4" class="hidden bg-white rounded-lg border border-slate-200/80 px-1.5 py-1.5 overflow-hidden">
+                            <div class="text-[9px] font-bold text-rose-600">P4</div>
+                            <div class="text-[10.5px] sm:text-[11px] font-semibold text-slate-800 leading-tight truncate" id="prop-pot-p4">—</div>
+                            <div class="text-[8.5px] text-slate-400 leading-tight truncate" id="prop-pot-p4-anio"></div>
+                          </div>
+                          <div id="prop-pot-box-p5" class="hidden bg-white rounded-lg border border-slate-200/80 px-1.5 py-1.5 overflow-hidden">
+                            <div class="text-[9px] font-bold text-rose-600">P5</div>
+                            <div class="text-[10.5px] sm:text-[11px] font-semibold text-slate-800 leading-tight truncate" id="prop-pot-p5">—</div>
+                            <div class="text-[8.5px] text-slate-400 leading-tight truncate" id="prop-pot-p5-anio"></div>
+                          </div>
+                          <div id="prop-pot-box-p6" class="hidden bg-white rounded-lg border border-slate-200/80 px-1.5 py-1.5 overflow-hidden">
+                            <div class="text-[9px] font-bold text-rose-600">P6</div>
+                            <div class="text-[10.5px] sm:text-[11px] font-semibold text-slate-800 leading-tight truncate" id="prop-pot-p6">—</div>
+                            <div class="text-[8.5px] text-slate-400 leading-tight truncate" id="prop-pot-p6-anio"></div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="space-y-1 pt-0.5">
+                        <div class="text-[10px] font-sans font-semibold text-slate-700">Energía <span class="text-[9px] text-slate-400 font-normal">· €/kWh</span></div>
+                        <div id="grid-prop-ene" class="grid grid-cols-3 gap-1.5 font-mono text-center">
+                          <div class="bg-white rounded-lg border border-slate-200/80 px-1.5 py-1.5 overflow-hidden">
+                            <div class="text-[9px] font-bold text-rose-600">P1</div>
+                            <div class="text-[10.5px] sm:text-[11px] font-semibold text-slate-800 leading-tight truncate" id="prop-ene-p1">0,123000</div>
+                          </div>
+                          <div class="bg-white rounded-lg border border-slate-200/80 px-1.5 py-1.5 overflow-hidden">
+                            <div class="text-[9px] font-bold text-rose-600">P2</div>
+                            <div class="text-[10.5px] sm:text-[11px] font-semibold text-slate-800 leading-tight truncate" id="prop-ene-p2">0,123000</div>
+                          </div>
+                          <div class="bg-white rounded-lg border border-slate-200/80 px-1.5 py-1.5 overflow-hidden">
+                            <div class="text-[9px] font-bold text-rose-600">P3</div>
+                            <div class="text-[10.5px] sm:text-[11px] font-semibold text-slate-800 leading-tight truncate" id="prop-ene-p3">0,123000</div>
+                          </div>
+                          <div id="prop-ene-box-p4" class="hidden bg-white rounded-lg border border-slate-200/80 px-1.5 py-1.5 overflow-hidden">
+                            <div class="text-[9px] font-bold text-rose-600">P4</div>
+                            <div class="text-[10.5px] sm:text-[11px] font-semibold text-slate-800 leading-tight truncate" id="prop-ene-p4">—</div>
+                          </div>
+                          <div id="prop-ene-box-p5" class="hidden bg-white rounded-lg border border-slate-200/80 px-1.5 py-1.5 overflow-hidden">
+                            <div class="text-[9px] font-bold text-rose-600">P5</div>
+                            <div class="text-[10.5px] sm:text-[11px] font-semibold text-slate-800 leading-tight truncate" id="prop-ene-p5">—</div>
+                          </div>
+                          <div id="prop-ene-box-p6" class="hidden bg-white rounded-lg border border-slate-200/80 px-1.5 py-1.5 overflow-hidden">
+                            <div class="text-[9px] font-bold text-rose-600">P6</div>
+                            <div class="text-[10.5px] sm:text-[11px] font-semibold text-slate-800 leading-tight truncate" id="prop-ene-p6">—</div>
+                          </div>
+                        </div>
+                      </div>
+
                       <div id="prop-contrato-nota" class="hidden text-[10px] text-emerald-800 bg-emerald-50/90 border border-emerald-200/80 rounded-lg px-2.5 py-1.5 font-sans leading-snug"></div>
                       <div class="pt-1.5 border-t border-slate-200/70 flex flex-wrap gap-x-4 gap-y-1 text-[10.5px] text-slate-500 font-sans">
                         <span>Alquiler de equipo <strong class="text-slate-800 font-mono" id="prop-alquiler-val">0,93 €</strong></span>
@@ -630,7 +673,7 @@
                     </div>
 
                     <!-- BLOQUE B: ACTUAL VS PROPUESTA — SOLO IMPORTES EN EUROS (€) -->
-                    <div class="p-3.5 rounded-xl bg-white border border-slate-200 space-y-2">
+                    <div class="p-2.5 sm:p-3.5 rounded-xl bg-white border border-slate-200 space-y-2">
                       <div class="flex items-start justify-between gap-2">
                         <div class="min-w-0">
                           <div class="text-xs font-extrabold text-slate-900">Actual vs propuesta</div>
@@ -642,66 +685,74 @@
                       </div>
                       <table class="w-full text-left text-xs font-mono table-fixed">
                         <thead>
-                          <tr class="border-b border-slate-200 text-slate-400 text-[9.5px] uppercase">
-                            <th class="pb-1.5 w-[36%]">Concepto</th>
-                            <th class="pb-1.5 text-right w-[21%]">Actual</th>
-                            <th class="pb-1.5 text-right w-[21%]">Oferta</th>
-                            <th class="pb-1.5 text-right w-[22%]">Diferencia</th>
+                          <tr class="border-b border-slate-200 text-slate-400 text-[8.5px] sm:text-[9.5px] uppercase">
+                            <th class="pb-1.5 w-[31%]">Concepto</th>
+                            <th class="pb-1.5 pr-1 text-right w-[21%]">Actual</th>
+                            <th class="pb-1.5 pr-1 text-right w-[21%]">Oferta</th>
+                            <th class="pb-1.5 text-right w-[27%]">Diferencia</th>
                           </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-100 text-[11px]">
+                        <tbody class="divide-y divide-slate-100 text-[10.5px] sm:text-[11px]">
                           <tr>
-                            <td class="py-2 text-slate-700 font-semibold font-sans">Total energía</td>
-                            <td class="py-2 text-right text-slate-700" id="estudio-tabla-ene-actual">19,21</td>
-                            <td class="py-2 text-right text-slate-900 font-bold" id="estudio-tabla-ene-oferta">15,42</td>
-                            <td class="py-2 text-right"><span id="estudio-tabla-ene-diff" class="inline-block px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 font-bold text-[10px]">-3,79 €</span></td>
+                            <td class="py-2 pr-1 text-slate-700 font-semibold font-sans leading-tight">Total energía</td>
+                            <td class="py-2 pr-1 text-right text-slate-700 whitespace-nowrap" id="estudio-tabla-ene-actual">19,21</td>
+                            <td class="py-2 pr-1 text-right text-slate-900 font-bold whitespace-nowrap" id="estudio-tabla-ene-oferta">15,42</td>
+                            <td class="py-2 text-right"><span id="estudio-tabla-ene-diff" class="inline-block whitespace-nowrap px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 font-bold text-[9.5px] sm:text-[10px]">-3,79 €</span></td>
                           </tr>
                           <tr>
-                            <td class="py-2 text-slate-700 font-semibold font-sans">Total potencia</td>
-                            <td class="py-2 text-right text-slate-700" id="estudio-tabla-pot-actual">19,68</td>
-                            <td class="py-2 text-right text-slate-900 font-bold" id="estudio-tabla-pot-oferta">21,87</td>
-                            <td class="py-2 text-right"><span id="estudio-tabla-pot-diff" class="inline-block px-1.5 py-0.5 rounded bg-rose-50 text-rose-700 font-bold text-[10px]">+2,19 €</span></td>
+                            <td class="py-2 pr-1 text-slate-700 font-semibold font-sans leading-tight">Total potencia</td>
+                            <td class="py-2 pr-1 text-right text-slate-700 whitespace-nowrap" id="estudio-tabla-pot-actual">19,68</td>
+                            <td class="py-2 pr-1 text-right text-slate-900 font-bold whitespace-nowrap" id="estudio-tabla-pot-oferta">21,87</td>
+                            <td class="py-2 text-right"><span id="estudio-tabla-pot-diff" class="inline-block whitespace-nowrap px-1.5 py-0.5 rounded bg-rose-50 text-rose-700 font-bold text-[9.5px] sm:text-[10px]">+2,19 €</span></td>
                           </tr>
                           <tr id="estudio-tabla-seg-row" class="hidden">
-                            <td class="py-2 text-slate-700 font-semibold font-sans">Seguros</td>
-                            <td class="py-2 text-right text-slate-700" id="estudio-tabla-seg-actual">0,00</td>
-                            <td class="py-2 text-right text-slate-900 font-bold" id="estudio-tabla-seg-oferta">0,00</td>
-                            <td class="py-2 text-right"><span id="estudio-tabla-seg-diff" class="inline-block px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 font-bold text-[10px]">0,00 €</span></td>
+                            <td class="py-2 pr-1 text-slate-700 font-semibold font-sans leading-tight">Seguros</td>
+                            <td class="py-2 pr-1 text-right text-slate-700 whitespace-nowrap" id="estudio-tabla-seg-actual">0,00</td>
+                            <td class="py-2 pr-1 text-right text-slate-900 font-bold whitespace-nowrap" id="estudio-tabla-seg-oferta">0,00</td>
+                            <td class="py-2 text-right"><span id="estudio-tabla-seg-diff" class="inline-block whitespace-nowrap px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 font-bold text-[9.5px] sm:text-[10px]">0,00 €</span></td>
                           </tr>
                         </tbody>
                       </table>
                     </div>
 
                     <!-- BLOQUE C: ESTIMACIÓN ANUAL · PRECIOS FINALES (€/kWh) POR PERIODO -->
-                    <div class="p-3.5 rounded-xl bg-slate-50/80 border border-slate-200 space-y-2">
+                    <div class="p-2.5 sm:p-3.5 rounded-xl bg-slate-50/80 border border-slate-200 space-y-2">
                       <div>
                         <div class="text-xs font-extrabold text-slate-900">Estimación anual · precios finales (€/kWh)</div>
                         <div class="text-[10px] text-slate-500">Precio actual frente a precio de la oferta, por periodo</div>
                       </div>
-                      <table class="w-full text-xs font-mono table-fixed">
-                        <thead>
-                          <tr class="border-b border-slate-200 text-rose-600 text-[10px]">
-                            <th class="pb-1 text-left w-[34%]"></th>
-                            <th class="pb-1 text-right">P1</th>
-                            <th class="pb-1 text-right">P2</th>
-                            <th class="pb-1 text-right">P3</th>
-                          </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-200/70 text-[11px]">
-                          <tr>
-                            <td class="py-2 font-sans font-semibold text-slate-600 leading-tight">Precio actual<span class="block text-[9px] text-slate-400 font-normal">€/kWh</span></td>
-                            <td class="py-2 text-right text-slate-700" id="anual-px-act-p1">0,153224</td>
-                            <td class="py-2 text-right text-slate-700" id="anual-px-act-p2">0,153223</td>
-                            <td class="py-2 text-right text-slate-700" id="anual-px-act-p3">0,153225</td>
-                          </tr>
-                          <tr>
-                            <td class="py-2 font-sans font-semibold text-emerald-800 leading-tight">Precio oferta<span class="block text-[9px] text-emerald-600 font-normal">€/kWh</span></td>
-                            <td class="py-2 text-right text-emerald-700 font-bold" id="anual-px-of-p1">0,123000</td>
-                            <td class="py-2 text-right text-emerald-700 font-bold" id="anual-px-of-p2">0,123000</td>
-                            <td class="py-2 text-right text-emerald-700 font-bold" id="anual-px-of-p3">0,123000</td>
-                          </tr>
-                        </tbody>
-                      </table>
+                      <div id="grid-anual-px" class="grid grid-cols-3 gap-1.5 font-mono text-center">
+                        <div class="bg-white rounded-lg border border-slate-200/80 px-1.5 py-1.5 space-y-1 overflow-hidden">
+                          <div class="text-[9px] font-bold text-rose-600 border-b border-slate-100 pb-0.5">P1</div>
+                          <div><span class="block text-[8px] font-sans text-slate-400 leading-none">Actual</span><span class="text-[10.5px] sm:text-[11px] text-slate-700 leading-tight block truncate" id="anual-px-act-p1">0,153224</span></div>
+                          <div><span class="block text-[8px] font-sans text-emerald-600 leading-none">Oferta</span><span class="text-[10.5px] sm:text-[11px] text-emerald-700 font-bold leading-tight block truncate" id="anual-px-of-p1">0,123000</span></div>
+                        </div>
+                        <div class="bg-white rounded-lg border border-slate-200/80 px-1.5 py-1.5 space-y-1 overflow-hidden">
+                          <div class="text-[9px] font-bold text-rose-600 border-b border-slate-100 pb-0.5">P2</div>
+                          <div><span class="block text-[8px] font-sans text-slate-400 leading-none">Actual</span><span class="text-[10.5px] sm:text-[11px] text-slate-700 leading-tight block truncate" id="anual-px-act-p2">0,153223</span></div>
+                          <div><span class="block text-[8px] font-sans text-emerald-600 leading-none">Oferta</span><span class="text-[10.5px] sm:text-[11px] text-emerald-700 font-bold leading-tight block truncate" id="anual-px-of-p2">0,123000</span></div>
+                        </div>
+                        <div class="bg-white rounded-lg border border-slate-200/80 px-1.5 py-1.5 space-y-1 overflow-hidden">
+                          <div class="text-[9px] font-bold text-rose-600 border-b border-slate-100 pb-0.5">P3</div>
+                          <div><span class="block text-[8px] font-sans text-slate-400 leading-none">Actual</span><span class="text-[10.5px] sm:text-[11px] text-slate-700 leading-tight block truncate" id="anual-px-act-p3">0,153225</span></div>
+                          <div><span class="block text-[8px] font-sans text-emerald-600 leading-none">Oferta</span><span class="text-[10.5px] sm:text-[11px] text-emerald-700 font-bold leading-tight block truncate" id="anual-px-of-p3">0,123000</span></div>
+                        </div>
+                        <div id="anual-px-box-p4" class="hidden bg-white rounded-lg border border-slate-200/80 px-1.5 py-1.5 space-y-1 overflow-hidden">
+                          <div class="text-[9px] font-bold text-rose-600 border-b border-slate-100 pb-0.5">P4</div>
+                          <div><span class="block text-[8px] font-sans text-slate-400 leading-none">Actual</span><span class="text-[10.5px] sm:text-[11px] text-slate-700 leading-tight block truncate" id="anual-px-act-p4">—</span></div>
+                          <div><span class="block text-[8px] font-sans text-emerald-600 leading-none">Oferta</span><span class="text-[10.5px] sm:text-[11px] text-emerald-700 font-bold leading-tight block truncate" id="anual-px-of-p4">—</span></div>
+                        </div>
+                        <div id="anual-px-box-p5" class="hidden bg-white rounded-lg border border-slate-200/80 px-1.5 py-1.5 space-y-1 overflow-hidden">
+                          <div class="text-[9px] font-bold text-rose-600 border-b border-slate-100 pb-0.5">P5</div>
+                          <div><span class="block text-[8px] font-sans text-slate-400 leading-none">Actual</span><span class="text-[10.5px] sm:text-[11px] text-slate-700 leading-tight block truncate" id="anual-px-act-p5">—</span></div>
+                          <div><span class="block text-[8px] font-sans text-emerald-600 leading-none">Oferta</span><span class="text-[10.5px] sm:text-[11px] text-emerald-700 font-bold leading-tight block truncate" id="anual-px-of-p5">—</span></div>
+                        </div>
+                        <div id="anual-px-box-p6" class="hidden bg-white rounded-lg border border-slate-200/80 px-1.5 py-1.5 space-y-1 overflow-hidden">
+                          <div class="text-[9px] font-bold text-rose-600 border-b border-slate-100 pb-0.5">P6</div>
+                          <div><span class="block text-[8px] font-sans text-slate-400 leading-none">Actual</span><span class="text-[10.5px] sm:text-[11px] text-slate-700 leading-tight block truncate" id="anual-px-act-p6">—</span></div>
+                          <div><span class="block text-[8px] font-sans text-emerald-600 leading-none">Oferta</span><span class="text-[10.5px] sm:text-[11px] text-emerald-700 font-bold leading-tight block truncate" id="anual-px-of-p6">—</span></div>
+                        </div>
+                      </div>
                     </div>
 
                     <!-- AUDITORÍA DE POTENCIAS Y MAXÍMETRO -->
@@ -1281,6 +1332,17 @@
       const comActual = invoiceData?.comercializadora || "Comercializadora actual";
       const tarifa = invoiceData?.tarifa || sipsRef?.tarifa_acceso || "2.0TD";
       const pot = invoiceData?.potencia_kw || sipsPots[0] || null;
+      const es6Periodos = /^(3\.0|6\.)/i.test(String(tarifa)) || String(sipsRef?.tarifa_acceso) === '019' || (sipsPots.length >= 6 && sipsPots.slice(2).some(x => Number(x) > 0));
+      ['grid-prop-pot', 'grid-prop-ene', 'grid-anual-px'].forEach(gid => {
+        const gEl = document.getElementById(gid);
+        if (gEl) gEl.classList.toggle('sm:grid-cols-6', es6Periodos);
+      });
+      [4, 5, 6].forEach(pNum => {
+        ['prop-pot-box-p', 'prop-ene-box-p', 'anual-px-box-p'].forEach(pref => {
+          const bEl = document.getElementById(pref + pNum);
+          if (bEl) bEl.classList.toggle('hidden', !es6Periodos);
+        });
+      });
 
       if (titularEl) titularEl.innerText = titular;
       if (cupsEl) {
@@ -1357,6 +1419,22 @@
         if (anPxOfP1El) anPxOfP1El.innerText = "...";
         if (anPxOfP2El) anPxOfP2El.innerText = "...";
         if (anPxOfP3El) anPxOfP3El.innerText = "...";
+        if (es6Periodos) {
+          if (propPotP3El) propPotP3El.innerText = "...";
+          const invPxInit = Array.isArray(invoiceData?.precios_energia_periodo_kwh) ? invoiceData.precios_energia_periodo_kwh : [];
+          [4, 5, 6].forEach(pNum => {
+            const pDiaEl = document.getElementById('prop-pot-p' + pNum);
+            const pAnEl = document.getElementById('prop-pot-p' + pNum + '-anio');
+            const eEl = document.getElementById('prop-ene-p' + pNum);
+            const actEl = document.getElementById('anual-px-act-p' + pNum);
+            const ofEl = document.getElementById('anual-px-of-p' + pNum);
+            if (pDiaEl) pDiaEl.innerText = "...";
+            if (pAnEl) pAnEl.innerText = "";
+            if (eEl) eEl.innerText = "...";
+            if (actEl) actEl.innerText = invPxInit[pNum - 1] ? fmtDec(invPxInit[pNum - 1], 6) : "—";
+            if (ofEl) ofEl.innerText = "...";
+          });
+        }
         return;
       }
 
@@ -1385,27 +1463,46 @@
         ? Math.round((Number(invoiceData.consumo_kwh) / factorDias) * 100) / 100
         : (sipsRef?.consumo_anual_total_kwh ? Math.round((Number(sipsRef.consumo_anual_total_kwh) / 12) * 100) / 100 : 0);
 
-      // Potencias reales contratadas (factura o SIPS oficial)
+      // Potencias reales contratadas (factura o SIPS oficial · soporte 2.0TD [P1..P2] y 3.0TD/6.1TD [P1..P6])
       const potP1 = Number(invoiceData?.potencia_p1_kw || invoiceData?.potencia_kw || sipsPots[0] || 0);
       const potP2 = Number(invoiceData?.potencia_p2_kw || sipsPots[1] || potP1 || 0);
+      const invPotPer = Array.isArray(invoiceData?.potencias_periodo_kw) ? invoiceData.potencias_periodo_kw : [];
+      const potArr6 = [0, 1, 2, 3, 4, 5].map(i => Number(invPotPer[i] || sipsPots[i] || (i === 0 ? potP1 : (i === 1 ? potP2 : potP1)) || 0));
 
       // Precios reales de potencia y energía de la tarifa de Several CRM (usando días exactos del ciclo igual que Estudio 1895)
       const diasCalculo = esBimestral ? 30 : (diasFact > 0 ? diasFact : 30);
       const pxPotArr = Array.isArray(selectedOffer.precio_potencia_eur_kw_anio) ? selectedOffer.precio_potencia_eur_kw_anio : [];
       const pxPot1 = Number(pxPotArr[0] || 0);
       const pxPot2 = Number(pxPotArr[1] ?? pxPot1);
-      const costePotPropMes = Math.round(((potP1 * pxPot1 + potP2 * pxPot2) * (diasCalculo / 365)) * 100) / 100;
+      const costePotPropMes = es6Periodos
+        ? Math.round((potArr6.reduce((acc, kw, i) => acc + kw * Number(pxPotArr[i] ?? pxPot1), 0) * (diasCalculo / 365)) * 100) / 100
+        : Math.round(((potP1 * pxPot1 + potP2 * pxPot2) * (diasCalculo / 365)) * 100) / 100;
+
+      const sipsConsPer = Array.isArray(sipsRef?.consumo_anual_periodos) ? sipsRef.consumo_anual_periodos : [];
+      const sipsConsTot = Number(sipsRef?.consumo_anual_total_kwh || 0);
 
       let costeEnePropMes = 0;
       const pxEneArr = selectedOffer.precio_energia_eur_kwh;
-      const hasTramos = Array.isArray(pxEneArr) && pxEneArr.length >= 3 && invoiceData?.consumo_p1_kwh !== undefined && invoiceData?.consumo_p1_kwh !== null;
-      if (hasTramos) {
-        const k1 = (Number(invoiceData.consumo_p1_kwh) || 0) / factorDias;
-        const k2 = (Number(invoiceData.consumo_p2_kwh) || 0) / factorDias;
-        const k3 = (Number(invoiceData.consumo_p3_kwh) || 0) / factorDias;
-        costeEnePropMes = Math.round((k1 * Number(pxEneArr[0]) + k2 * Number(pxEneArr[1]) + k3 * Number(pxEneArr[2])) * 100) / 100;
+      const invConsPer = Array.isArray(invoiceData?.consumos_periodo_kwh) ? invoiceData.consumos_periodo_kwh : null;
+      if (es6Periodos && Array.isArray(pxEneArr) && pxEneArr.length >= 6) {
+        const sumInv6 = invConsPer && invConsPer.length >= 6 ? invConsPer.slice(0, 6).reduce((a, b) => a + (Number(b) || 0), 0) : 0;
+        if (sumInv6 > 0) {
+          costeEnePropMes = Math.round(invConsPer.slice(0, 6).reduce((acc, kwh, i) => acc + ((Number(kwh) || 0) / factorDias) * Number(pxEneArr[i] ?? ofertaPx), 0) * 100) / 100;
+        } else if (sipsConsPer.length >= 6 && sipsConsTot > 0 && consKwhMes > 0) {
+          costeEnePropMes = Math.round(sipsConsPer.slice(0, 6).reduce((acc, cAn, i) => acc + (consKwhMes * ((Number(cAn) || 0) / sipsConsTot)) * Number(pxEneArr[i] ?? ofertaPx), 0) * 100) / 100;
+        } else {
+          costeEnePropMes = Math.round((consKwhMes * ofertaPx) * 100) / 100;
+        }
       } else {
-        costeEnePropMes = Math.round((consKwhMes * ofertaPx) * 100) / 100;
+        const hasTramos = Array.isArray(pxEneArr) && pxEneArr.length >= 3 && invoiceData?.consumo_p1_kwh !== undefined && invoiceData?.consumo_p1_kwh !== null;
+        if (hasTramos) {
+          const k1 = (Number(invoiceData.consumo_p1_kwh) || 0) / factorDias;
+          const k2 = (Number(invoiceData.consumo_p2_kwh) || 0) / factorDias;
+          const k3 = (Number(invoiceData.consumo_p3_kwh) || 0) / factorDias;
+          costeEnePropMes = Math.round((k1 * Number(pxEneArr[0]) + k2 * Number(pxEneArr[1]) + k3 * Number(pxEneArr[2])) * 100) / 100;
+        } else {
+          costeEnePropMes = Math.round((consKwhMes * ofertaPx) * 100) / 100;
+        }
       }
 
       // Fórmula Oficial Estudio 1895 Several: Diferencia Energía + Diferencia Potencia (con IE + IVA) + Seguros suprimidos
@@ -1428,23 +1525,46 @@
         impProp = baseFacturaMes;
         ahrFact = 0;
       }
-      // Precios por periodo (P1 | P2 | P3) actuales y propuestos (6 decimales exactos como Estudio 1895)
+      // Precios por periodo (P1..P3 en 2.0TD | P1..P6 en 3.0TD/6.1TD) actuales y propuestos
       const hasRealPxAct = invoiceData?.precio_kwh !== undefined && invoiceData?.precio_kwh !== null && Number(invoiceData.precio_kwh) > 0;
       const pxActBase = hasRealPxAct ? Number(invoiceData.precio_kwh) : ((eneActCiclo !== null && consKwhMes > 0) ? (eneActCiclo / consKwhMes) : null);
-      const pxActP1 = Number(invoiceData?.precio_p1_kwh || pxActBase || 0);
-      const pxActP2 = Number(invoiceData?.precio_p2_kwh || pxActBase || pxActP1 || 0);
-      const pxActP3 = Number(invoiceData?.precio_p3_kwh || pxActBase || pxActP1 || 0);
+      const invPxPer = Array.isArray(invoiceData?.precios_energia_periodo_kwh) ? invoiceData.precios_energia_periodo_kwh : [];
+      const pxActP1 = Number(invPxPer[0] || invoiceData?.precio_p1_kwh || (es6Periodos ? 0 : pxActBase) || 0);
+      const pxActP2 = Number(invPxPer[1] || invoiceData?.precio_p2_kwh || (es6Periodos ? 0 : (pxActBase || pxActP1)) || 0);
+      const pxActP3 = Number(invPxPer[2] || invoiceData?.precio_p3_kwh || (es6Periodos ? 0 : (pxActBase || pxActP1)) || 0);
+      const pxActArr6 = [
+        pxActP1,
+        pxActP2,
+        pxActP3,
+        Number(invPxPer[3] || 0),
+        Number(invPxPer[4] || 0),
+        Number(invPxPer[5] || 0)
+      ];
       const pxOfP1 = Number((Array.isArray(pxEneArr) && pxEneArr[0] != null) ? pxEneArr[0] : ofertaPx);
       const pxOfP2 = Number((Array.isArray(pxEneArr) && pxEneArr[1] != null) ? pxEneArr[1] : ofertaPx);
       const pxOfP3 = Number((Array.isArray(pxEneArr) && pxEneArr[2] != null) ? pxEneArr[2] : ofertaPx);
+      const pxOfArr6 = [0, 1, 2, 3, 4, 5].map(i => Number((Array.isArray(pxEneArr) && pxEneArr[i] != null) ? pxEneArr[i] : ofertaPx));
 
-      // Cálculo anual exacto estilo Estudio 1895 (con consumo anual oficial SIPS por periodo cuando existe)
+      // Cálculo anual exacto estilo Estudio 1895 (con consumo anual oficial SIPS en 3 o 6 periodos)
       const factorAnualCiclo = esBimestral ? 12 : (365 / diasCalculo);
-      const sipsConsPer = Array.isArray(sipsRef?.consumo_anual_periodos) ? sipsRef.consumo_anual_periodos : [];
-      const sipsConsTot = Number(sipsRef?.consumo_anual_total_kwh || 0);
       let anualActCalc = anualAct;
       let ahrAnual = 0;
-      if (sipsConsTot > 0 && pxActP1 > 0 && potActCiclo !== null && eneActCiclo !== null) {
+      if (es6Periodos && sipsConsTot > 0 && (pxActBase > 0 || pxActP1 > 0) && potActCiclo !== null && eneActCiclo !== null) {
+        const pxEstMissing = pxActArr6[5] > 0 ? (pxActArr6[5] * 1.04) : (pxActBase || pxActP1);
+        const sumPer6 = sipsConsPer.slice(0, 6).reduce((a, b) => a + (Number(b) || 0), 0);
+        const eneAnAct = sumPer6 > 0
+          ? sipsConsPer.slice(0, 6).reduce((acc, cAn, i) => acc + (Number(cAn) || 0) * (pxActArr6[i] > 0 ? pxActArr6[i] : pxEstMissing), 0)
+          : (sipsConsTot * (pxActBase || pxActP1));
+        const eneAnProp = sumPer6 > 0
+          ? sipsConsPer.slice(0, 6).reduce((acc, cAn, i) => acc + (Number(cAn) || 0) * pxOfArr6[i], 0)
+          : (sipsConsTot * ofertaPx);
+        const potAnAct = potActCiclo * factorAnualCiclo;
+        const potAnProp = potArr6.reduce((acc, kw, i) => acc + kw * Number(pxPotArr[i] ?? pxPot1), 0);
+        const segAnAct = segActCiclo * (esBimestral ? 6 : 12);
+        const fijosReguladosCiclo = Math.max(0, baseFacturaMes - segActCiclo - ((eneActCiclo + potActCiclo) * 1.051126963 * 1.21));
+        anualActCalc = Math.round((((eneAnAct + potAnAct) * 1.051126963 * 1.21) + (fijosReguladosCiclo * factorAnualCiclo) + segAnAct) * 100) / 100;
+        ahrAnual = Math.round((((eneAnAct - eneAnProp) + (potAnAct - potAnProp)) * 1.051126963 * 1.21 + segAnAct) * 100) / 100;
+      } else if (sipsConsTot > 0 && pxActP1 > 0 && potActCiclo !== null && eneActCiclo !== null) {
         const cAn1 = Number(sipsConsPer[0] || 0);
         const cAn2 = Number(sipsConsPer[1] || 0);
         const cAn3 = Number(sipsConsPer[2] || 0);
@@ -1513,11 +1633,11 @@
         }
       }
 
-      // BLOQUE A: Precios propuestos por periodo (Potencia €/kW·día + €/kW·año y Energía €/kWh + Equivalencia Contrato)
+      // BLOQUE A: Precios propuestos por periodo (P1..P3 en 2.0TD | P1..P6 en 3.0TD/6.1TD)
+      const esTarifa20 = !es6Periodos && String(tarifa).toUpperCase().startsWith('2.0');
+      const pxPot3 = (!esTarifa20 && pxPotArr.length >= 3) ? Number(pxPotArr[2] || 0) : 0;
       if (propPotP1El) propPotP1El.innerText = pxPot1 > 0 ? fmtDec(pxPot1 / 365, 6) : "—";
       if (propPotP2El) propPotP2El.innerText = pxPot2 > 0 ? fmtDec(pxPot2 / 365, 6) : "—";
-      const esTarifa20 = String(tarifa).toUpperCase().startsWith('2.0');
-      const pxPot3 = (!esTarifa20 && pxPotArr.length >= 3) ? Number(pxPotArr[2] || 0) : 0;
       if (propPotP3El) propPotP3El.innerText = pxPot3 > 0 ? fmtDec(pxPot3 / 365, 6) : "—";
       if (propPotP1AnioEl) propPotP1AnioEl.innerText = pxPot1 > 0 ? `${fmtDec(pxPot1, 2)} €/kW·año` : "";
       if (propPotP2AnioEl) propPotP2AnioEl.innerText = pxPot2 > 0 ? `${fmtDec(pxPot2, 2)} €/kW·año` : "";
@@ -1525,6 +1645,18 @@
       if (propEneP1El) propEneP1El.innerText = pxOfP1 > 0 ? fmtDec(pxOfP1, 6) : "—";
       if (propEneP2El) propEneP2El.innerText = pxOfP2 > 0 ? fmtDec(pxOfP2, 6) : "—";
       if (propEneP3El) propEneP3El.innerText = pxOfP3 > 0 ? fmtDec(pxOfP3, 6) : "—";
+      if (es6Periodos) {
+        [4, 5, 6].forEach(pNum => {
+          const idx = pNum - 1;
+          const pAn = Number(pxPotArr[idx] || 0);
+          const pDiaEl = document.getElementById('prop-pot-p' + pNum);
+          const pAnEl = document.getElementById('prop-pot-p' + pNum + '-anio');
+          const eEl = document.getElementById('prop-ene-p' + pNum);
+          if (pDiaEl) pDiaEl.innerText = pAn > 0 ? fmtDec(pAn / 365, 6) : "—";
+          if (pAnEl) pAnEl.innerText = pAn > 0 ? `${fmtDec(pAn, 2)} €/kW·año` : "";
+          if (eEl) eEl.innerText = pxOfArr6[idx] > 0 ? fmtDec(pxOfArr6[idx], 6) : "—";
+        });
+      }
 
       if (propContratoNotaEl) {
         const mDto = String(ofertaTar).match(/(\d+(?:[.,]\d+)?)\s*%\s*(?:TE|DTO|DESC)/i);
@@ -1555,19 +1687,19 @@
       const renderDiffBadge = (el, diffEur) => {
         if (!el) return;
         if (diffEur === null || isNaN(diffEur)) {
-          el.className = "inline-block px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 font-mono text-[10px]";
+          el.className = "inline-block whitespace-nowrap px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 font-mono text-[9.5px] sm:text-[10px]";
           el.innerText = "--";
           return;
         }
         const d = Math.round(diffEur * 100) / 100;
         if (d > 0.004) {
-          el.className = "inline-block px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 font-bold text-[10px]";
+          el.className = "inline-block whitespace-nowrap px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 font-bold text-[9.5px] sm:text-[10px]";
           el.innerText = "-" + fmtDec(d, 2) + " €";
         } else if (d < -0.004) {
-          el.className = "inline-block px-1.5 py-0.5 rounded bg-rose-50 text-rose-700 font-bold text-[10px]";
+          el.className = "inline-block whitespace-nowrap px-1.5 py-0.5 rounded bg-rose-50 text-rose-700 font-bold text-[9.5px] sm:text-[10px]";
           el.innerText = "+" + fmtDec(Math.abs(d), 2) + " €";
         } else {
-          el.className = "inline-block px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 font-semibold text-[10px]";
+          el.className = "inline-block whitespace-nowrap px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 font-semibold text-[9.5px] sm:text-[10px]";
           el.innerText = "0,00 €";
         }
       };
@@ -1597,13 +1729,25 @@
       if (segOfEl) segOfEl.innerText = "0,00";
       renderDiffBadge(segDiffEl, valSegAct);
 
-      // BLOQUE C: Estimación anual · precios finales (€/kWh) por periodo (P1 | P2 | P3)
+      // BLOQUE C: Estimación anual · precios finales (€/kWh) por periodo (P1..P3 en 2.0TD | P1..P6 en 3.0TD/6.1TD)
       if (anPxActP1El) anPxActP1El.innerText = pxActP1 > 0 ? fmtDec(pxActP1, 6) : "—";
       if (anPxActP2El) anPxActP2El.innerText = pxActP2 > 0 ? fmtDec(pxActP2, 6) : "—";
       if (anPxActP3El) anPxActP3El.innerText = pxActP3 > 0 ? fmtDec(pxActP3, 6) : "—";
       if (anPxOfP1El) anPxOfP1El.innerText = pxOfP1 > 0 ? fmtDec(pxOfP1, 6) : "—";
       if (anPxOfP2El) anPxOfP2El.innerText = pxOfP2 > 0 ? fmtDec(pxOfP2, 6) : "—";
       if (anPxOfP3El) anPxOfP3El.innerText = pxOfP3 > 0 ? fmtDec(pxOfP3, 6) : "—";
+      if (es6Periodos) {
+        const pxEstAnualMissing = pxActArr6[5] > 0 ? (pxActArr6[5] * 1.04) : (pxActBase || 0);
+        if (anPxActP3El && pxActP3 <= 0 && pxEstAnualMissing > 0) anPxActP3El.innerText = fmtDec(pxEstAnualMissing, 6);
+        [4, 5, 6].forEach(pNum => {
+          const idx = pNum - 1;
+          const actEl = document.getElementById('anual-px-act-p' + pNum);
+          const ofEl = document.getElementById('anual-px-of-p' + pNum);
+          const vAct = pxActArr6[idx] > 0 ? pxActArr6[idx] : pxEstAnualMissing;
+          if (actEl) actEl.innerText = vAct > 0 ? fmtDec(vAct, 6) : "—";
+          if (ofEl) ofEl.innerText = pxOfArr6[idx] > 0 ? fmtDec(pxOfArr6[idx], 6) : "—";
+        });
+      }
 
       // Actualizar badge de ahorro dinámicamente
       const ahrBadgeEl = document.getElementById('estudio-ahorro-ene-badge');
@@ -1780,13 +1924,25 @@
         consTramos = [];
       }
 
+      const es6Manual = /^(3\.0|6\.)/i.test(String(tarifa));
+      const invPotsMan = Array.isArray(detectedInvoiceData?.potencias_periodo_kw) ? detectedInvoiceData.potencias_periodo_kw : [];
+      const invConsMan = Array.isArray(detectedInvoiceData?.consumos_periodo_kwh) ? detectedInvoiceData.consumos_periodo_kwh : [];
+      const potPayload = es6Manual
+        ? [0, 1, 2, 3, 4, 5].map(i => Number(invPotsMan[i] || (i === 0 ? p1Pot : p2Pot) || p1Pot))
+        : [p1Pot, p2Pot];
+      const consPayload = es6Manual
+        ? (invConsMan.length >= 6 && invConsMan.some(x => Number(x) > 0)
+            ? invConsMan.slice(0, 6).map(x => Math.round(((Number(x) || 0) / factorD) * 12))
+            : (cTot ? [0.10, 0.12, 0.15, 0.15, 0.08, 0.40].map(w => Math.round(((Number(cTot) / factorD) * 12) * w)) : []))
+        : consTramos;
+
       const payload = {
         cups: cups,
         tipo_suministro: 'luz',
         tarifa: tarifa,
         zona: 'PENINSULAR',
-        potencias: [p1Pot, p2Pot],
-        consumos: consTramos
+        potencias: potPayload,
+        consumos: consPayload
       };
 
       try {
@@ -1831,24 +1987,50 @@
             const conBonoMayor10 = sinMismaYSinSva.filter(o => Math.round(Number(o.comision_cash_energy_eur) * 0.30) > 10);
             const baseViables = conBonoMayor10.length > 0 ? conBonoMayor10 : sinMismaYSinSva;
 
-            const c150 = baseViables.filter(o => o.precio_energia_promedio && o.precio_energia_promedio >= 0.05 && o.precio_energia_promedio <= 0.150);
-            const c160 = baseViables.filter(o => o.precio_energia_promedio && o.precio_energia_promedio >= 0.05 && o.precio_energia_promedio <= 0.160);
-            const numGrupos = (arr) => new Set(arr.map(x => grupoComp(x.comercializadora))).size;
-            let pool = numGrupos(c150) >= 2 ? c150 : (c160.length > 0 ? c160 : baseViables);
+            const sipsPotsComp = Array.isArray(data.sips?.potencias_w) ? data.sips.potencias_w : [];
+            const sipsConsComp = Array.isArray(data.sips?.consumo_anual_periodos) ? data.sips.consumo_anual_periodos : [];
+            const es6PeriodosComp = /^(3\.0|6\.)/i.test(String(tarifa)) || String(data.sips?.tarifa_acceso) === '019' || (sipsPotsComp.length >= 6 && sipsPotsComp.slice(2).some(x => Number(x) > 0));
 
-            const pxCliente = detectedInvoiceData?.precio_kwh;
-            if (pxCliente) {
-              const mejores = pool.filter(o => o.precio_energia_promedio && o.precio_energia_promedio <= pxCliente);
-              if (numGrupos(mejores) >= 2) pool = mejores;
+            const numGrupos = (arr) => new Set(arr.map(x => grupoComp(x.comercializadora))).size;
+            let pool = baseViables;
+            if (!es6PeriodosComp) {
+              const c150 = baseViables.filter(o => o.precio_energia_promedio && o.precio_energia_promedio >= 0.05 && o.precio_energia_promedio <= 0.150);
+              const c160 = baseViables.filter(o => o.precio_energia_promedio && o.precio_energia_promedio >= 0.05 && o.precio_energia_promedio <= 0.160);
+              pool = numGrupos(c150) >= 2 ? c150 : (c160.length > 0 ? c160 : baseViables);
+
+              const pxCliente = detectedInvoiceData?.precio_kwh;
+              if (pxCliente) {
+                const mejores = pool.filter(o => o.precio_energia_promedio && o.precio_energia_promedio <= pxCliente);
+                if (numGrupos(mejores) >= 2) pool = mejores;
+              }
             }
 
             if (pool.length > 0) {
               const diasCalc = (detectedInvoiceData?.es_bimestral || diasF > 45) ? 30 : (diasF > 0 ? diasF : 30);
               const kwhCiclo = cTot ? (Number(cTot) / factorD) : 200;
+              const invPots6 = Array.isArray(detectedInvoiceData?.potencias_periodo_kw) ? detectedInvoiceData.potencias_periodo_kw : [];
+              const potComp6 = [0, 1, 2, 3, 4, 5].map(i => Number(invPots6[i] || sipsPotsComp[i] || (i === 0 ? p1Pot : (i === 1 ? p2Pot : p1Pot)) || 0));
+              const invCons6 = Array.isArray(detectedInvoiceData?.consumos_periodo_kwh) ? detectedInvoiceData.consumos_periodo_kwh : [];
+              const sumSips6 = sipsConsComp.slice(0, 6).reduce((a, b) => a + (Number(b) || 0), 0);
+              const sumInvComp6 = invCons6.slice(0, 6).reduce((a, b) => a + (Number(b) || 0), 0);
+
               const costeNetoCiclo = (o) => {
                 const pxE = Number(o.precio_energia_promedio || 99);
+                const eArr = Array.isArray(o.precio_energia_eur_kwh) ? o.precio_energia_eur_kwh : [];
                 const pArr = Array.isArray(o.precio_potencia_eur_kw_anio) ? o.precio_potencia_eur_kw_anio : [40, 20];
                 const pot1 = Number(pArr[0] || 40);
+                if (es6PeriodosComp && eArr.length >= 6 && pArr.length >= 6) {
+                  if (sumSips6 > 0) {
+                    const eAn = sipsConsComp.slice(0, 6).reduce((acc, kwh, i) => acc + (Number(kwh) || 0) * Number(eArr[i] ?? pxE), 0);
+                    const pAn = potComp6.reduce((acc, kw, i) => acc + kw * Number(pArr[i] ?? pot1), 0);
+                    return eAn + pAn;
+                  }
+                  const eMes = sumInvComp6 > 0
+                    ? invCons6.slice(0, 6).reduce((acc, kwh, i) => acc + ((Number(kwh) || 0) / factorD) * Number(eArr[i] ?? pxE), 0)
+                    : (kwhCiclo * pxE);
+                  const pMes = potComp6.reduce((acc, kw, i) => acc + kw * Number(pArr[i] ?? pot1), 0) * (diasCalc / 365);
+                  return eMes + pMes;
+                }
                 const pot2 = Number(pArr[1] ?? pot1);
                 return (kwhCiclo * pxE) + ((p1Pot * pot1 + p2Pot * pot2) * (diasCalc / 365));
               };
@@ -1857,7 +2039,7 @@
               const g1 = grupoComp(op1.comercializadora);
               const otraComp = pool.filter(o => grupoComp(o.comercializadora) !== g1)
                 .sort((a, b) => costeNetoCiclo(a) - costeNetoCiclo(b) || (b.comision_cash_energy_eur || 0) - (a.comision_cash_energy_eur || 0));
-              const resto = pool.filter(o => o !== op1 && o !== otraComp[0]);
+              const resto = porCosteTotal.filter(o => o !== op1 && o !== otraComp[0]);
               offers = otraComp.length > 0 ? [op1, otraComp[0], ...resto] : [op1, ...resto];
             }
           }
