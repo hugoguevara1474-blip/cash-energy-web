@@ -1674,9 +1674,9 @@
         }
       }
 
-      const alqVal = (invoiceData?.importe_alquiler !== undefined && invoiceData?.importe_alquiler !== null && Number(invoiceData.importe_alquiler) > 0)
+      const alqVal = (invoiceData?.importe_alquiler !== undefined && invoiceData?.importe_alquiler !== null && Number(invoiceData.importe_alquiler) >= 0)
         ? Math.round((Number(invoiceData.importe_alquiler) / factorDias) * 100) / 100
-        : Math.round((0.026557 * diasCalculo) * 100) / 100;
+        : (es6Periodos ? 0 : Math.round((0.026557 * diasCalculo) * 100) / 100);
       const ieeVal = (invoiceData?.importe_impuesto_electrico !== undefined && invoiceData?.importe_impuesto_electrico !== null && Number(invoiceData.importe_impuesto_electrico) > 0)
         ? Math.round((Number(invoiceData.importe_impuesto_electrico) / factorDias) * 100) / 100
         : Math.round(((costeEnePropMes + costePotPropMes + alqVal) * 0.051126963) * 100) / 100;
@@ -2007,7 +2007,7 @@
 
       const alqVal = (inv.importe_alquiler != null && Number(inv.importe_alquiler) >= 0)
         ? Math.round((Number(inv.importe_alquiler) / factorDias) * 100) / 100
-        : Math.round((0.026557 * diasCalculo) * 100) / 100;
+        : (es6P ? 0 : Math.round((0.026557 * diasCalculo) * 100) / 100);
       const ieeVal = (inv.importe_impuesto_electrico != null && Number(inv.importe_impuesto_electrico) > 0)
         ? Math.round((Number(inv.importe_impuesto_electrico) / factorDias) * 100) / 100
         : Math.round(((costeEnePropMes + costePotPropMes + alqVal) * 0.051126963) * 100) / 100;
@@ -2296,7 +2296,7 @@
                 <span style="display:inline-flex;align-items:center;gap:5px;"><span style="width:7px;height:7px;border-radius:50%;background:#D97706;display:inline-block;"></span>Consumo (perfil estimado)</span>
                 <span style="display:inline-flex;align-items:center;gap:5px;"><span style="width:7px;height:7px;border-radius:50%;background:#10B981;display:inline-block;"></span>Precio de mercado</span>
               </div>
-              <svg width="312" height="136" viewBox="0 0 312 136" style="margin-top:6px;display:block;">
+              <svg width="312" height="140" viewBox="0 0 312 140" style="margin-top:6px;display:block;">
                 <line x1="14" y1="30" x2="298" y2="30" stroke="#F1F5F9" stroke-width="1"/>
                 <line x1="14" y1="70" x2="298" y2="70" stroke="#F1F5F9" stroke-width="1"/>
                 <line x1="14" y1="112" x2="298" y2="112" stroke="#E2E8F0" stroke-width="1"/>
@@ -2321,7 +2321,7 @@
                 <span style="display:inline-flex;align-items:center;gap:5px;"><span style="width:7px;height:7px;border-radius:50%;background:#D97706;display:inline-block;"></span>Consumo anual (kWh)</span>
                 <span style="display:inline-flex;align-items:center;gap:5px;"><span style="width:7px;height:7px;border-radius:50%;background:#0F766E;display:inline-block;"></span>Consumo del ciclo (kWh)</span>
               </div>
-              <svg width="312" height="136" viewBox="0 0 312 136" style="margin-top:6px;display:block;">
+              <svg width="312" height="140" viewBox="0 0 312 140" style="margin-top:6px;display:block;">
                 <line x1="24" y1="28" x2="300" y2="28" stroke="#F1F5F9" stroke-width="1"/>
                 <line x1="24" y1="69" x2="300" y2="69" stroke="#F1F5F9" stroke-width="1"/>
                 <line x1="24" y1="110" x2="300" y2="110" stroke="#E2E8F0" stroke-width="1"/>
@@ -2523,39 +2523,48 @@
 
         const activeOffer = selectedSeveralTariff || (Array.isArray(currentSeveralOffers) && currentSeveralOffers[0]) || null;
         const built = construirPaginasPDFEjecutivoCashEnergy(detectedInvoiceData, activeOffer, lastSeveralSipsData);
-        wrapEl = built.wrapEl;
-        if (document.body && document.body.appendChild) {
-          document.body.appendChild(wrapEl);
-        }
-
-        const imgs = wrapEl.querySelectorAll ? wrapEl.querySelectorAll('img') : [];
+        const imgs = built.wrapEl.querySelectorAll ? built.wrapEl.querySelectorAll('img') : [];
         await Promise.all(Array.from(imgs).map(im => (im.decode ? im.decode().catch(() => {}) : Promise.resolve())));
+
+        const savedScrollX = window.scrollX || window.pageXOffset || 0;
+        const savedScrollY = window.scrollY || window.pageYOffset || 0;
+        const prevScrollBehavior = document.documentElement ? document.documentElement.style.scrollBehavior : '';
+        if (document.documentElement) document.documentElement.style.scrollBehavior = 'auto';
+        if (typeof window.scrollTo === 'function') window.scrollTo(0, 0);
 
         const optPage = {
           margin: [0, 0, 0, 0],
           filename: finalFilename,
           image: { type: 'jpeg', quality: 0.98 },
-          pagebreak: { mode: ['avoid-all'] },
-          html2canvas: { scale: 2, useCORS: true, letterRendering: true, scrollY: 0, windowWidth: 794 },
+          pagebreak: { mode: [] },
+          html2canvas: { scale: 2, useCORS: true, letterRendering: true, scrollX: 0, scrollY: 0 },
           jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
 
-        const worker1 = html2pdf().set(optPage).from(built.page1El);
-        if (typeof worker1.toPdf === 'function') {
-          const pdf = await worker1.toPdf().get('pdf');
+        const workerProbe = html2pdf().set(optPage);
+        if (typeof workerProbe.toCanvas === 'function' && typeof workerProbe.toPdf === 'function') {
+          let canvas1, canvas2, pdf;
+          try {
+            canvas1 = await html2pdf().set(optPage).from(built.page1El).toCanvas().get('canvas');
+            canvas2 = await html2pdf().set(optPage).from(built.page2El).toCanvas().get('canvas');
+            pdf = await html2pdf().set(optPage).from(document.createElement('div')).toPdf().get('pdf');
+          } finally {
+            if (typeof window.scrollTo === 'function') window.scrollTo(savedScrollX, savedScrollY);
+            if (document.documentElement) document.documentElement.style.scrollBehavior = prevScrollBehavior;
+          }
           while (pdf.internal.getNumberOfPages() > 1) {
             pdf.deletePage(pdf.internal.getNumberOfPages());
           }
-          const canvas2 = await html2pdf().set(optPage).from(built.page2El).toCanvas().get('canvas');
+          if (typeof pdf.setPage === 'function') pdf.setPage(1);
+          pdf.addImage(canvas1.toDataURL('image/jpeg', 0.98), 'JPEG', 0, 0, 210, 297);
           pdf.addPage('a4', 'portrait');
           pdf.addImage(canvas2.toDataURL('image/jpeg', 0.98), 'JPEG', 0, 0, 210, 297);
           pdf.save(finalFilename);
         } else {
-          await worker1.save();
+          if (typeof window.scrollTo === 'function') window.scrollTo(savedScrollX, savedScrollY);
+          if (document.documentElement) document.documentElement.style.scrollBehavior = prevScrollBehavior;
+          await workerProbe.from(built.page1El).save();
         }
-
-        if (wrapEl && wrapEl.parentNode) wrapEl.parentNode.removeChild(wrapEl);
-        wrapEl = null;
 
         if (btnTxt) btnTxt.innerText = "✓ ¡Estudio 2 Páginas Descargado!";
         setTimeout(() => {
@@ -3294,18 +3303,25 @@
         potencia_kw: potencia,
         potencia_p1_kw: potP1,
         potencia_p2_kw: potP2,
+        potencias_periodo_kw: Array.isArray(data.potencias_periodo_kw) ? data.potencias_periodo_kw : null,
         consumo_kwh: consumoTotal,
         consumo_p1_kwh: consumoP1,
         consumo_p2_kwh: consumoP2,
         consumo_p3_kwh: consumoP3,
+        consumos_periodo_kwh: Array.isArray(data.consumos_periodo_kwh) ? data.consumos_periodo_kwh : null,
         importe_potencia: impPotencia,
         importe_energia: impEnergia,
+        importe_alquiler: data.importe_alquiler ?? null,
+        importe_impuesto_electrico: data.importe_impuesto_electrico ?? null,
         precio_p1_kwh: pxP1,
         precio_p2_kwh: pxP2,
         precio_p3_kwh: pxP3,
+        precios_energia_periodo_kwh: Array.isArray(data.precios_energia_periodo_kwh) ? data.precios_energia_periodo_kwh : null,
+        precios_potencia_periodo_dia: Array.isArray(data.precios_potencia_periodo_dia) ? data.precios_potencia_periodo_dia : null,
         importe_total: importe,
         importe_mensual: importeMensual,
         dias_facturados: diasFacturados,
+        periodo_fechas: data.periodo_fechas || null,
         es_bimestral: esBimestral,
         precio_kwh: precioKwh,
         coste_seguros: costeSeguros,
