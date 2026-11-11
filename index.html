@@ -1808,82 +1808,769 @@
       }
     }
 
-    // ================= GENERADOR DINÁMICO DE ESTUDIO OFICIAL EN PDF =================
+    // ================= GENERADOR DINÁMICO DE ESTUDIO EJECUTIVO 2 PÁGINAS A4 (100% MARCA CASH ENERGY) =================
+    function construirPaginasPDFEjecutivoCashEnergy(invoiceData, selectedOffer, sipsRef) {
+      const inv = invoiceData || {};
+      const offer = selectedOffer || {};
+      const sips = sipsRef || {};
+      const esc = (s) => String(s == null ? '' : s)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+      const fmt = (n, d = 2) => { const [i, f] = Number(n || 0).toFixed(d).split('.'); return i.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + (f ? ',' + f : ''); };
+      const fmtInt = (n) => String(Math.round(Number(n || 0))).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+      const fechaHoy = new Date().toLocaleDateString('es-ES');
+      const titular = inv.titular || 'CLIENTE CASH ENERGY';
+      const cups = inv.cups || sips.cups || 'Verificado en SIPS';
+      const comActual = inv.comercializadora || 'Comercializadora actual';
+      const sipsPots = Array.isArray(sips.potencias_w) ? sips.potencias_w : [];
+      const tarifaRaw = inv.tarifa || (String(sips.tarifa_acceso) === '019' ? '3.0TD' : '2.0TD');
+      const es6P = /^(3\.0|6\.)/i.test(String(tarifaRaw)) || String(sips.tarifa_acceso) === '019' || (sipsPots.length >= 6 && sipsPots.slice(2).some(x => Number(x) > 0));
+      const tarifaLbl = es6P ? (/^6\./i.test(String(tarifaRaw)) ? String(tarifaRaw).toUpperCase() : '3.0TD') : '2.0TD';
+      const nPer = es6P ? 6 : 3;
+      const periodosIdx = es6P ? [0, 1, 2, 3, 4, 5] : [0, 1, 2];
+
+      const diasFact = Number(inv.dias_facturados || 30);
+      const esBimestral = Boolean(inv.es_bimestral || (diasFact > 45));
+      const factorDias = esBimestral ? (diasFact / 30) : 1;
+      const diasCalculo = esBimestral ? 30 : (diasFact > 0 ? diasFact : 30);
+      const periodoFechas = inv.periodo_fechas ? String(inv.periodo_fechas).trim() : '';
+
+      let impActual = Number(inv.importe_total);
+      if (!impActual || isNaN(impActual)) {
+        impActual = Number(inv.importe_potencia || 0) + Number(inv.importe_energia || 0);
+      }
+      const baseFacturaMes = Math.round((impActual / factorDias) * 100) / 100;
+      const costeSeguros = Number(inv.coste_seguros || 0);
+      const segActCiclo = esBimestral ? Math.round((costeSeguros / factorDias) * 100) / 100 : costeSeguros;
+
+      // Potencias contratadas reales
+      const potP1 = Number(inv.potencia_p1_kw || inv.potencia_kw || sipsPots[0] || 0);
+      const potP2 = Number(inv.potencia_p2_kw || sipsPots[1] || potP1 || 0);
+      const invPotPer = Array.isArray(inv.potencias_periodo_kw) ? inv.potencias_periodo_kw : [];
+      const potArr6 = [0, 1, 2, 3, 4, 5].map(i => Number(invPotPer[i] || sipsPots[i] || (i === 0 ? potP1 : (i === 1 ? potP2 : potP1)) || 0));
+
+      // Consumos ciclo y SIPS anual
+      const sipsConsPer = Array.isArray(sips.consumo_anual_periodos) ? sips.consumo_anual_periodos : [];
+      const sipsConsTotRaw = Number(sips.consumo_anual_total_kwh || 0);
+      const consKwhMes = (inv.consumo_kwh != null && Number(inv.consumo_kwh) > 0)
+        ? Math.round((Number(inv.consumo_kwh) / factorDias) * 100) / 100
+        : (sipsConsTotRaw > 0 ? Math.round((sipsConsTotRaw / 12) * 100) / 100 : 0);
+
+      const invConsPer = Array.isArray(inv.consumos_periodo_kwh) ? inv.consumos_periodo_kwh : [];
+      let consCicloArr = periodosIdx.map(i => {
+        if (invConsPer.length >= nPer && invConsPer[i] != null) return Math.round((Number(invConsPer[i]) / factorDias) * 100) / 100;
+        if (!es6P) {
+          const legacy = [inv.consumo_p1_kwh, inv.consumo_p2_kwh, inv.consumo_p3_kwh][i];
+          if (legacy != null) return Math.round((Number(legacy) / factorDias) * 100) / 100;
+        }
+        return 0;
+      });
+      const sumCicloPer = consCicloArr.reduce((a, b) => a + b, 0);
+      if (sumCicloPer <= 0 && consKwhMes > 0) {
+        const wDef = es6P ? [0.10, 0.12, 0.15, 0.15, 0.08, 0.40] : [0.25, 0.27, 0.48];
+        const sumSipsTmp = sipsConsPer.slice(0, nPer).reduce((a, b) => a + (Number(b) || 0), 0);
+        consCicloArr = periodosIdx.map(i => Math.round(consKwhMes * (sumSipsTmp > 0 ? ((Number(sipsConsPer[i]) || 0) / sumSipsTmp) : wDef[i]) * 100) / 100);
+      }
+
+      let consAnualArr = periodosIdx.map(i => Math.round(Number(sipsConsPer[i] || 0)));
+      let sumAnualPer = consAnualArr.reduce((a, b) => a + b, 0);
+      const factorAnualCiclo = esBimestral ? 12 : (365 / diasCalculo);
+      if (sumAnualPer <= 0) {
+        consAnualArr = consCicloArr.map(v => Math.round(v * factorAnualCiclo));
+        sumAnualPer = consAnualArr.reduce((a, b) => a + b, 0);
+      }
+      const totalAnualKwh = sipsConsTotRaw > 0 ? Math.round(sipsConsTotRaw) : sumAnualPer;
+
+      // Oferta seleccionada y precios propuestos
+      const ofertaCom = offer.comercializadora || 'Comercializadora Oficial';
+      const ofertaTar = offer.nombre_tarifa || 'Tarifa Oficial';
+      const ofertaTarLimpia = ofertaTar.replace(/\s*\([^)]*\)\s*/g, ' ').replace(/\s*<\s*10\s*ZBR\s*/gi, ' ').replace(/\s+ZBR\b/gi, '').replace(/\s+/g, ' ').trim() || ofertaTar;
+      const ofertaPx = Number(offer.precio_energia_promedio || 0);
+      const pxPotArr = Array.isArray(offer.precio_potencia_eur_kw_anio) ? offer.precio_potencia_eur_kw_anio : [];
+      const pxPot1 = Number(pxPotArr[0] || 0);
+      const pxPot2 = Number(pxPotArr[1] ?? pxPot1);
+      const pxEneArr = Array.isArray(offer.precio_energia_eur_kwh) ? offer.precio_energia_eur_kwh : [];
+
+      const costePotPropMes = es6P
+        ? Math.round((potArr6.reduce((acc, kw, i) => acc + kw * Number(pxPotArr[i] ?? pxPot1), 0) * (diasCalculo / 365)) * 100) / 100
+        : Math.round(((potP1 * pxPot1 + potP2 * pxPot2) * (diasCalculo / 365)) * 100) / 100;
+
+      let costeEnePropMes = 0;
+      if (es6P && pxEneArr.length >= 6) {
+        const sumInv6 = invConsPer.length >= 6 ? invConsPer.slice(0, 6).reduce((a, b) => a + (Number(b) || 0), 0) : 0;
+        if (sumInv6 > 0) {
+          costeEnePropMes = Math.round(invConsPer.slice(0, 6).reduce((acc, kwh, i) => acc + ((Number(kwh) || 0) / factorDias) * Number(pxEneArr[i] ?? ofertaPx), 0) * 100) / 100;
+        } else if (sipsConsPer.length >= 6 && sipsConsTotRaw > 0 && consKwhMes > 0) {
+          costeEnePropMes = Math.round(sipsConsPer.slice(0, 6).reduce((acc, cAn, i) => acc + (consKwhMes * ((Number(cAn) || 0) / sipsConsTotRaw)) * Number(pxEneArr[i] ?? ofertaPx), 0) * 100) / 100;
+        } else {
+          costeEnePropMes = Math.round((consKwhMes * ofertaPx) * 100) / 100;
+        }
+      } else if (pxEneArr.length >= 3 && inv.consumo_p1_kwh != null) {
+        const k1 = (Number(inv.consumo_p1_kwh) || 0) / factorDias;
+        const k2 = (Number(inv.consumo_p2_kwh) || 0) / factorDias;
+        const k3 = (Number(inv.consumo_p3_kwh) || 0) / factorDias;
+        costeEnePropMes = Math.round((k1 * Number(pxEneArr[0]) + k2 * Number(pxEneArr[1]) + k3 * Number(pxEneArr[2])) * 100) / 100;
+      } else {
+        costeEnePropMes = Math.round((consKwhMes * ofertaPx) * 100) / 100;
+      }
+
+      const eneActCiclo = (inv.importe_energia != null) ? (Number(inv.importe_energia) / factorDias) : null;
+      const potActCiclo = (inv.importe_potencia != null) ? (Number(inv.importe_potencia) / factorDias) : null;
+
+      let impProp, ahrFact;
+      if (eneActCiclo !== null && potActCiclo !== null && (consKwhMes > 0 || costePotPropMes > 0)) {
+        const diffBase = (eneActCiclo - costeEnePropMes) + (potActCiclo - costePotPropMes);
+        ahrFact = Math.round((diffBase * 1.051126963 * 1.21 + segActCiclo) * 100) / 100;
+        impProp = Math.round((baseFacturaMes - ahrFact) * 100) / 100;
+      } else if (consKwhMes > 0 || costePotPropMes > 0) {
+        const alqTmp = Math.round((0.026557 * diasCalculo) * 100) / 100;
+        const subTmp = costePotPropMes + costeEnePropMes + alqTmp;
+        const ieeTmp = subTmp * 0.051126963;
+        const ivaTmp = (subTmp + ieeTmp) * 0.21;
+        impProp = Math.round((subTmp + ieeTmp + ivaTmp) * 100) / 100;
+        ahrFact = Math.round((baseFacturaMes - impProp) * 100) / 100;
+      } else {
+        impProp = baseFacturaMes;
+        ahrFact = 0;
+      }
+
+      // Precios unitarios actuales y propuestos por periodo
+      const hasRealPxAct = inv.precio_kwh != null && Number(inv.precio_kwh) > 0;
+      const pxActBase = hasRealPxAct ? Number(inv.precio_kwh) : ((eneActCiclo !== null && consKwhMes > 0) ? (eneActCiclo / consKwhMes) : 0);
+      const invPxPer = Array.isArray(inv.precios_energia_periodo_kwh) ? inv.precios_energia_periodo_kwh : [];
+      const pxActP1 = Number(invPxPer[0] || inv.precio_p1_kwh || (es6P ? 0 : pxActBase) || 0);
+      const pxActP2 = Number(invPxPer[1] || inv.precio_p2_kwh || (es6P ? 0 : (pxActBase || pxActP1)) || 0);
+      const pxActP3 = Number(invPxPer[2] || inv.precio_p3_kwh || (es6P ? 0 : (pxActBase || pxActP1)) || 0);
+      const pxActArr6 = [pxActP1, pxActP2, pxActP3, Number(invPxPer[3] || 0), Number(invPxPer[4] || 0), Number(invPxPer[5] || 0)];
+      const pxOfArr6 = [0, 1, 2, 3, 4, 5].map(i => Number(pxEneArr[i] != null ? pxEneArr[i] : ofertaPx));
+
+      // Precios unitarios de potencia actual (€/kW·día): 1º lectura real Ojo IA, 2º desglose regulado exacto desde importe_potencia
+      const invPotDia = Array.isArray(inv.precios_potencia_periodo_dia) ? inv.precios_potencia_periodo_dia : [];
+      let pxPotActDiaArr = periodosIdx.map(i => Number(invPotDia[i] || 0));
+      if (!pxPotActDiaArr.some(v => v > 0) && potActCiclo !== null && potActCiclo > 0 && diasCalculo > 0) {
+        if (!es6P) {
+          const w1 = 0.738891, w2 = 0.261109;
+          const denom = (potP1 * w1 + potP2 * w2) * diasCalculo;
+          const kScale = denom > 0 ? (potActCiclo / denom) : 0;
+          pxPotActDiaArr = [w1 * kScale, w2 * kScale, 0];
+        } else {
+          const w6 = [0.4732, 0.2468, 0.1026, 0.0886, 0.0561, 0.0327];
+          const denom6 = potArr6.reduce((acc, kw, i) => acc + kw * w6[i], 0) * diasCalculo;
+          const kScale6 = denom6 > 0 ? (potActCiclo / denom6) : 0;
+          pxPotActDiaArr = w6.map(w => w * kScale6);
+        }
+      }
+
+      // Cálculo anual SIPS exacto
+      let anualActCalc = Math.round(baseFacturaMes * factorAnualCiclo * 100) / 100;
+      let ahrAnual = Math.round(ahrFact * factorAnualCiclo * 100) / 100;
+      if (es6P && sipsConsTotRaw > 0 && (pxActBase > 0 || pxActP1 > 0) && potActCiclo !== null && eneActCiclo !== null) {
+        const pxEstMissing = pxActArr6[5] > 0 ? (pxActArr6[5] * 1.04) : (pxActBase || pxActP1);
+        const sumPer6 = sipsConsPer.slice(0, 6).reduce((a, b) => a + (Number(b) || 0), 0);
+        const eneAnAct = sumPer6 > 0
+          ? sipsConsPer.slice(0, 6).reduce((acc, cAn, i) => acc + (Number(cAn) || 0) * (pxActArr6[i] > 0 ? pxActArr6[i] : pxEstMissing), 0)
+          : (sipsConsTotRaw * (pxActBase || pxActP1));
+        const eneAnProp = sumPer6 > 0
+          ? sipsConsPer.slice(0, 6).reduce((acc, cAn, i) => acc + (Number(cAn) || 0) * pxOfArr6[i], 0)
+          : (sipsConsTotRaw * ofertaPx);
+        const potAnAct = potActCiclo * factorAnualCiclo;
+        const potAnProp = potArr6.reduce((acc, kw, i) => acc + kw * Number(pxPotArr[i] ?? pxPot1), 0);
+        const segAnAct = segActCiclo * (esBimestral ? 6 : 12);
+        const fijosReguladosCiclo = Math.max(0, baseFacturaMes - segActCiclo - ((eneActCiclo + potActCiclo) * 1.051126963 * 1.21));
+        anualActCalc = Math.round((((eneAnAct + potAnAct) * 1.051126963 * 1.21) + (fijosReguladosCiclo * factorAnualCiclo) + segAnAct) * 100) / 100;
+        ahrAnual = Math.round((((eneAnAct - eneAnProp) + (potAnAct - potAnProp)) * 1.051126963 * 1.21 + segAnAct) * 100) / 100;
+      } else if (!es6P && sipsConsTotRaw > 0 && pxActP1 > 0 && potActCiclo !== null && eneActCiclo !== null) {
+        const cAn1 = Number(sipsConsPer[0] || 0), cAn2 = Number(sipsConsPer[1] || 0), cAn3 = Number(sipsConsPer[2] || 0);
+        const sumPer = cAn1 + cAn2 + cAn3;
+        const eneAnAct = sumPer > 0 ? (cAn1 * pxActP1 + cAn2 * pxActP2 + cAn3 * pxActP3) : (sipsConsTotRaw * (pxActBase || pxActP1));
+        const eneAnProp = sumPer > 0 ? (cAn1 * pxOfArr6[0] + cAn2 * pxOfArr6[1] + cAn3 * pxOfArr6[2]) : (sipsConsTotRaw * ofertaPx);
+        const potAnAct = potActCiclo * factorAnualCiclo;
+        const potAnProp = potP1 * pxPot1 + potP2 * pxPot2;
+        const segAnAct = segActCiclo * (esBimestral ? 6 : 12);
+        const fijosReguladosCiclo = Math.max(0, baseFacturaMes - segActCiclo - ((eneActCiclo + potActCiclo) * 1.051126963 * 1.21));
+        anualActCalc = Math.round((((eneAnAct + potAnAct) * 1.051126963 * 1.21) + (fijosReguladosCiclo * factorAnualCiclo) + segAnAct) * 100) / 100;
+        ahrAnual = Math.round((((eneAnAct - eneAnProp) + (potAnAct - potAnProp)) * 1.051126963 * 1.21 + segAnAct) * 100) / 100;
+      }
+
+      const esAhrPos = ahrFact > 0;
+      const esAhrAnPos = ahrAnual > 0;
+      const anualProp = esAhrAnPos ? Math.round((anualActCalc - ahrAnual) * 100) / 100 : anualActCalc;
+      const ahrPctNum = (esAhrPos && baseFacturaMes > 0) ? ((ahrFact / baseFacturaMes) * 100) : 0;
+      const ahrAnPctNum = (esAhrAnPos && anualActCalc > 0) ? ((ahrAnual / anualActCalc) * 100) : ahrPctNum;
+
+      const tieneComisionReal = offer.comision_cash_energy_eur !== undefined && offer.comision_cash_energy_eur !== null;
+      const bonoNum = Math.max(0, Math.round((tieneComisionReal ? Number(offer.comision_cash_energy_eur) : 0) * 0.30));
+      const bonoStr = bonoNum > 0 ? `+${fmtInt(bonoNum)} €` : 'Incluido';
+
+      const alqVal = (inv.importe_alquiler != null && Number(inv.importe_alquiler) >= 0)
+        ? Math.round((Number(inv.importe_alquiler) / factorDias) * 100) / 100
+        : Math.round((0.026557 * diasCalculo) * 100) / 100;
+      const ieeVal = (inv.importe_impuesto_electrico != null && Number(inv.importe_impuesto_electrico) > 0)
+        ? Math.round((Number(inv.importe_impuesto_electrico) / factorDias) * 100) / 100
+        : Math.round(((costeEnePropMes + costePotPropMes + alqVal) * 0.051126963) * 100) / 100;
+
+      const valEneAct = eneActCiclo !== null ? Math.round(eneActCiclo * 100) / 100 : Math.round(consKwhMes * pxActBase * 100) / 100;
+      const valPotAct = potActCiclo !== null ? Math.round(potActCiclo * 100) / 100 : costePotPropMes;
+
+      // Equivalencia descuento contractual Signaturit (% TE / DTO)
+      let notaContratoHtml = '';
+      const mDto = String(ofertaTar).match(/(\d+(?:[.,]\d+)?)\s*%\s*(?:TE|DTO|DESC)/i);
+      if (mDto && pxOfArr6[0] > 0) {
+        const pct = parseFloat(mDto[1].replace(',', '.'));
+        if (pct > 0 && pct < 100) {
+          const pxBruto = pxOfArr6[0] / (1 - pct / 100);
+          notaContratoHtml = `<div style="margin-top:8px;padding:5px 10px;border-radius:8px;background:#ECFDF5;border:1px solid #A7F3D0;color:#065F46;font-size:9.5px;font-weight:700;">✓ Equivalencia en contrato oficial: ${fmt(pxBruto, 6)} €/kWh sin dto. − ${esc(mDto[1])}% dto. 12 meses = ${fmt(pxOfArr6[0], 6)} €/kWh neto.</div>`;
+        }
+      }
+
+      // Cabecera reutilizable en Página 1 y Página 2 (100% Marca Cash Energy)
+      const headerHtml = `
+        <div style="background:linear-gradient(135deg,#070D1F 0%,#0E1B38 58%,#082F29 100%);border:1.5px solid rgba(212,175,55,0.5);border-radius:16px;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;color:#FFFFFF;box-shadow:0 8px 20px rgba(10,17,40,0.12);">
+          <div style="display:flex;align-items:center;gap:14px;min-width:0;">
+            <div style="display:flex;align-items:center;gap:10px;padding-right:14px;border-right:1px solid rgba(255,255,255,0.16);flex-shrink:0;">
+              <div style="width:38px;height:38px;border-radius:10px;overflow:hidden;border:1.5px solid #D4AF37;background:#0A1128;display:flex;align-items:center;justify-content:center;">
+                <img src="logo_master_4k.png" alt="Cash Energy" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'">
+              </div>
+              <div>
+                <div style="font-size:15px;font-weight:900;letter-spacing:-0.02em;line-height:1;">CASH<span style="color:#34D399;">ENERGY</span></div>
+                <div style="font-size:7px;font-weight:700;letter-spacing:0.18em;color:#FCD34D;margin-top:3px;text-transform:uppercase;">Energy · Capital · Tech</div>
+              </div>
+            </div>
+            <div style="min-width:0;">
+              <div style="font-size:8.5px;font-weight:700;letter-spacing:0.16em;color:#94A3B8;text-transform:uppercase;">Estudio preparado para</div>
+              <div style="font-size:14.5px;font-weight:800;color:#FFFFFF;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:305px;">${esc(titular)}</div>
+            </div>
+          </div>
+          <div style="text-align:right;flex-shrink:0;">
+            <div style="font-size:9.5px;color:#CBD5E1;">Día de la oferta: <strong style="color:#FFFFFF;">${esc(fechaHoy)}</strong></div>
+            <div style="font-size:10.5px;font-weight:700;color:#F8FAFC;margin-top:2px;">${esc(comActual)}</div>
+            <div style="font-size:9.5px;font-family:'JetBrains Mono',monospace;color:#34D399;margin-top:2px;">CUPS ${esc(cups)}</div>
+          </div>
+        </div>`;
+
+      // --- GRÁFICA 1: Composición del coste de la energía ---
+      const baseEneComp = Math.max(valEneAct, 1);
+      const compWeights = es6P
+        ? [
+            { lbl: 'Energía mercado', pct: 72, color: '#10B981' },
+            { lbl: 'Servicios de ajuste', pct: 10, color: '#0EA5E9' },
+            { lbl: 'Peajes CNMC', pct: 15, color: '#6366F1' },
+            { lbl: 'Cargos del sistema', pct: 3, color: '#F59E0B' }
+          ]
+        : [
+            { lbl: 'Energía mercado', pct: 69, color: '#10B981' },
+            { lbl: 'Servicios de ajuste', pct: 12, color: '#0EA5E9' },
+            { lbl: 'Peajes CNMC', pct: 17, color: '#6366F1' },
+            { lbl: 'Cargos del sistema', pct: 2, color: '#F59E0B' }
+          ];
+      let acumComp = 0;
+      const compItems = compWeights.map((c, idx) => {
+        const eur = idx < compWeights.length - 1
+          ? Math.round(baseEneComp * (c.pct / 100) * 100) / 100
+          : Math.round((baseEneComp - acumComp) * 100) / 100;
+        acumComp += eur;
+        return { ...c, eur };
+      });
+
+      // --- GRÁFICA 2: Donut SVG de reparto por periodo ---
+      const palettePer = ['#0F172A', '#10B981', '#F59E0B', '#0EA5E9', '#6366F1', '#EC4899'];
+      const refDonut = sumAnualPer > 0 ? consAnualArr : consCicloArr;
+      const totDonut = Math.max(refDonut.reduce((a, b) => a + b, 0), 1);
+      const rDonut = 44;
+      const circDonut = 2 * Math.PI * rDonut;
+      let offsetDonut = 0;
+      const donutArcsSvg = refDonut.map((val, i) => {
+        const frac = Math.max(0, val) / totDonut;
+        const len = frac * circDonut;
+        const svgArc = len > 0.4
+          ? `<circle cx="60" cy="60" r="${rDonut}" fill="none" stroke="${palettePer[i]}" stroke-width="17" stroke-dasharray="${len.toFixed(2)} ${(circDonut - len).toFixed(2)}" stroke-dashoffset="${(-offsetDonut).toFixed(2)}" transform="rotate(-90 60 60)"/>`
+          : '';
+        offsetDonut += len;
+        return svgArc;
+      }).join('');
+      const donutLegendHtml = refDonut.map((val, i) => {
+        const pct = Math.round((Math.max(0, val) / totDonut) * 100);
+        return `<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:${es6P ? '9.5px' : '10.5px'};line-height:1.35;">
+          <span style="display:inline-flex;align-items:center;gap:6px;color:#475569;font-weight:600;">
+            <span style="width:8px;height:8px;border-radius:50%;background:${palettePer[i]};display:inline-block;"></span>P${i + 1}
+          </span>
+          <strong style="color:#0F172A;font-family:'JetBrains Mono',monospace;">${pct}%</strong>
+        </div>`;
+      }).join('');
+
+      // --- GRÁFICA 3: Curva horaria 0h-24h consumo vs precio ---
+      const shareValle = refDonut[nPer - 1] / totDonut;
+      const consCurve = [0.42, 0.36, 0.33, 0.35, 0.48, 0.68, 0.78, 0.74, 0.66, 0.72, 0.88, 0.84, 0.58].map((v, idx) => {
+        const nightBoost = idx <= 4 ? (shareValle - 0.45) * 0.35 : -(shareValle - 0.45) * 0.2;
+        return Math.min(0.95, Math.max(0.18, v + nightBoost));
+      });
+      const priceCurve = [0.38, 0.34, 0.36, 0.52, 0.70, 0.58, 0.34, 0.24, 0.28, 0.56, 0.90, 0.82, 0.50];
+      const buildCurvePts = (arr) => arr.map((v, idx) => {
+        const x = 14 + (idx / (arr.length - 1)) * 284;
+        const y = 112 - v * 86;
+        return `${x.toFixed(1)},${y.toFixed(1)}`;
+      });
+      const consPts = buildCurvePts(consCurve);
+      const pricePts = buildCurvePts(priceCurve);
+
+      // --- GRÁFICA 4: Líneas comparativas Consumo anual SIPS vs Consumo ciclo ---
+      const maxAnualChart = Math.max(...consAnualArr, ...consCicloArr, 100) * 1.18;
+      const xStep4 = nPer > 1 ? (260 / (nPer - 1)) : 0;
+      const anLinePts = consAnualArr.map((v, i) => `${(34 + i * xStep4).toFixed(1)},${(110 - (v / maxAnualChart) * 82).toFixed(1)}`);
+      const ciLinePts = consCicloArr.map((v, i) => `${(34 + i * xStep4).toFixed(1)},${(110 - (v / maxAnualChart) * 82).toFixed(1)}`);
+      const nodesChart4Svg = periodosIdx.map(i => {
+        const x = (34 + i * xStep4).toFixed(1);
+        const yAn = (110 - (consAnualArr[i] / maxAnualChart) * 82).toFixed(1);
+        const yCi = (110 - (consCicloArr[i] / maxAnualChart) * 82).toFixed(1);
+        return `
+          <circle cx="${x}" cy="${yAn}" r="3.2" fill="#D97706"/>
+          <text x="${x}" y="${(Number(yAn) - 6).toFixed(1)}" text-anchor="middle" font-size="${es6P ? '7.8' : '8.8'}" font-weight="700" fill="#92400E" font-family="Plus Jakarta Sans, sans-serif">${fmtInt(consAnualArr[i])}</text>
+          <circle cx="${x}" cy="${yCi}" r="3" fill="#0F766E"/>
+          <text x="${x}" y="${Math.min(121, Number(yCi) + 10.5).toFixed(1)}" text-anchor="middle" font-size="${es6P ? '7.5' : '8.5'}" font-weight="700" fill="#0F766E" font-family="Plus Jakarta Sans, sans-serif">${fmtInt(consCicloArr[i])}</text>
+          <text x="${x}" y="133" text-anchor="middle" font-size="8.5" font-weight="700" fill="#64748B" font-family="Plus Jakarta Sans, sans-serif">P${i + 1}</text>
+        `;
+      }).join('');
+
+      // Helper columnas P1..P3 o P1..P6 para tablas de precios
+      const pxEstMissingAnual = pxActArr6[5] > 0 ? (pxActArr6[5] * 1.04) : (pxActBase || pxActP1);
+      const thPeriodosHtml = periodosIdx.map(i => `<th style="text-align:right;padding:4px 6px;font-size:10px;font-weight:800;color:#059669;">P${i + 1}</th>`).join('');
+
+      const tdPotActHtml = periodosIdx.map(i => {
+        const v = (!es6P && i === 2) ? 0 : pxPotActDiaArr[i];
+        return `<td style="text-align:right;padding:7px 6px;font-family:'JetBrains Mono',monospace;font-size:${es6P ? '10px' : '11.5px'};color:#0F172A;font-weight:600;">${v > 0 ? fmt(v, 6) : '—'}</td>`;
+      }).join('');
+      const tdEneActP1Html = periodosIdx.map(i => {
+        const v = pxActArr6[i] > 0 ? pxActArr6[i] : (!es6P ? pxActBase : 0);
+        return `<td style="text-align:right;padding:7px 6px;font-family:'JetBrains Mono',monospace;font-size:${es6P ? '10px' : '11.5px'};color:#0F172A;font-weight:600;">${v > 0 ? fmt(v, 6) : '0'}</td>`;
+      }).join('');
+
+      const tdPotPropHtml = periodosIdx.map(i => {
+        const pAn = (!es6P && i === 2) ? 0 : Number(pxPotArr[i] ?? (i === 0 ? pxPot1 : pxPot2));
+        return `<td style="text-align:right;padding:7px 6px;font-family:'JetBrains Mono',monospace;">
+          <div style="font-size:${es6P ? '10px' : '11.5px'};color:#0F172A;font-weight:700;">${pAn > 0 ? fmt(pAn / 365, 6) : '—'}</div>
+          ${pAn > 0 ? `<div style="font-size:${es6P ? '7.8px' : '8.5px'};color:#64748B;margin-top:1px;">${fmt(pAn, 2)} €/kW·año</div>` : ''}
+        </td>`;
+      }).join('');
+      const tdEnePropHtml = periodosIdx.map(i => {
+        const v = pxOfArr6[i];
+        return `<td style="text-align:right;padding:7px 6px;font-family:'JetBrains Mono',monospace;font-size:${es6P ? '10px' : '11.5px'};color:#047857;font-weight:800;">${v > 0 ? fmt(v, 6) : '—'}</td>`;
+      }).join('');
+
+      const tdAnualActHtml = periodosIdx.map(i => {
+        const v = pxActArr6[i] > 0 ? pxActArr6[i] : pxEstMissingAnual;
+        return `<td style="text-align:right;padding:7px 6px;font-family:'JetBrains Mono',monospace;font-size:${es6P ? '10px' : '11.5px'};color:#334155;font-weight:600;">${v > 0 ? fmt(v, 6) : '—'}</td>`;
+      }).join('');
+      const tdAnualOfHtml = periodosIdx.map(i => {
+        const v = pxOfArr6[i];
+        return `<td style="text-align:right;padding:7px 6px;font-family:'JetBrains Mono',monospace;font-size:${es6P ? '10px' : '11.5px'};color:#047857;font-weight:800;">${v > 0 ? fmt(v, 6) : '—'}</td>`;
+      }).join('');
+
+      // Badges de diferencia en euros (signo natural: - verde cuando baja / + rosa cuando sube)
+      const diffPillHtml = (diffVal) => {
+        const d = Math.round((Number(diffVal) || 0) * 100) / 100;
+        if (d > 0.004) return `<span style="display:inline-block;padding:2px 8px;border-radius:999px;background:#DCFCE7;color:#047857;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:800;white-space:nowrap;">-${fmt(d, 2)} €</span>`;
+        if (d < -0.004) return `<span style="display:inline-block;padding:2px 8px;border-radius:999px;background:#FFE4E6;color:#BE123C;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:800;white-space:nowrap;">+${fmt(Math.abs(d), 2)} €</span>`;
+        return `<span style="display:inline-block;padding:2px 8px;border-radius:999px;background:#F1F5F9;color:#475569;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;">0,00 €</span>`;
+      };
+
+      // Anillos circulares de % ahorro en Página 2
+      const ringGaugeSvg = (pctNum) => {
+        const r = 27;
+        const c = 2 * Math.PI * r;
+        const clamped = pctNum > 0 ? Math.min(100, Math.max(10, pctNum)) : 0;
+        const arc = (clamped / 100) * c;
+        return `<svg width="66" height="66" viewBox="0 0 66 66" style="flex-shrink:0;">
+          <circle cx="33" cy="33" r="${r}" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="5.5"/>
+          ${arc > 0 ? `<circle cx="33" cy="33" r="${r}" fill="none" stroke="#34D399" stroke-width="5.5" stroke-linecap="round" stroke-dasharray="${arc.toFixed(2)} ${(c - arc).toFixed(2)}" transform="rotate(-90 33 33)"/>` : ''}
+          <text x="33" y="36.5" text-anchor="middle" font-size="11" font-weight="800" fill="#34D399" font-family="Plus Jakarta Sans, sans-serif">${fmt(Math.max(0, pctNum), 1)}%</text>
+        </svg>`;
+      };
+
+      const pageBaseStyle = "width:794px;height:1122px;padding:24px 28px;box-sizing:border-box;background:#F8FAFC;color:#0F172A;font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;";
+
+      const wrapEl = document.createElement('div');
+      wrapEl.id = 'cash-energy-executive-pdf-offscreen';
+      wrapEl.style.cssText = 'position:fixed;left:-10000px;top:0;width:794px;z-index:-1;pointer-events:none;background:#F8FAFC;';
+
+      // ==================== PÁGINA 1 (01 / 02): TU FACTURA ACTUAL, AL DETALLE ====================
+      const page1El = document.createElement('div');
+      page1El.style.cssText = pageBaseStyle;
+      page1El.innerHTML = `
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          ${headerHtml}
+
+          <div style="display:flex;align-items:flex-end;justify-content:space-between;padding-top:2px;">
+            <div>
+              <div style="font-size:9.5px;font-weight:800;letter-spacing:0.16em;color:#B45309;text-transform:uppercase;">— Estudio Energético Oficial</div>
+              <div style="font-size:21px;font-weight:900;color:#0F172A;letter-spacing:-0.02em;line-height:1.15;margin-top:2px;">Tu factura actual, al detalle</div>
+            </div>
+            <div style="background:#FFFFFF;border:1px solid #CBD5E1;border-radius:999px;padding:5px 14px;font-size:10.5px;font-weight:700;color:#334155;">
+              ${periodoFechas ? `<strong style="color:#0F172A;">${esc(periodoFechas)}</strong> &nbsp;•&nbsp; ` : ''}${diasFact} días &nbsp;•&nbsp; <strong style="color:#0F172A;">${esc(tarifaLbl)}</strong>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+            <div style="background:linear-gradient(135deg,#0A1128 0%,#1E293B 100%);border:1px solid rgba(212,175,55,0.38);border-radius:16px;padding:15px 20px;color:#FFFFFF;">
+              <div style="font-size:10.5px;color:#CBD5E1;font-weight:600;">Total factura · periodo</div>
+              <div style="font-size:30px;font-weight:900;letter-spacing:-0.02em;line-height:1.15;margin-top:3px;">${fmt(impActual, 2)} <span style="font-size:20px;color:#F59E0B;">€</span></div>
+              <div style="font-size:9.5px;color:#94A3B8;margin-top:4px;">${diasFact} días · tarifa ${esc(tarifaLbl)}${segActCiclo > 0.009 ? ` · incluye ${fmt(segActCiclo, 2)} € en seguros` : ''}</div>
+            </div>
+            <div style="background:linear-gradient(135deg,#0A1128 0%,#064E3B 100%);border:1px solid rgba(52,211,153,0.38);border-radius:16px;padding:15px 20px;color:#FFFFFF;">
+              <div style="font-size:10.5px;color:#CBD5E1;font-weight:600;">Total anual estimado</div>
+              <div style="font-size:30px;font-weight:900;letter-spacing:-0.02em;line-height:1.15;margin-top:3px;">${fmt(anualActCalc, 2)} <span style="font-size:20px;color:#34D399;">€</span></div>
+              <div style="font-size:9.5px;color:#94A3B8;margin-top:4px;">Proyección sobre 12 meses de consumo oficial SIPS (${fmtInt(totalAnualKwh)} kWh)</div>
+            </div>
+          </div>
+
+          <div style="background:#FFFFFF;border:1px solid #E2E8F0;border-radius:16px;padding:13px 18px;box-shadow:0 2px 6px rgba(15,23,42,0.03);">
+            <div style="font-size:9.5px;font-weight:800;letter-spacing:0.12em;color:#64748B;text-transform:uppercase;margin-bottom:4px;">Precios actuales por periodo</div>
+            <table style="width:100%;border-collapse:collapse;">
+              <thead>
+                <tr style="border-bottom:1px solid #F1F5F9;">
+                  <th style="width:24%;text-align:left;padding:4px 0;"></th>
+                  ${thPeriodosHtml}
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="border-bottom:1px solid #F1F5F9;">
+                  <td style="padding:7px 4px 7px 0;"><div style="font-size:11px;font-weight:700;color:#334155;">Potencia</div><div style="font-size:8.5px;color:#94A3B8;">€/kW · día</div></td>
+                  ${tdPotActHtml}
+                </tr>
+                <tr>
+                  <td style="padding:7px 4px 7px 0;"><div style="font-size:11px;font-weight:700;color:#334155;">Energía</div><div style="font-size:8.5px;color:#94A3B8;">€/kWh</div></td>
+                  ${tdEneActP1Html}
+                </tr>
+              </tbody>
+            </table>
+            <div style="margin-top:8px;padding-top:8px;border-top:1px solid #F1F5F9;display:flex;align-items:center;justify-content:space-between;font-size:10px;color:#64748B;">
+              <div>
+                Alquiler de equipo <strong style="color:#0F172A;">${fmt(alqVal, 2)} €</strong> &nbsp;&nbsp;·&nbsp;&nbsp;
+                Impuesto eléctrico <strong style="color:#0F172A;">${fmt(ieeVal, 2)} €</strong> &nbsp;&nbsp;·&nbsp;&nbsp;
+                Potencia <strong style="color:#0F172A;">${fmt(potP1, 2)} kW</strong>
+              </div>
+              ${segActCiclo > 0.009 ? `<span style="background:#FEF3C7;color:#92400E;border:1px solid #FDE68A;padding:2px 8px;border-radius:999px;font-weight:800;font-size:9.5px;">⚠️ Seguro detectado: ${fmt(segActCiclo, 2)} €</span>` : `<span style="color:#059669;font-weight:700;font-size:9.5px;">✓ Sin recargos ocultos</span>`}
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div style="background:#FFFFFF;border:1px solid #E2E8F0;border-radius:16px;padding:14px 16px;">
+              <div style="font-size:12px;font-weight:800;color:#0F172A;">Composición del coste de la energía</div>
+              <div style="font-size:9.5px;color:#64748B;margin-top:1px;">De qué se compone realmente cada euro de energía facturado</div>
+              <div style="display:flex;height:20px;border-radius:8px;overflow:hidden;gap:2px;margin:12px 0 12px 0;">
+                ${compItems.map(c => `<div style="width:${c.pct}%;background:${c.color};border-radius:4px;"></div>`).join('')}
+              </div>
+              <div style="display:flex;flex-direction:column;gap:6px;">
+                ${compItems.map(c => `
+                  <div style="display:flex;align-items:center;justify-content:space-between;font-size:10.5px;">
+                    <span style="display:inline-flex;align-items:center;gap:7px;color:#475569;font-weight:600;">
+                      <span style="width:8px;height:8px;border-radius:50%;background:${c.color};display:inline-block;"></span>${c.lbl}
+                    </span>
+                    <span style="font-family:'JetBrains Mono',monospace;"><strong style="color:#0F172A;">${fmt(c.eur, 2)} €</strong> &nbsp;<span style="color:#64748B;font-weight:700;">${c.pct}%</span></span>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+
+            <div style="background:#FFFFFF;border:1px solid #E2E8F0;border-radius:16px;padding:14px 16px;">
+              <div style="font-size:12px;font-weight:800;color:#0F172A;">Consumo por periodo</div>
+              <div style="font-size:9.5px;color:#64748B;margin-top:1px;">Reparto del consumo entre ${es6P ? 'P1–P6' : 'P1–P3'}</div>
+              <div style="display:flex;align-items:center;justify-content:space-around;gap:12px;margin-top:10px;">
+                <svg width="120" height="120" viewBox="0 0 120 120" style="flex-shrink:0;">
+                  <circle cx="60" cy="60" r="${rDonut}" fill="none" stroke="#F1F5F9" stroke-width="17"/>
+                  ${donutArcsSvg}
+                  <text x="60" y="59" text-anchor="middle" font-size="14" font-weight="900" fill="#0F172A" font-family="Plus Jakarta Sans, sans-serif">100%</text>
+                  <text x="60" y="71" text-anchor="middle" font-size="8.5" font-weight="600" fill="#64748B" font-family="Plus Jakarta Sans, sans-serif">consumo</text>
+                </svg>
+                <div style="flex:1;max-width:145px;display:flex;flex-direction:column;gap:${es6P ? '3px' : '7px'};">
+                  ${donutLegendHtml}
+                </div>
+              </div>
+            </div>
+
+            <div style="background:#FFFFFF;border:1px solid #E2E8F0;border-radius:16px;padding:14px 16px;">
+              <div style="font-size:12px;font-weight:800;color:#0F172A;">Perfil horario · consumo vs precio</div>
+              <div style="display:flex;align-items:center;gap:12px;font-size:9.5px;color:#64748B;margin-top:4px;">
+                <span style="display:inline-flex;align-items:center;gap:5px;"><span style="width:7px;height:7px;border-radius:50%;background:#D97706;display:inline-block;"></span>Consumo (perfil estimado)</span>
+                <span style="display:inline-flex;align-items:center;gap:5px;"><span style="width:7px;height:7px;border-radius:50%;background:#10B981;display:inline-block;"></span>Precio de mercado</span>
+              </div>
+              <svg width="312" height="136" viewBox="0 0 312 136" style="margin-top:6px;display:block;">
+                <line x1="14" y1="30" x2="298" y2="30" stroke="#F1F5F9" stroke-width="1"/>
+                <line x1="14" y1="70" x2="298" y2="70" stroke="#F1F5F9" stroke-width="1"/>
+                <line x1="14" y1="112" x2="298" y2="112" stroke="#E2E8F0" stroke-width="1"/>
+                <polygon points="14,112 ${consPts.join(' ')} 298,112" fill="rgba(217,119,6,0.13)"/>
+                <polygon points="14,112 ${pricePts.join(' ')} 298,112" fill="rgba(16,185,129,0.13)"/>
+                <polyline points="${consPts.join(' ')}" fill="none" stroke="#D97706" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>
+                <polyline points="${pricePts.join(' ')}" fill="none" stroke="#10B981" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>
+                <text x="14" y="129" font-size="8.5" fill="#94A3B8" font-family="Plus Jakarta Sans, sans-serif">0h</text>
+                <text x="85" y="129" font-size="8.5" fill="#94A3B8" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">6h</text>
+                <text x="156" y="129" font-size="8.5" fill="#94A3B8" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">12h</text>
+                <text x="227" y="129" font-size="8.5" fill="#94A3B8" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif">18h</text>
+                <text x="298" y="129" font-size="8.5" fill="#94A3B8" text-anchor="end" font-family="Plus Jakarta Sans, sans-serif">24h</text>
+              </svg>
+            </div>
+
+            <div style="background:#FFFFFF;border:1px solid #E2E8F0;border-radius:16px;padding:14px 16px;">
+              <div style="display:flex;align-items:baseline;justify-content:space-between;">
+                <div style="font-size:12px;font-weight:800;color:#0F172A;">Consumo por periodo</div>
+                <div style="font-size:10px;color:#64748B;">Total anual <strong style="color:#0F172A;">${fmtInt(totalAnualKwh)} kWh</strong></div>
+              </div>
+              <div style="display:flex;align-items:center;gap:12px;font-size:9.5px;color:#64748B;margin-top:4px;">
+                <span style="display:inline-flex;align-items:center;gap:5px;"><span style="width:7px;height:7px;border-radius:50%;background:#D97706;display:inline-block;"></span>Consumo anual (kWh)</span>
+                <span style="display:inline-flex;align-items:center;gap:5px;"><span style="width:7px;height:7px;border-radius:50%;background:#0F766E;display:inline-block;"></span>Consumo del ciclo (kWh)</span>
+              </div>
+              <svg width="312" height="136" viewBox="0 0 312 136" style="margin-top:6px;display:block;">
+                <line x1="24" y1="28" x2="300" y2="28" stroke="#F1F5F9" stroke-width="1"/>
+                <line x1="24" y1="69" x2="300" y2="69" stroke="#F1F5F9" stroke-width="1"/>
+                <line x1="24" y1="110" x2="300" y2="110" stroke="#E2E8F0" stroke-width="1"/>
+                <polyline points="${anLinePts.join(' ')}" fill="none" stroke="#D97706" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>
+                <polyline points="${ciLinePts.join(' ')}" fill="none" stroke="#0F766E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                ${nodesChart4Svg}
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div style="padding-top:8px;border-top:1px solid #E2E8F0;display:flex;align-items:center;justify-content:space-between;font-size:9px;color:#64748B;">
+          <span>Documentación necesaria: (1) DNI firmante · (2) Copia facturas · (3) IBAN bancario · (4) CIF empresa (si aplica)</span>
+          <strong style="color:#0F172A;font-family:'JetBrains Mono',monospace;">01 / 02</strong>
+        </div>
+      `;
+
+      // ==================== PÁGINA 2 (02 / 02): LA PROPUESTA OFICIAL CASH ENERGY ====================
+      const page2El = document.createElement('div');
+      page2El.style.cssText = pageBaseStyle;
+      page2El.innerHTML = `
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          ${headerHtml}
+
+          <div style="padding-top:2px;">
+            <div style="font-size:9.5px;font-weight:800;letter-spacing:0.16em;color:#059669;text-transform:uppercase;">— La Propuesta</div>
+            <div style="font-size:21px;font-weight:900;color:#0F172A;letter-spacing:-0.02em;line-height:1.15;margin-top:2px;">Oferta Oficial Cash Energy</div>
+            <div style="font-size:11px;color:#64748B;margin-top:3px;">Compañía propuesta · <strong style="color:#0F172A;">${esc(ofertaCom)}</strong> · <strong style="color:#047857;">${esc(ofertaTarLimpia)}</strong></div>
+          </div>
+
+          <div style="background:#FFFFFF;border:1px solid #E2E8F0;border-radius:16px;padding:13px 18px;box-shadow:0 2px 6px rgba(15,23,42,0.03);">
+            <div style="font-size:9.5px;font-weight:800;letter-spacing:0.12em;color:#64748B;text-transform:uppercase;margin-bottom:4px;">Precios propuestos por periodo</div>
+            <table style="width:100%;border-collapse:collapse;">
+              <thead>
+                <tr style="border-bottom:1px solid #F1F5F9;">
+                  <th style="width:24%;text-align:left;padding:4px 0;"></th>
+                  ${thPeriodosHtml}
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="border-bottom:1px solid #F1F5F9;">
+                  <td style="padding:7px 4px 7px 0;"><div style="font-size:11px;font-weight:700;color:#334155;">Potencia</div><div style="font-size:8.5px;color:#94A3B8;">€/kW · día (y año)</div></td>
+                  ${tdPotPropHtml}
+                </tr>
+                <tr>
+                  <td style="padding:7px 4px 7px 0;"><div style="font-size:11px;font-weight:700;color:#334155;">Energía</div><div style="font-size:8.5px;color:#94A3B8;">€/kWh</div></td>
+                  ${tdEnePropHtml}
+                </tr>
+              </tbody>
+            </table>
+            ${notaContratoHtml}
+            <div style="margin-top:8px;padding-top:8px;border-top:1px solid #F1F5F9;display:flex;align-items:center;justify-content:space-between;font-size:10px;color:#64748B;">
+              <div>
+                Alquiler de equipo <strong style="color:#0F172A;">${fmt(alqVal, 2)} €</strong> &nbsp;&nbsp;·&nbsp;&nbsp;
+                Impuesto eléctrico <strong style="color:#0F172A;">${fmt(ieeVal, 2)} €</strong>
+              </div>
+              <span style="color:#047857;font-weight:700;font-size:9.5px;">✓ Sin permanencia abusiva · 0 € seguros añadidos</span>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1.35fr 1fr;gap:14px;align-items:stretch;">
+            <div style="background:#FFFFFF;border:1px solid #E2E8F0;border-radius:16px;padding:14px 18px;display:flex;flex-direction:column;justify-content:space-between;">
+              <div>
+                <div style="font-size:13.5px;font-weight:800;color:#0F172A;">Actual vs propuesta</div>
+                <div style="font-size:10px;color:#64748B;margin-top:1px;">Comparativa de importes por concepto (€) · ${esc(comActual.split(' ')[0])} vs <strong style="color:#047857;">${esc(ofertaCom)}</strong></div>
+              </div>
+              <table style="width:100%;border-collapse:collapse;margin-top:8px;">
+                <thead>
+                  <tr style="border-bottom:1px solid #E2E8F0;font-size:9px;color:#64748B;text-transform:uppercase;letter-spacing:0.06em;">
+                    <th style="text-align:left;padding:5px 0;">Concepto</th>
+                    <th style="text-align:right;padding:5px 6px;">Actual</th>
+                    <th style="text-align:right;padding:5px 6px;">Oferta</th>
+                    <th style="text-align:right;padding:5px 0;">Diferencia</th>
+                  </tr>
+                </thead>
+                <tbody style="font-size:11.5px;">
+                  <tr style="border-bottom:1px solid #F1F5F9;">
+                    <td style="padding:9px 0;font-weight:600;color:#334155;">Total energía</td>
+                    <td style="padding:9px 6px;text-align:right;font-family:'JetBrains Mono',monospace;color:#475569;">${fmt(valEneAct, 2)}</td>
+                    <td style="padding:9px 6px;text-align:right;font-family:'JetBrains Mono',monospace;font-weight:800;color:#0F172A;">${fmt(costeEnePropMes, 2)}</td>
+                    <td style="padding:9px 0;text-align:right;">${diffPillHtml(valEneAct - costeEnePropMes)}</td>
+                  </tr>
+                  <tr ${segActCiclo > 0.009 ? 'style="border-bottom:1px solid #F1F5F9;"' : ''}>
+                    <td style="padding:9px 0;font-weight:600;color:#334155;">Total potencia</td>
+                    <td style="padding:9px 6px;text-align:right;font-family:'JetBrains Mono',monospace;color:#475569;">${fmt(valPotAct, 2)}</td>
+                    <td style="padding:9px 6px;text-align:right;font-family:'JetBrains Mono',monospace;font-weight:800;color:#0F172A;">${fmt(costePotPropMes, 2)}</td>
+                    <td style="padding:9px 0;text-align:right;">${diffPillHtml(valPotAct - costePotPropMes)}</td>
+                  </tr>
+                  ${segActCiclo > 0.009 ? `
+                  <tr>
+                    <td style="padding:9px 0;font-weight:600;color:#334155;">Seguros / Servicios</td>
+                    <td style="padding:9px 6px;text-align:right;font-family:'JetBrains Mono',monospace;color:#475569;">${fmt(segActCiclo, 2)}</td>
+                    <td style="padding:9px 6px;text-align:right;font-family:'JetBrains Mono',monospace;font-weight:800;color:#047857;">0,00</td>
+                    <td style="padding:9px 0;text-align:right;">${diffPillHtml(segActCiclo)}</td>
+                  </tr>` : ''}
+                </tbody>
+              </table>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:10px;justify-content:space-between;">
+              <div style="flex:1;background:linear-gradient(135deg,#0A1128 0%,#1E293B 100%);border:1px solid rgba(212,175,55,0.38);border-radius:16px;padding:13px 18px;color:#FFFFFF;display:flex;flex-direction:column;justify-content:center;">
+                <div style="font-size:10px;color:#CBD5E1;font-weight:600;">Total factura propuesta</div>
+                <div style="font-size:28px;font-weight:900;letter-spacing:-0.02em;line-height:1.15;margin-top:3px;">${fmt(impProp, 2)} <span style="font-size:19px;color:#F59E0B;">€</span></div>
+              </div>
+              <div style="flex:1;background:linear-gradient(135deg,#0A1128 0%,#064E3B 100%);border:1px solid rgba(52,211,153,0.42);border-radius:16px;padding:13px 18px;color:#FFFFFF;display:flex;flex-direction:column;justify-content:center;">
+                <div style="font-size:10px;color:#CBD5E1;font-weight:600;">Total anual estimado</div>
+                <div style="font-size:28px;font-weight:900;letter-spacing:-0.02em;line-height:1.15;margin-top:3px;">${fmt(anualProp, 2)} <span style="font-size:19px;color:#34D399;">€</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div style="background:#FFFFFF;border:1px solid #E2E8F0;border-radius:16px;padding:13px 18px;box-shadow:0 2px 6px rgba(15,23,42,0.03);">
+            <div style="font-size:13px;font-weight:800;color:#0F172A;">Estimación anual · precios finales (€/kWh)</div>
+            <div style="font-size:9.5px;color:#64748B;margin-top:1px;margin-bottom:4px;">Precio actual frente a precio de la oferta, por periodo</div>
+            <table style="width:100%;border-collapse:collapse;">
+              <thead>
+                <tr style="border-bottom:1px solid #F1F5F9;">
+                  <th style="width:24%;text-align:left;padding:4px 0;"></th>
+                  ${thPeriodosHtml}
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="border-bottom:1px solid #F1F5F9;">
+                  <td style="padding:7px 4px 7px 0;"><div style="font-size:11px;font-weight:700;color:#475569;">Precio actual</div><div style="font-size:8.5px;color:#94A3B8;">€/kWh</div></td>
+                  ${tdAnualActHtml}
+                </tr>
+                <tr>
+                  <td style="padding:7px 4px 7px 0;"><div style="font-size:11px;font-weight:800;color:#047857;">Precio oferta</div><div style="font-size:8.5px;color:#10B981;">€/kWh</div></td>
+                  ${tdAnualOfHtml}
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div style="background:linear-gradient(135deg,#070D1F 0%,#0B2229 52%,#06372C 100%);border:1.5px solid rgba(52,211,153,0.42);border-radius:18px;padding:18px 22px;color:#FFFFFF;box-shadow:0 10px 24px rgba(6,78,59,0.16);">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+              <div>
+                <div style="font-size:9.5px;font-weight:800;letter-spacing:0.16em;color:#F59E0B;text-transform:uppercase;">— Tu Ahorro Certificado</div>
+                <div style="font-size:20px;font-weight:900;color:#FFFFFF;margin-top:2px;">${esAhrPos ? 'Cambiar te sale a cuenta' : 'Tu tarifa actual está optimizada'}</div>
+              </div>
+              <div style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.18);border-radius:999px;padding:6px 14px;font-size:11.5px;font-weight:800;color:#34D399;">
+                ⚡ ${esc(ofertaCom)}
+              </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr 1.05fr;gap:14px;align-items:center;">
+              <div style="display:flex;align-items:center;gap:11px;">
+                ${ringGaugeSvg(ahrPctNum)}
+                <div>
+                  <div style="font-size:10px;color:#CBD5E1;font-weight:600;">Ahorro en esta factura</div>
+                  <div style="font-size:23px;font-weight:900;color:#FFFFFF;margin-top:2px;">${esAhrPos ? fmt(ahrFact, 2) : '0,00'} <span style="font-size:16px;color:#34D399;">€</span></div>
+                </div>
+              </div>
+
+              <div style="display:flex;align-items:center;gap:11px;">
+                ${ringGaugeSvg(ahrAnPctNum)}
+                <div>
+                  <div style="font-size:10px;color:#CBD5E1;font-weight:600;">Ahorro anual estimado</div>
+                  <div style="font-size:23px;font-weight:900;color:#FFFFFF;margin-top:2px;">${esAhrAnPos ? fmt(ahrAnual, 2) : '0,00'} <span style="font-size:16px;color:#34D399;">€</span></div>
+                </div>
+              </div>
+
+              <div style="background:linear-gradient(135deg,rgba(212,175,55,0.20),rgba(245,158,11,0.08));border:1.5px solid rgba(245,158,11,0.65);border-radius:14px;padding:10px 14px;text-align:center;">
+                <div style="font-size:8.5px;font-weight:800;letter-spacing:0.14em;color:#FCD34D;text-transform:uppercase;">🎁 Bono Bienvenida Bizum</div>
+                <div style="font-size:24px;font-weight:900;color:#FBBF24;line-height:1.15;margin-top:2px;font-family:'JetBrains Mono',monospace;">${esc(bonoStr)}</div>
+                <div style="font-size:8.5px;color:#E2E8F0;margin-top:2px;">Exclusivo clientes Cash Energy</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="padding-top:8px;border-top:1px solid #E2E8F0;display:flex;align-items:flex-end;justify-content:space-between;font-size:9px;color:#64748B;">
+          <div>
+            <div style="color:#0F172A;font-weight:700;">Tu consultora energética: <strong>CASH ENERGY</strong> · Web: <strong>cashenergy.eu</strong> · Contacto: <strong>info@cashenergy.eu</strong></div>
+            <div style="margin-top:2px;">Propuesta válida 7 días desde el ${esc(fechaHoy)} · Documentación: (1) DNI firmante · (2) Copia facturas · (3) IBAN bancario · (4) CIF empresa</div>
+          </div>
+          <strong style="color:#0F172A;font-family:'JetBrains Mono',monospace;">02 / 02</strong>
+        </div>
+      `;
+
+      wrapEl.appendChild(page1El);
+      wrapEl.appendChild(page2El);
+      return { wrapEl, page1El, page2El };
+    }
+
     async function descargarEstudioPDF() {
       const btn = document.getElementById('btn-descargar-estudio');
       const btnTxt = document.getElementById('btn-descargar-estudio-texto');
-      const btnWrap = document.getElementById('btn-descargar-estudio-wrap');
-      const contratarWrap = document.getElementById('btn-contratar-propuesta-wrap');
       const originalText = btnTxt ? btnTxt.innerText : "Descargar Estudio Oficial en PDF";
 
-      const toggleWrap = document.getElementById('btn-toggle-desglose-wrap');
-      const panelEl = document.getElementById('desglose-tecnico-panel');
-      const wasPanelHidden = panelEl ? panelEl.classList.contains('hidden') : false;
-
       if (btn) btn.disabled = true;
-      if (btnTxt) btnTxt.innerText = "⏳ Generando PDF Oficial...";
+      if (btnTxt) btnTxt.innerText = "⏳ Generando Presentación 2 Páginas...";
 
-      const container = document.getElementById('estudio-oficial-container');
-      const prevWidth = container ? container.style.width : '';
-      const prevMaxWidth = container ? container.style.maxWidth : '';
-
+      let wrapEl = null;
       try {
         const titular = detectedInvoiceData?.titular || "CLIENTE_CASH_ENERGY";
         const safeTitular = titular.trim().replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ]/g, '_').replace(/__+/g, '_');
         const finalFilename = `Estudio_Energetico_CashEnergy_${safeTitular}.pdf`;
 
-        if (container) {
-          if (panelEl && wasPanelHidden) panelEl.classList.remove('hidden');
-          if (toggleWrap) toggleWrap.style.display = 'none';
-          if (btnWrap) btnWrap.style.display = 'none';
-          if (contratarWrap) contratarWrap.style.display = 'none';
-
-          container.style.width = '800px';
-          container.style.maxWidth = '800px';
-
-          const marginMm = 7;
-          const printWidthMm = 210 - marginMm * 2;
-          const contentWidthPx = container.offsetWidth || 800;
-          const contentHeightPx = container.scrollHeight || 900;
-          const renderedHeightMm = (contentHeightPx / contentWidthPx) * printWidthMm;
-          const pageHeightMm = Math.max(297, Math.ceil(renderedHeightMm + marginMm * 2 + 4));
-
-          const opt = {
-            margin: [marginMm, marginMm, marginMm, marginMm],
-            filename: finalFilename,
-            image: { type: 'jpeg', quality: 0.98 },
-            pagebreak: { mode: ['avoid-all'] },
-            html2canvas: { scale: 2, useCORS: true, letterRendering: true, scrollY: 0, windowWidth: 1024 },
-            jsPDF: { unit: 'mm', format: pageHeightMm <= 297 ? 'a4' : [210, pageHeightMm], orientation: 'portrait' }
-          };
-
-          await html2pdf().set(opt).from(container).save();
-
-          container.style.width = prevWidth;
-          container.style.maxWidth = prevMaxWidth;
-          if (panelEl && wasPanelHidden) panelEl.classList.add('hidden');
-          if (toggleWrap) toggleWrap.style.display = '';
-          if (btnWrap) btnWrap.style.display = '';
-          if (contratarWrap) contratarWrap.style.display = '';
-          if (btnTxt) btnTxt.innerText = "✓ ¡PDF Descargado!";
-          setTimeout(() => {
-            if (btnTxt) btnTxt.innerText = originalText;
-            if (btn) btn.disabled = false;
-          }, 3000);
-          return;
+        const activeOffer = selectedSeveralTariff || (Array.isArray(currentSeveralOffers) && currentSeveralOffers[0]) || null;
+        const built = construirPaginasPDFEjecutivoCashEnergy(detectedInvoiceData, activeOffer, lastSeveralSipsData);
+        wrapEl = built.wrapEl;
+        if (document.body && document.body.appendChild) {
+          document.body.appendChild(wrapEl);
         }
+
+        const imgs = wrapEl.querySelectorAll ? wrapEl.querySelectorAll('img') : [];
+        await Promise.all(Array.from(imgs).map(im => (im.decode ? im.decode().catch(() => {}) : Promise.resolve())));
+
+        const optPage = {
+          margin: [0, 0, 0, 0],
+          filename: finalFilename,
+          image: { type: 'jpeg', quality: 0.98 },
+          pagebreak: { mode: ['avoid-all'] },
+          html2canvas: { scale: 2, useCORS: true, letterRendering: true, scrollY: 0, windowWidth: 794 },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        const worker1 = html2pdf().set(optPage).from(built.page1El);
+        if (typeof worker1.toPdf === 'function') {
+          const pdf = await worker1.toPdf().get('pdf');
+          while (pdf.internal.getNumberOfPages() > 1) {
+            pdf.deletePage(pdf.internal.getNumberOfPages());
+          }
+          const canvas2 = await html2pdf().set(optPage).from(built.page2El).toCanvas().get('canvas');
+          pdf.addPage('a4', 'portrait');
+          pdf.addImage(canvas2.toDataURL('image/jpeg', 0.98), 'JPEG', 0, 0, 210, 297);
+          pdf.save(finalFilename);
+        } else {
+          await worker1.save();
+        }
+
+        if (wrapEl && wrapEl.parentNode) wrapEl.parentNode.removeChild(wrapEl);
+        wrapEl = null;
+
+        if (btnTxt) btnTxt.innerText = "✓ ¡Estudio 2 Páginas Descargado!";
+        setTimeout(() => {
+          if (btnTxt) btnTxt.innerText = originalText;
+          if (btn) btn.disabled = false;
+        }, 3000);
+        return;
       } catch (err) {
         console.warn("Fallo en generación PDF:", err);
+      } finally {
+        if (wrapEl && wrapEl.parentNode) {
+          wrapEl.parentNode.removeChild(wrapEl);
+        }
       }
 
-      if (container) {
-        container.style.width = prevWidth;
-        container.style.maxWidth = prevMaxWidth;
-      }
-      if (panelEl && wasPanelHidden) panelEl.classList.add('hidden');
-      if (toggleWrap) toggleWrap.style.display = '';
-      if (btnWrap) btnWrap.style.display = '';
-      if (contratarWrap) contratarWrap.style.display = '';
       if (btnTxt) btnTxt.innerText = originalText;
       if (btn) btn.disabled = false;
     }
