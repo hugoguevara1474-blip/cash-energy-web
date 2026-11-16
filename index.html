@@ -2731,13 +2731,33 @@
                 const pot2 = Number(pArr[1] ?? pot1);
                 return (kwhCiclo * pxE) + ((p1Pot * pot1 + p2Pot * pot2) * (diasCalc / 365));
               };
-              const porCosteTotal = [...pool].sort((a, b) => costeNetoCiclo(a) - costeNetoCiclo(b) || (b.comision_cash_energy_eur || 0) - (a.comision_cash_energy_eur || 0));
-              const op1 = porCosteTotal[0];
-              const g1 = grupoComp(op1.comercializadora);
-              const otraComp = pool.filter(o => grupoComp(o.comercializadora) !== g1)
-                .sort((a, b) => costeNetoCiclo(a) - costeNetoCiclo(b) || (b.comision_cash_energy_eur || 0) - (a.comision_cash_energy_eur || 0));
-              const resto = porCosteTotal.filter(o => o !== op1 && o !== otraComp[0]);
-              offers = otraComp.length > 0 ? [op1, otraComp[0], ...resto] : [op1, ...resto];
+              let offersOrdered;
+              if (es6PeriodosComp) {
+                // Algoritmo Punto Dulce para Hoteles y Grandes Cuentas (3.0TD / 6.1TD):
+                // Dentro de las tarifas que garantizan un ahorro excelente (hasta +10% del coste mínimo),
+                // se prioriza la tarifa con MAYOR COMISIÓN para Cash Energy.
+                const cMin = Math.min(...pool.map(costeNetoCiclo));
+                const umbralDulce = cMin * 1.10;
+                const candidatasDulce = pool.filter(o => costeNetoCiclo(o) <= umbralDulce);
+                const pool30 = candidatasDulce.length > 0 ? candidatasDulce : pool;
+                const porComisionPuntoDulce = [...pool30].sort((a, b) => (Number(b.comision_cash_energy_eur) || 0) - (Number(a.comision_cash_energy_eur) || 0) || costeNetoCiclo(a) - costeNetoCiclo(b));
+                const op1 = porComisionPuntoDulce[0];
+                const g1 = grupoComp(op1.comercializadora);
+                const otraComp = pool30.filter(o => grupoComp(o.comercializadora) !== g1)
+                  .sort((a, b) => (Number(b.comision_cash_energy_eur) || 0) - (Number(a.comision_cash_energy_eur) || 0) || costeNetoCiclo(a) - costeNetoCiclo(b));
+                const resto = porComisionPuntoDulce.filter(o => o !== op1 && o !== otraComp[0]);
+                offersOrdered = otraComp.length > 0 ? [op1, otraComp[0], ...resto] : [op1, ...resto];
+              } else {
+                // Modo Doméstico 2.0TD: Ahorro puro y precio bajo al céntimo
+                const porCosteTotal = [...pool].sort((a, b) => costeNetoCiclo(a) - costeNetoCiclo(b) || (b.comision_cash_energy_eur || 0) - (a.comision_cash_energy_eur || 0));
+                const op1 = porCosteTotal[0];
+                const g1 = grupoComp(op1.comercializadora);
+                const otraComp = pool.filter(o => grupoComp(o.comercializadora) !== g1)
+                  .sort((a, b) => costeNetoCiclo(a) - costeNetoCiclo(b) || (b.comision_cash_energy_eur || 0) - (a.comision_cash_energy_eur || 0));
+                const resto = porCosteTotal.filter(o => o !== op1 && o !== otraComp[0]);
+                offersOrdered = otraComp.length > 0 ? [op1, otraComp[0], ...resto] : [op1, ...resto];
+              }
+              offers = offersOrdered;
             }
           }
 
