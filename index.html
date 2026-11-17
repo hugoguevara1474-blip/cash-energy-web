@@ -483,7 +483,7 @@
                     <div class="text-2xl sm:text-3xl font-black font-mono text-white mt-1" id="estudio-factura-actual">51,68 €</div>
                     <div class="text-[11px] text-slate-300 font-medium mt-0.5" id="estudio-periodo-lbl">Periodo facturado (35 días)</div>
                     <div class="mt-2.5 pt-2 border-t border-slate-800 text-[10px] text-slate-400 font-mono flex justify-between">
-                      <span>Proyección anual actual:</span>
+                      <span>Proyección anual actual (IVA incl.):</span>
                       <span class="font-bold text-slate-200" id="estudio-anual-actual">526,04 €</span>
                     </div>
                   </div>
@@ -520,7 +520,7 @@
                     </div>
 
                     <div class="mt-2.5 pt-2 border-t border-emerald-500/30 text-[10px] text-slate-400 font-mono flex justify-between">
-                      <span>Total anual propuesto:</span>
+                      <span>Total anual propuesto (IVA incl.):</span>
                       <span class="font-bold text-emerald-300" id="estudio-anual-propuesta">507,38 €</span>
                     </div>
                   </div>
@@ -569,7 +569,7 @@
                       <span class="inline-block text-[9px] font-bold text-emerald-300 bg-emerald-500/20 px-1.5 py-0.2 rounded font-mono mt-0.5" id="estudio-ahorro-factura-pct">3,9% Ahorro</span>
                     </div>
                     <div class="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800">
-                      <div class="text-[9px] text-slate-400 uppercase font-mono">Ahorro Anual</div>
+                      <div class="text-[9px] text-slate-400 uppercase font-mono">Ahorro Anual (c/IVA)</div>
                       <div class="text-base sm:text-lg font-black font-mono text-emerald-400 mt-0.5" id="final-ahorro">18,66 €</div>
                       <span class="inline-block text-[9px] font-bold text-emerald-300 bg-emerald-500/20 px-1.5 py-0.2 rounded font-mono mt-0.5" id="estudio-ahorro-anual-pct">3,6% Ahorro</span>
                     </div>
@@ -1586,7 +1586,7 @@
 
       const esAhorroPositivo = ahrFact > 0;
       const esAhorroAnualPos = ahrAnual > 0;
-      const anualProp = esAhorroAnualPos ? Math.round((anualActCalc - ahrAnual) * 100) / 100 : anualActCalc;
+      const anualProp = anualActCalc > 0 ? Math.max(0, Math.round((anualActCalc - ahrAnual) * 100) / 100) : anualActCalc;
       const ahrPct = (esAhorroPositivo && baseFacturaMes > 0) ? (fmtDec((ahrFact / baseFacturaMes) * 100, 1) + "%") : "0%";
       const ahrAnualPct = (esAhorroAnualPos && anualActCalc > 0) ? (fmtDec((ahrAnual / anualActCalc) * 100, 1) + "%") : ahrPct;
 
@@ -1998,7 +1998,7 @@
 
       const esAhrPos = ahrFact > 0;
       const esAhrAnPos = ahrAnual > 0;
-      const anualProp = esAhrAnPos ? Math.round((anualActCalc - ahrAnual) * 100) / 100 : anualActCalc;
+      const anualProp = anualActCalc > 0 ? Math.max(0, Math.round((anualActCalc - ahrAnual) * 100) / 100) : anualActCalc;
       const ahrPctNum = (esAhrPos && baseFacturaMes > 0) ? ((ahrFact / baseFacturaMes) * 100) : 0;
       const ahrAnPctNum = (esAhrAnPos && anualActCalc > 0) ? ((ahrAnual / anualActCalc) * 100) : ahrPctNum;
 
@@ -2220,9 +2220,9 @@
               <div style="font-size:9.5px;color:#94A3B8;margin-top:4px;">${diasFact} días · tarifa ${esc(tarifaLbl)}${segActCiclo > 0.009 ? ` · incluye ${fmt(segActCiclo, 2)} € en seguros` : ''}</div>
             </div>
             <div style="background:linear-gradient(135deg,#0A1128 0%,#064E3B 100%);border:1px solid rgba(52,211,153,0.38);border-radius:16px;padding:15px 20px;color:#FFFFFF;">
-              <div style="font-size:10.5px;color:#CBD5E1;font-weight:600;">Total anual estimado</div>
+              <div style="font-size:10.5px;color:#CBD5E1;font-weight:600;">Total anual estimado <span style="font-size:8.5px;color:#A7F3D0;font-weight:600;">(IVA 21% e IEE incl.)</span></div>
               <div style="font-size:30px;font-weight:900;letter-spacing:-0.02em;line-height:1.15;margin-top:3px;">${fmt(anualActCalc, 2)} <span style="font-size:20px;color:#34D399;">€</span></div>
-              <div style="font-size:9.5px;color:#94A3B8;margin-top:4px;">Proyección sobre 12 meses de consumo oficial SIPS (${fmtInt(totalAnualKwh)} kWh)</div>
+              <div style="font-size:9.5px;color:#94A3B8;margin-top:4px;">Proyección 12 meses SIPS (${fmtInt(totalAnualKwh)} kWh) · IVA 21% e IEE incl.</div>
             </div>
           </div>
 
@@ -2424,11 +2424,11 @@
 
             <div style="display:flex;flex-direction:column;gap:10px;justify-content:space-between;">
               <div style="flex:1;background:linear-gradient(135deg,#0A1128 0%,#1E293B 100%);border:1px solid rgba(212,175,55,0.38);border-radius:16px;padding:13px 18px;color:#FFFFFF;display:flex;flex-direction:column;justify-content:center;">
-                <div style="font-size:10px;color:#CBD5E1;font-weight:600;">Total factura propuesta</div>
+                <div style="font-size:10px;color:#CBD5E1;font-weight:600;">Total factura propuesta <span style="font-size:8.5px;color:#94A3B8;font-weight:500;">(IVA 21% incl.)</span></div>
                 <div style="font-size:28px;font-weight:900;letter-spacing:-0.02em;line-height:1.15;margin-top:3px;">${fmt(impProp, 2)} <span style="font-size:19px;color:#F59E0B;">€</span></div>
               </div>
               <div style="flex:1;background:linear-gradient(135deg,#0A1128 0%,#064E3B 100%);border:1px solid rgba(52,211,153,0.42);border-radius:16px;padding:13px 18px;color:#FFFFFF;display:flex;flex-direction:column;justify-content:center;">
-                <div style="font-size:10px;color:#CBD5E1;font-weight:600;">Total anual estimado</div>
+                <div style="font-size:10px;color:#CBD5E1;font-weight:600;">Total anual estimado <span style="font-size:8.5px;color:#A7F3D0;font-weight:600;">(IVA 21% e IEE incl.)</span></div>
                 <div style="font-size:28px;font-weight:900;letter-spacing:-0.02em;line-height:1.15;margin-top:3px;">${fmt(anualProp, 2)} <span style="font-size:19px;color:#34D399;">€</span></div>
               </div>
             </div>
@@ -2480,7 +2480,7 @@
               <div style="display:flex;align-items:center;gap:11px;">
                 ${ringGaugeSvg(ahrAnPctNum)}
                 <div>
-                  <div style="font-size:10px;color:#CBD5E1;font-weight:600;">Ahorro anual estimado</div>
+                  <div style="font-size:10px;color:#CBD5E1;font-weight:600;">Ahorro anual estimado <span style="font-size:8px;color:#94A3B8;font-weight:500;">(c/IVA)</span></div>
                   <div style="font-size:23px;font-weight:900;color:#FFFFFF;margin-top:2px;">${esAhrAnPos ? fmt(ahrAnual, 2) : '0,00'} <span style="font-size:16px;color:#34D399;">€</span></div>
                 </div>
               </div>
@@ -2674,11 +2674,18 @@
               return s.split(/\s+/)[0];
             };
             const gCliente = grupoComp(detectedInvoiceData?.comercializadora || detectedInvoiceData?.compania || '');
+            const consAnualRef = Number(data.sips?.consumo_anual_total_kwh || (consPayload.reduce((a, b) => a + (Number(b) || 0), 0)) || 0);
             const sinMismaYSinSva = data.ofertas.filter(o => {
               if (o.comision_cash_energy_eur === null || o.comision_cash_energy_eur === undefined || o.bloqueada) return false;
               if (gCliente && grupoComp(o.comercializadora) === gCliente) return false;
               const tNom = (o.nombre_tarifa || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase();
               if (tNom.includes('RENOVACI') || tNom.includes('+ SVA') || tNom.includes('+SVA')) return false;
+              if (consAnualRef > 0 && tNom.includes('KWH')) {
+                const mMax = tNom.match(/<\s*=?\s*([\d.]+)\s*KWH/);
+                if (mMax && consAnualRef > Number(mMax[1].replace(/\./g, ''))) return false;
+                const mMin = tNom.match(/>\s*=?\s*([\d.]+)\s*KWH/);
+                if (mMin && consAnualRef < Number(mMin[1].replace(/\./g, ''))) return false;
+              }
               return true;
             });
             const conBonoMayor10 = sinMismaYSinSva.filter(o => Math.round(Number(o.comision_cash_energy_eur) * 0.30) > 10);
@@ -2748,13 +2755,18 @@
                 const resto = porComisionPuntoDulce.filter(o => o !== op1 && o !== otraComp[0]);
                 offersOrdered = otraComp.length > 0 ? [op1, otraComp[0], ...resto] : [op1, ...resto];
               } else {
-                // Modo Doméstico 2.0TD: Ahorro puro y precio bajo al céntimo
-                const porCosteTotal = [...pool].sort((a, b) => costeNetoCiclo(a) - costeNetoCiclo(b) || (b.comision_cash_energy_eur || 0) - (a.comision_cash_energy_eur || 0));
-                const op1 = porCosteTotal[0];
+                // Algoritmo Punto Dulce en 2.0TD: dentro de las tarifas con ahorro máximo (margen <= 6% y <= 3,50 €/mes netos sobre el mínimo),
+                // prioriza la opción que maximiza la comisión de Cash Energy y el Bono Bizum del cliente (ej. Endesa 66,53 € frente a 54,43 €).
+                const cMin20 = Math.min(...pool.map(costeNetoCiclo));
+                const umbralDulce20 = Math.min(cMin20 * 1.06, cMin20 + 3.5);
+                const candidatasDulce20 = pool.filter(o => costeNetoCiclo(o) <= umbralDulce20);
+                const pool20 = candidatasDulce20.length > 0 ? candidatasDulce20 : pool;
+                const porComisionDulce20 = [...pool20].sort((a, b) => (Number(b.comision_cash_energy_eur) || 0) - (Number(a.comision_cash_energy_eur) || 0) || costeNetoCiclo(a) - costeNetoCiclo(b));
+                const op1 = porComisionDulce20[0];
                 const g1 = grupoComp(op1.comercializadora);
-                const otraComp = pool.filter(o => grupoComp(o.comercializadora) !== g1)
-                  .sort((a, b) => costeNetoCiclo(a) - costeNetoCiclo(b) || (b.comision_cash_energy_eur || 0) - (a.comision_cash_energy_eur || 0));
-                const resto = porCosteTotal.filter(o => o !== op1 && o !== otraComp[0]);
+                const otraComp = pool20.filter(o => grupoComp(o.comercializadora) !== g1)
+                  .sort((a, b) => (Number(b.comision_cash_energy_eur) || 0) - (Number(a.comision_cash_energy_eur) || 0) || costeNetoCiclo(a) - costeNetoCiclo(b));
+                const resto = porComisionDulce20.filter(o => o !== op1 && o !== otraComp[0]);
                 offersOrdered = otraComp.length > 0 ? [op1, otraComp[0], ...resto] : [op1, ...resto];
               }
               offers = offersOrdered;
