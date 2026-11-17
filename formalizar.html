@@ -85,8 +85,8 @@
 
   <main class="w-full max-w-lg space-y-4">
 
-    <!-- ================= TARJETA DE PROPUESTA / AHORRO DINÁMICO ================= -->
-    <div id="card-propuesta-resumen" class="glass-card rounded-2xl p-4 sm:p-5 relative overflow-hidden border border-emerald-500/20">
+    <!-- ================= TARJETA DE PROPUESTA / AHORRO DINÁMICO (SOLO SI VIENE EN URL) ================= -->
+    <div id="card-propuesta-resumen" class="hidden glass-card rounded-2xl p-4 sm:p-5 relative overflow-hidden border border-emerald-500/20">
       <div class="absolute -right-10 -bottom-10 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none"></div>
 
       <div class="flex items-center justify-between pb-3 border-b border-slate-800">
@@ -95,8 +95,8 @@
           <h2 id="display-cliente" class="text-base font-bold text-white">Validación de Suministro</h2>
         </div>
         <div class="text-right">
-          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500/10 border border-amber-500/30 text-amber-300" id="display-bono-badge">
-            🎁 Bono +20 € Bizum
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500/10 border border-amber-500/30 text-amber-300 hidden" id="display-bono-badge">
+            🎁 Bono Bienvenida
           </span>
         </div>
       </div>
@@ -104,17 +104,17 @@
       <div class="grid grid-cols-2 gap-3 pt-3">
         <div class="bg-slate-900/60 rounded-xl p-2.5 border border-slate-800/80">
           <span class="text-[11px] text-slate-400 block mb-0.5">Comercializadora</span>
-          <span id="display-tarifa" class="text-sm font-bold text-slate-200 block truncate">Endesa Luz 24H</span>
+          <span id="display-tarifa" class="text-sm font-bold text-slate-200 block truncate">Tarifa Seleccionada</span>
         </div>
         <div class="bg-slate-900/60 rounded-xl p-2.5 border border-slate-800/80">
           <span class="text-[11px] text-slate-400 block mb-0.5">Ahorro Estimado</span>
-          <span id="display-ahorro" class="text-sm font-extrabold text-emerald-400 block truncate">216,46 € / año</span>
+          <span id="display-ahorro" class="text-sm font-extrabold text-emerald-400 block truncate">Ahorro Optimizado</span>
         </div>
       </div>
 
       <div id="row-cups-asesor" class="mt-2 text-[11px] text-slate-400 flex items-center justify-between">
         <span id="display-cups" class="truncate max-w-[200px]">CUPS: Pendiente</span>
-        <span id="display-asesor" class="text-slate-300 font-medium">Asesor: Zelmar Cao</span>
+        <span id="display-asesor" class="text-slate-300 font-medium">Asesor: Cash Energy</span>
       </div>
     </div>
 
@@ -130,7 +130,7 @@
 
         <div>
           <label class="block text-xs font-medium text-slate-300 mb-1">Nombre Completo del Titular <span class="text-emerald-400">*</span></label>
-          <input type="text" id="input-nombre" required placeholder="Ej: Astrid Vico Gorgues" 
+          <input type="text" id="input-nombre" required placeholder="Nombre y dos apellidos del titular" 
             class="w-full bg-slate-900/80 border border-slate-700/80 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-slate-500 transition">
         </div>
 
@@ -283,19 +283,19 @@
       <div class="bg-slate-900/80 rounded-xl p-4 text-left space-y-2 border border-slate-800 text-xs text-slate-300">
         <div class="flex justify-between border-b border-slate-800 pb-1.5">
           <span class="text-slate-400">Titular Registrado:</span>
-          <strong id="exito-nombre" class="text-white">Astrid Vico</strong>
+          <strong id="exito-nombre" class="text-white">-</strong>
         </div>
         <div class="flex justify-between border-b border-slate-800 pb-1.5">
           <span class="text-slate-400">Tarifa Activada:</span>
-          <strong id="exito-tarifa" class="text-emerald-400">Endesa Luz 24H</strong>
+          <strong id="exito-tarifa" class="text-emerald-400">Suministro Eléctrico</strong>
         </div>
-        <div class="flex justify-between border-b border-slate-800 pb-1.5">
+        <div class="flex justify-between border-b border-slate-800 pb-1.5" id="wrap-exito-bono">
           <span class="text-slate-400">Bono Bizum de Bienvenida:</span>
-          <strong id="exito-bono" class="text-amber-300">+20 €</strong>
+          <strong id="exito-bono" class="text-amber-300">Bono Bienvenida</strong>
         </div>
         <div class="flex justify-between">
           <span class="text-slate-400">Móvil de Firma:</span>
-          <strong id="exito-telefono" class="text-white font-mono">600 000 000</strong>
+          <strong id="exito-telefono" class="text-white font-mono">-</strong>
         </div>
       </div>
 
@@ -331,31 +331,38 @@
       ? 'http://127.0.0.1:8000'
       : 'https://attempting-hide-mere-addition.trycloudflare.com';
 
-    // Leer parámetros URL (Permite a Zelmar generar links personalizados tipo ?cliente=Astrid&tarifa=Endesa...)
+    // Leer parámetros URL (Opcionales: solo si se desea pre-cargar un caso específico)
     const urlParams = new URLSearchParams(window.location.search);
     const paramCliente = urlParams.get('cliente') || urlParams.get('nombre') || '';
     const paramCups = urlParams.get('cups') || '';
-    const paramTarifa = urlParams.get('tarifa') || urlParams.get('compania') || 'Endesa · Tarifa Luz 24H Fijo';
-    const paramAhorro = urlParams.get('ahorro') || '216,46 € / año';
-    const paramBono = urlParams.get('bono') || '+20 €';
-    const paramAsesor = urlParams.get('asesor') || urlParams.get('ref') || 'Zelmar Cao';
+    const paramTarifa = urlParams.get('tarifa') || urlParams.get('compania') || '';
+    const paramAhorro = urlParams.get('ahorro') || '';
+    const paramBono = urlParams.get('bono') || '';
+    const paramAsesor = urlParams.get('asesor') || urlParams.get('ref') || '';
 
-    // Rellenar cabecera dinámica
-    if (paramCliente) {
-      document.getElementById('display-cliente').innerText = paramCliente;
-      document.getElementById('input-nombre').value = paramCliente;
+    // Si y solo si vienen datos en la URL, mostrar la tarjeta resumen superior
+    if (paramCliente || paramTarifa || paramAhorro || paramBono) {
+      const cardResumen = document.getElementById('card-propuesta-resumen');
+      if (cardResumen) cardResumen.classList.remove('hidden');
+
+      if (paramCliente) {
+        document.getElementById('display-cliente').innerText = paramCliente;
+        document.getElementById('input-nombre').value = paramCliente;
+      }
+      if (paramTarifa) document.getElementById('display-tarifa').innerText = paramTarifa;
+      if (paramAhorro) document.getElementById('display-ahorro').innerText = paramAhorro.includes('€') ? paramAhorro : `${paramAhorro} € / año`;
+      if (paramBono) {
+        const bStr = paramBono.includes('€') ? paramBono : `+${paramBono} €`;
+        const badge = document.getElementById('display-bono-badge');
+        badge.innerText = `🎁 Bono ${bStr} Bizum`;
+        badge.classList.remove('hidden');
+      }
+      if (paramCups) {
+        document.getElementById('display-cups').innerText = `CUPS: ${paramCups}`;
+        document.getElementById('input-cups').value = paramCups;
+      }
+      if (paramAsesor) document.getElementById('display-asesor').innerText = `Asesor: ${paramAsesor}`;
     }
-    if (paramTarifa) document.getElementById('display-tarifa').innerText = paramTarifa;
-    if (paramAhorro) document.getElementById('display-ahorro').innerText = paramAhorro.includes('€') ? paramAhorro : `${paramAhorro} € / año`;
-    if (paramBono) {
-      const bStr = paramBono.includes('€') ? paramBono : `+${paramBono} €`;
-      document.getElementById('display-bono-badge').innerText = `🎁 Bono ${bStr} Bizum`;
-    }
-    if (paramCups) {
-      document.getElementById('display-cups').innerText = `CUPS: ${paramCups}`;
-      document.getElementById('input-cups').value = paramCups;
-    }
-    if (paramAsesor) document.getElementById('display-asesor').innerText = `Asesor: ${paramAsesor}`;
 
     // Estado archivos DNI
     let archivoDniAnverso = null;
@@ -592,12 +599,17 @@
         document.getElementById('card-propuesta-resumen').classList.add('hidden');
 
         document.getElementById('exito-nombre').innerText = nombre;
-        document.getElementById('exito-tarifa').innerText = paramTarifa;
-        document.getElementById('exito-bono').innerText = paramBono;
+        document.getElementById('exito-tarifa').innerText = paramTarifa || 'Suministro Eléctrico';
+        if (paramBono) {
+          document.getElementById('exito-bono').innerText = paramBono.includes('€') ? paramBono : `+${paramBono} €`;
+        } else {
+          const wrapB = document.getElementById('wrap-exito-bono');
+          if (wrapB) wrapB.classList.add('hidden');
+        }
         document.getElementById('exito-telefono').innerText = telefono;
 
         // Personalizar enlace de WhatsApp de regreso
-        const asesorMsg = encodeURIComponent(`Hola ${paramAsesor}, ya completé la formalización de mi tarifa de ${paramTarifa} en Cash Energy para ${nombre} (DNI ${dni}). Quedo a la espera del SMS de la compañía.`);
+        const asesorMsg = encodeURIComponent(`Hola, ya completé la formalización de mi contrato en Cash Energy para ${nombre} (DNI ${dni}). Quedo a la espera del SMS de la compañía.`);
         document.getElementById('btn-whatsapp-asesor').href = `https://wa.me/34694556204?text=${asesorMsg}`;
 
         document.getElementById('pantalla-exito').classList.remove('hidden');
