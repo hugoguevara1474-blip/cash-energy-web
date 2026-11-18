@@ -149,6 +149,19 @@
           </div>
         </div>
 
+        <!-- CÓDIGO DE ASESOR / COLABORADOR -->
+        <div class="pt-0.5">
+          <label class="block text-xs font-medium text-slate-300 mb-1 flex items-center justify-between">
+            <span>Código de Asesor / Colaborador (Opcional)</span>
+            <span id="badge-asesor-detectado" class="text-[10px] text-amber-300 font-bold hidden">
+              👤 Asesor Activo
+            </span>
+          </label>
+          <input type="text" id="input-asesor" maxlength="20" placeholder="Ej: ZELMAR, CARLOS, AG-01..." 
+            class="w-full uppercase bg-slate-900/80 border border-slate-700/80 rounded-xl px-3.5 py-2 text-sm text-white placeholder-slate-500 transition font-mono tracking-wider"
+            oninput="actualizarAsesorManual(this.value)">
+        </div>
+
         <!-- FOTO DNI (ANVERSO / REVERSO) -->
         <div class="pt-1">
           <label class="block text-xs font-medium text-slate-300 mb-1.5 flex items-center justify-between">
@@ -331,6 +344,20 @@
       ? 'http://127.0.0.1:8000'
       : 'https://attempting-hide-mere-addition.trycloudflare.com';
 
+    // Sistema de Detección y Persistencia de Código de Asesor / Colaborador
+    function obtenerRefCodeActivo() {
+      const p = new URLSearchParams(window.location.search);
+      const refUrl = p.get('ref') || p.get('asesor') || p.get('agente') || p.get('colaborador');
+      if (refUrl && refUrl.trim()) {
+        const clean = refUrl.trim().toUpperCase();
+        try { localStorage.setItem('cashenergy_ref', clean); } catch (e) {}
+        return clean;
+      }
+      try { return (localStorage.getItem('cashenergy_ref') || '').trim().toUpperCase(); } catch (e) { return ''; }
+    }
+
+    let refActivo = obtenerRefCodeActivo();
+
     // Leer parámetros URL (Opcionales: solo si se desea pre-cargar un caso específico)
     const urlParams = new URLSearchParams(window.location.search);
     const paramCliente = urlParams.get('cliente') || urlParams.get('nombre') || '';
@@ -338,7 +365,34 @@
     const paramTarifa = urlParams.get('tarifa') || urlParams.get('compania') || '';
     const paramAhorro = urlParams.get('ahorro') || '';
     const paramBono = urlParams.get('bono') || '';
-    const paramAsesor = urlParams.get('asesor') || urlParams.get('ref') || '';
+    const paramAsesor = urlParams.get('asesor') || urlParams.get('ref') || refActivo || '';
+
+    // Inicializar campo asesor
+    const inputAsesorEl = document.getElementById('input-asesor');
+    const badgeAsesorEl = document.getElementById('badge-asesor-detectado');
+    if (paramAsesor && inputAsesorEl) {
+      inputAsesorEl.value = paramAsesor;
+      if (badgeAsesorEl) {
+        badgeAsesorEl.innerText = `👤 Asesor: ${paramAsesor}`;
+        badgeAsesorEl.classList.remove('hidden');
+      }
+    }
+
+    function actualizarAsesorManual(val) {
+      const clean = (val || '').trim().toUpperCase();
+      if (clean) {
+        try { localStorage.setItem('cashenergy_ref', clean); } catch(e) {}
+        refActivo = clean;
+        if (badgeAsesorEl) {
+          badgeAsesorEl.innerText = `👤 Asesor: ${clean}`;
+          badgeAsesorEl.classList.remove('hidden');
+        }
+      } else {
+        try { localStorage.removeItem('cashenergy_ref'); } catch(e) {}
+        refActivo = '';
+        if (badgeAsesorEl) badgeAsesorEl.classList.add('hidden');
+      }
+    }
 
     // Si y solo si vienen datos en la URL, mostrar la tarjeta resumen superior
     if (paramCliente || paramTarifa || paramAhorro || paramBono) {
@@ -580,7 +634,7 @@
           nombre_tarifa: paramTarifa,
           ahorro: paramAhorro,
           bono: paramBono,
-          asesor: paramAsesor,
+          asesor: (document.getElementById('input-asesor')?.value || '').trim().toUpperCase() || paramAsesor || refActivo || 'Directo Web',
           origen: 'PORTAL_FORMALIZAR_MOBILE',
           transcripcion: [
             { emisor: 'sistema', texto: `Portal Seguro Formalización Mobile · Asesor: ${paramAsesor}` },

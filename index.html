@@ -178,6 +178,12 @@
 
         <!-- ACCIONES RÁPIDAS EXCLUSIVAS PARA PC / TABLET (IDÉNTICAS AHORA) -->
         <div class="hidden md:flex items-center space-x-2.5 sm:space-x-3 shrink-0">
+          <!-- BADGE ASESOR / COLABORADOR ACTIVO -->
+          <div id="badge-asesor-header" class="hidden items-center space-x-1.5 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-400 text-amber-900 text-xs font-bold shadow-sm">
+            <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+            <span>Asesor: <strong id="lbl-asesor-header" class="font-mono"></strong></span>
+            <button type="button" onclick="cambiarCodigoAsesorWeb()" title="Cambiar código de asesor" class="ml-1 text-slate-400 hover:text-rose-600 text-xs font-bold cursor-pointer">✕</button>
+          </div>
           <a href="https://wa.me/34694556204?text=Hola%20Cash%20Energy%2C%20quiero%20solicitar%20un%20estudio%20para%20mi%20empresa" target="_blank" class="inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50 border border-slate-300 transition cursor-pointer shrink-0">
             <svg class="w-4 h-4 text-emerald-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766 0-3.18-2.587-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.007c.106.005.249-.04.39.298.144.347.491 1.2.534 1.288.043.088.072.19.014.305-.058.115-.087.187-.173.289l-.26.308c-.087.086-.178.18-.077.354.102.174.451.745.969 1.206.666.593 1.228.777 1.402.864.174.087.275.072.376-.044.101-.116.433-.506.549-.68.116-.174.232-.145.39-.087s1.011.477 1.184.564.289.13.332.203c.044.072.044.419-.1.824z"/></svg>
             <span>WhatsApp VIP</span>
@@ -191,7 +197,14 @@
       </div>
 
       <!-- FRANJA DE ACCIÓN EXCLUSIVA PARA MÓVIL (DEBAJO DEL LOGO GIGANTE, 100% VISIBLE) -->
-      <div class="flex md:hidden items-center justify-between gap-2.5 pt-2 pb-2.5 border-t border-slate-100">
+      <div class="flex md:hidden items-center justify-between gap-2 pt-2 pb-2.5 border-t border-slate-100 flex-wrap">
+        <div id="badge-asesor-header-mob" class="hidden w-full items-center justify-between px-2.5 py-1 mb-1 rounded-lg bg-amber-500/10 border border-amber-400 text-amber-900 text-[11px] font-bold">
+          <span class="flex items-center space-x-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+            <span>Asesor: <strong id="lbl-asesor-header-mob" class="font-mono"></strong></span>
+          </span>
+          <button type="button" onclick="cambiarCodigoAsesorWeb()" class="text-slate-400 hover:text-rose-600 text-xs font-bold cursor-pointer">✕</button>
+        </div>
         <a href="https://wa.me/34694556204?text=Hola%20Cash%20Energy%2C%20quiero%20solicitar%20un%20estudio%20para%20mi%20empresa" target="_blank" class="inline-flex items-center justify-center space-x-1.5 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50 border border-slate-300 transition shrink-0 shadow-sm">
           <svg class="w-4 h-4 text-emerald-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766 0-3.18-2.587-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.007c.106.005.249-.04.39.298.144.347.491 1.2.534 1.288.043.088.072.19.014.305-.058.115-.087.187-.173.289l-.26.308c-.087.086-.178.18-.077.354.102.174.451.745.969 1.206.666.593 1.228.777 1.402.864.174.087.275.072.376-.044.101-.116.433-.506.549-.68.116-.174.232-.145.39-.087s1.011.477 1.184.564.289.13.332.203c.044.072.044.419-.1.824z"/></svg>
           <span>WhatsApp</span>
@@ -1151,6 +1164,49 @@
     const API_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
       ? 'http://127.0.0.1:8000'
       : 'https://attempting-hide-mere-addition.trycloudflare.com';
+
+    // Sistema de Detección y Persistencia de Código de Asesor / Colaborador (?ref=CARLOS)
+    function obtenerRefCodeActivo() {
+      const p = new URLSearchParams(window.location.search);
+      const refUrl = p.get('ref') || p.get('asesor') || p.get('agente') || p.get('colaborador');
+      if (refUrl && refUrl.trim()) {
+        const clean = refUrl.trim().toUpperCase().replace(/[^A-Z0-9_-]/g, '');
+        try { localStorage.setItem('cashenergy_ref', clean); } catch (e) {}
+        return clean;
+      }
+      try { return (localStorage.getItem('cashenergy_ref') || '').trim().toUpperCase(); } catch (e) { return ''; }
+    }
+
+    function actualizarBadgeAsesorHeader() {
+      const code = obtenerRefCodeActivo();
+      const bDesktop = document.getElementById('badge-asesor-header');
+      const bMob = document.getElementById('badge-asesor-header-mob');
+      const lDesktop = document.getElementById('lbl-asesor-header');
+      const lMob = document.getElementById('lbl-asesor-header-mob');
+      if (code) {
+        if (lDesktop) lDesktop.innerText = code;
+        if (lMob) lMob.innerText = code;
+        if (bDesktop) { bDesktop.classList.remove('hidden'); bDesktop.classList.add('inline-flex'); }
+        if (bMob) { bMob.classList.remove('hidden'); bMob.classList.add('inline-flex'); }
+      } else {
+        if (bDesktop) { bDesktop.classList.add('hidden'); bDesktop.classList.remove('inline-flex'); }
+        if (bMob) { bMob.classList.add('hidden'); bMob.classList.remove('inline-flex'); }
+      }
+    }
+
+    function cambiarCodigoAsesorWeb() {
+      const actual = obtenerRefCodeActivo();
+      const nuevo = prompt("Introduce tu código de asesor o colaborador (o déjalo vacío para modo general):", actual);
+      if (nuevo === null) return;
+      const clean = nuevo.trim().toUpperCase().replace(/[^A-Z0-9_-]/g, '');
+      if (clean) {
+        try { localStorage.setItem('cashenergy_ref', clean); } catch(e) {}
+      } else {
+        try { localStorage.removeItem('cashenergy_ref'); } catch(e) {}
+      }
+      actualizarBadgeAsesorHeader();
+    }
+
     let currentProfile = 'hoteles';
     let selectedFile = null;
     let selectedFiles = [];
@@ -1824,6 +1880,7 @@
 
       const fechaHoy = new Date().toLocaleDateString('es-ES');
       const titular = inv.titular || 'CLIENTE CASH ENERGY';
+      const refAsesorPdf = (typeof obtenerRefCodeActivo === 'function' ? obtenerRefCodeActivo() : '');
       const cups = inv.cups || sips.cups || 'Verificado en SIPS';
       const comActual = inv.comercializadora || 'Comercializadora actual';
       const sipsPots = Array.isArray(sips.potencias_w) ? sips.potencias_w : [];
@@ -2335,7 +2392,7 @@
         </div>
 
         <div style="padding-top:8px;border-top:1px solid #E2E8F0;display:flex;align-items:center;justify-content:space-between;font-size:9px;color:#64748B;">
-          <span>Documentación necesaria: (1) DNI firmante · (2) Copia facturas · (3) IBAN bancario · (4) CIF empresa (si aplica)</span>
+          <span>Documentación necesaria: (1) DNI firmante · (2) Copia facturas · (3) IBAN bancario · (4) CIF empresa (si aplica)${refAsesorPdf ? ` · Asesor Asignado: <strong style="color:#0F172A;">${esc(refAsesorPdf)}</strong>` : ''}</span>
           <strong style="color:#0F172A;font-family:'JetBrains Mono',monospace;">01 / 02</strong>
         </div>
       `;
@@ -2496,7 +2553,7 @@
 
         <div style="padding-top:8px;border-top:1px solid #E2E8F0;display:flex;align-items:flex-end;justify-content:space-between;font-size:9px;color:#64748B;">
           <div>
-            <div style="color:#0F172A;font-weight:700;">Tu consultora energética: <strong>CASH ENERGY</strong> · Web: <strong>cashenergy.eu</strong> · Contacto: <strong>info@cashenergy.eu</strong> · WhatsApp: <strong>+34 694 55 62 04</strong></div>
+            <div style="color:#0F172A;font-weight:700;">Tu consultora energética: <strong>CASH ENERGY</strong> · Web: <strong>cashenergy.eu</strong> · Contacto: <strong>info@cashenergy.eu</strong> · WhatsApp: <strong>+34 694 55 62 04</strong>${refAsesorPdf ? ` · Asesor Asignado: <span style="color:#D97706;font-weight:900;">${esc(refAsesorPdf)}</span>` : ''}</div>
             <div style="margin-top:2px;">Propuesta válida 7 días desde el ${esc(fechaHoy)} · Documentación: (1) DNI firmante · (2) Copia facturas · (3) IBAN bancario · (4) CIF empresa</div>
           </div>
           <strong style="color:#0F172A;font-family:'JetBrains Mono',monospace;">02 / 02</strong>
@@ -3568,6 +3625,7 @@
       } else {
         setProfile('hoteles');
       }
+      actualizarBadgeAsesorHeader();
     });
 
     // =========================================================================
@@ -3643,6 +3701,19 @@
       if (ctxAhorro) ctxAhorro.innerText = ahorroTxt;
       if (ctxBono) ctxBono.innerText = bonoTxt;
       if (ctxCups) ctxCups.innerText = cupsTxt;
+
+      const portalLink = document.getElementById('link-abrir-portal-formalizar');
+      if (portalLink) {
+        const refCode = (typeof obtenerRefCodeActivo === 'function' ? obtenerRefCodeActivo() : '');
+        const params = new URLSearchParams();
+        if (refCode) params.set('ref', refCode);
+        if (nombreCliente && nombreCliente !== 'Cliente') params.set('cliente', nombreCliente);
+        if (detectedInvoiceData?.cups) params.set('cups', detectedInvoiceData.cups);
+        if (ahorroTxt && ahorroTxt !== 'Ahorro Máximo') params.set('ahorro', ahorroTxt);
+        if (selectedSeveralTariff?.nombre_tarifa) params.set('tarifa', selectedSeveralTariff.nombre_tarifa);
+        if (bonoTxt) params.set('bono', bonoTxt);
+        portalLink.href = `/formalizar?${params.toString()}`;
+      }
 
       if (cupsTxt && chatUltimoCups && chatUltimoCups !== cupsTxt) {
         chatExpedienteId = null;
@@ -3957,6 +4028,7 @@
         nombre_tarifa: selectedSeveralTariff?.nombre_tarifa || "",
         ahorro: fA ? fA.innerText : "",
         bono: fB ? fB.innerText : "",
+        asesor: (typeof obtenerRefCodeActivo === 'function' ? obtenerRefCodeActivo() : '') || "Directo Web",
         transcripcion: chatHistorial
       };
 
@@ -4108,9 +4180,12 @@
       </div>
 
       <!-- Aviso Oficial de Seguridad: Llamada Several + SMS PIN -->
-      <div class="px-4 py-1.5 bg-amber-400/10 border-b border-amber-400/20 text-[10px] text-amber-300/90 flex items-center space-x-2 shrink-0">
-        <span>🔒</span>
-        <span><b>Aviso Oficial:</b> Several Energy te llamará para verificar datos y recibirás un SMS con PIN para firma.</span>
+      <div class="px-4 py-1.5 bg-amber-400/10 border-b border-amber-400/20 text-[10px] text-amber-300/90 flex items-center justify-between shrink-0">
+        <div class="flex items-center space-x-1.5 truncate">
+          <span>🔒</span>
+          <span class="truncate"><b>Aviso Oficial:</b> Several Energy te llamará para verificar datos y recibirás SMS PIN.</span>
+        </div>
+        <a id="link-abrir-portal-formalizar" href="/formalizar" target="_blank" class="text-amber-400 hover:text-white underline font-bold whitespace-nowrap ml-2">Portal Móvil ↗</a>
       </div>
 
       <!-- Contenedor de Mensajes -->
