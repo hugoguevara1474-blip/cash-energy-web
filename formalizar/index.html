@@ -244,19 +244,6 @@
           </div>
         </div>
 
-        <!-- MÓVIL PARA BIZUM -->
-        <div class="pt-1">
-          <label class="flex items-center space-x-2 text-xs text-slate-300 cursor-pointer select-none">
-            <input type="checkbox" id="check-mismo-bizum" checked onchange="toggleBizumCustom()" class="rounded bg-slate-900 border-slate-700 text-emerald-500 focus:ring-0">
-            <span>Usar este mismo número móvil para recibir el <strong>Bono Bizum de Bienvenida</strong></span>
-          </label>
-          <div id="wrap-bizum-custom" class="hidden mt-2">
-            <label class="block text-xs font-medium text-slate-300 mb-1">Número Móvil para el Bizum</label>
-            <input type="tel" id="input-telefono-bizum" placeholder="600 000 000" 
-              class="w-full bg-slate-900/80 border border-slate-700/80 rounded-xl px-3.5 py-2 text-sm text-white placeholder-slate-500 font-mono">
-          </div>
-        </div>
-
         <!-- CONSENTIMIENTO RGPD -->
         <div class="pt-1">
           <label class="flex items-start space-x-2 text-[11px] text-slate-400 cursor-pointer select-none leading-tight">
@@ -302,9 +289,6 @@
           <span class="text-slate-400">Tarifa Activada:</span>
           <strong id="exito-tarifa" class="text-emerald-400">Suministro Eléctrico</strong>
         </div>
-        <div class="flex justify-between border-b border-slate-800 pb-1.5" id="wrap-exito-bono">
-          <span class="text-slate-400">Bono Bizum de Bienvenida:</span>
-          <strong id="exito-bono" class="text-amber-300">Bono Bienvenida</strong>
         </div>
         <div class="flex justify-between">
           <span class="text-slate-400">Móvil de Firma:</span>
@@ -315,7 +299,7 @@
       <div class="p-3 bg-emerald-500/10 rounded-xl border border-emerald-500/20 text-xs text-emerald-300 leading-relaxed text-left flex items-start space-x-2">
         <i data-lucide="message-square" class="w-5 h-5 flex-shrink-0 mt-0.5"></i>
         <span>
-          <strong>Próximo Paso Inmediato:</strong> En unos minutos recibirás el <strong>SMS oficial de la compañía</strong> en tu móvil para confirmar la activación con tu firma digital. Tras la firma, se tramitará tu <strong>Bono Bizum de bienvenida</strong>.
+          <strong>Próximo Paso Inmediato:</strong> En unos minutos recibirás el <strong>SMS oficial de la compañía</strong> en tu móvil para confirmar la activación con tu firma digital.
         </span>
       </div>
 
@@ -438,7 +422,7 @@
 
     // Toggle Bizum móvil
     function toggleBizumCustom() {
-      const check = document.getElementById('check-mismo-bizum');
+      const check = null;
       const wrap = document.getElementById('wrap-bizum-custom');
       if (check.checked) {
         wrap.classList.add('hidden');
