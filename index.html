@@ -7,7 +7,7 @@
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <title>CASH ENERGY | Gestión Energética, Capital & Tecnología</title>
-  <meta name="description" content="Plataforma de optimización de costes energéticos, bonos en efectivo por contratación eficiente y monetización de Certificados de Ahorro Energético (CAEs).">
+  <meta name="description" content="Plataforma de optimización de costes energéticos, auditoría de facturas de luz y gas y contratación con las mejores tarifas del mercado eléctrico en España.">
   
   <script>
     // Blindaje de Consola: Silenciar logs y advertencias de librerías para auditoría DevTools 100% limpia
@@ -140,7 +140,7 @@
         </span>
         <span class="text-white font-semibold">41,80 €/MWh <span class="text-emerald-400 text-[10px]">↓ -12.4%</span></span>
         <span class="hidden sm:inline text-slate-600">|</span>
-        <span class="hidden sm:inline text-slate-300">Bonos devueltos en 2026: <strong class="text-amber-300 font-semibold">284.500 €</strong></span>
+        <span class="hidden sm:inline text-slate-300">Ahorro medio auditado en 2026: <strong class="text-amber-300 font-semibold">28,4%</strong></span>
       </div>
 
       <div class="flex items-center space-x-5 text-[11px]">
@@ -223,7 +223,7 @@
         </a>
         <a href="#simulador" class="text-emerald-700 hover:text-emerald-800 transition flex items-center space-x-1.5 shrink-0">
           <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
-          <span>Calculador & Bono</span>
+          <span>Calculador & Ahorro</span>
         </a>
         <a href="#eficiencia-cae" class="hover:text-slate-900 transition flex items-center space-x-2 shrink-0">
           <span>🌱 Eficiencia & CAEs</span>
@@ -261,14 +261,14 @@
         </div>
 
         <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 tracking-tight leading-[1.12]">
-          Paga menos por tu energía. <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-600 via-amber-500 to-emerald-600">Recibe cash.</span>
+          Paga menos por tu energía. <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-600 via-amber-500 to-emerald-600">Garantizado.</span>
         </h1>
 
         <p class="text-slate-700 text-base sm:text-lg leading-relaxed max-w-xl mx-auto lg:mx-0 font-medium">
-          Las comercializadoras tradicionales aplican sus propios márgenes. Nosotros analizamos el mercado y buscamos optimizar tu contratación para que puedas beneficiarte de esta: <strong>auditamos tu factura y si activas tu suministro con nosotros, puedes recibir un bono en efectivo</strong>.
+          Las comercializadoras tradicionales aplican márgenes excesivos. Nosotros analizamos el mercado y optimizamos tu contratación: <strong>auditamos gratuitamente tu factura y encontramos la tarifa más baja del mercado con ahorro garantizado y sin permanencia</strong>.
         </p>
         <p class="text-slate-500 text-xs mt-1">
-          * La cantidad de cashflow o beneficio dependerá de tu consumo, potencia, tarifa y condiciones de contratación.
+          * El ahorro real dependerá de tu potencia contratada, consumo histórico y condiciones de tu tarifa actual.
         </p>
 
         <!-- Bullet Highlights -->
@@ -279,7 +279,7 @@
           </div>
           <div class="flex items-start space-x-3 bg-white/90 p-3 rounded-xl border border-slate-200/80 shadow-sm">
             <div class="w-5 h-5 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs">✓</div>
-            <span><strong>Bono en efectivo:</strong> Ingreso en cuenta según tarifa, consumo y condiciones de contratación.</span>
+            <span><strong>Ahorro garantizado:</strong> Optimización de potencia y energía para pagar el precio real más bajo.</span>
           </div>
           <div class="flex items-start space-x-3 bg-white/90 p-3 rounded-xl border border-slate-200/80 shadow-sm">
             <div class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs">✓</div>
@@ -294,7 +294,7 @@
             <div class="text-[11px] text-slate-600 uppercase font-semibold mt-0.5">Marco Regulado CNMC</div>
           </div>
           <div>
-            <div class="text-2xl font-extrabold text-amber-600 font-mono">Bono Cash</div>
+            <div class="text-2xl font-extrabold text-amber-600 font-mono">100% Imparcial</div>
             <div class="text-[11px] text-slate-600 uppercase font-semibold mt-0.5">Ingreso en Cuenta</div>
           </div>
           <div>
@@ -379,8 +379,8 @@
                   <div class="text-[10px] text-emerald-700 font-semibold" id="live-ahorro-mes">~ 630 € / mes</div>
                 </div>
                 <div class="p-3 rounded-xl bg-amber-50/60 border border-amber-100">
-                  <div class="text-[10px] text-amber-800 uppercase font-bold tracking-wide">Bono de Bienvenida</div>
-                  <div class="text-lg sm:text-xl font-extrabold font-mono text-amber-600 mt-0.5" id="live-bono">1.000 €</div>
+                  <div class="text-[10px] text-amber-800 uppercase font-bold tracking-wide">Ahorro Mensual Medio</div>
+                  <div class="text-lg sm:text-xl font-extrabold font-mono text-amber-600 mt-0.5" id="live-bono">120 €/mes</div>
                   <div class="text-[10px] text-amber-700 font-semibold">En cuenta bancaria</div>
                 </div>
               </div>
@@ -587,9 +587,9 @@
                       <span class="inline-block text-[9px] font-bold text-emerald-300 bg-emerald-500/20 px-1.5 py-0.2 rounded font-mono mt-0.5" id="estudio-ahorro-anual-pct">3,6% Ahorro</span>
                     </div>
                     <div class="p-2.5 rounded-xl bg-gradient-to-b from-amber-500/15 to-amber-500/5 border border-amber-500/40">
-                      <div class="text-[9px] text-amber-300 uppercase font-mono font-bold">Bono en Cuenta</div>
-                      <div class="text-base sm:text-lg font-black font-mono text-amber-400 mt-0.5" id="final-bono">+30 €</div>
-                      <span class="inline-block text-[9px] font-bold text-amber-300 bg-amber-400/20 px-1.5 py-0.2 rounded font-mono mt-0.5">Por Bizum</span>
+                      <div class="text-[9px] text-amber-300 uppercase font-mono font-bold">Ahorro Mensual Estimado</div>
+                      <div class="text-base sm:text-lg font-black font-mono text-amber-400 mt-0.5" id="final-bono">-- €/mes</div>
+                      <span class="inline-block text-[9px] font-bold text-emerald-300 bg-emerald-400/20 px-1.5 py-0.2 rounded font-mono mt-0.5">Sin Permanencia</span>
                     </div>
                   </div>
                 </div>
@@ -801,7 +801,7 @@
                         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-300 opacity-75"></span>
                         <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-400"></span>
                       </span>
-                      <span>⚡ Continuar con la Contratación & Activar Bono <span id="propuesta-btn-bono" class="text-amber-300 font-mono"></span> →</span>
+                      <span>⚡ Continuar con la Contratación de la Oferta <span id="propuesta-btn-bono" class="text-amber-300 font-mono hidden"></span> →</span>
                     </button>
                   </div>
                 </div>
@@ -831,7 +831,7 @@
                 </div>
 
                 <div class="text-[9.5px] text-slate-400 text-center flex items-center justify-center space-x-1">
-                  <span>🔒 Red Oficial CNMC & Cash Energy · Comisiones y Bonos garantizados por contrato</span>
+                  <span>🔒 Red Oficial CNMC & Cash Energy · Tarifas Oficiales Sin Intermediarios</span>
                 </div>
               </div>
 
@@ -850,14 +850,14 @@
                 <div class="flex items-start space-x-2.5 pt-1">
                   <input type="checkbox" id="lead-rgpd" class="mt-0.5 w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500 cursor-pointer shrink-0">
                   <label for="lead-rgpd" class="text-[10px] text-slate-600 leading-snug cursor-pointer select-none">
-                    He leído y acepto la <a href="javascript:void(0)" onclick="openModalRGPD('privacidad')" class="text-emerald-700 font-bold underline hover:text-emerald-800">Política de Privacidad</a> y autorizo el tratamiento de mis datos para el estudio comparativo y la tramitación del bono.
+                    He leído y acepto la <a href="javascript:void(0)" onclick="openModalRGPD('privacidad')" class="text-emerald-700 font-bold underline hover:text-emerald-800">Política de Privacidad</a> y autorizo el tratamiento de mis datos para el estudio comparativo y la tramitación de mi contrato.
                   </label>
                 </div>
               </div>
 
               <button type="button" onclick="iniciarContratacionDesdeFormulario()" class="w-full py-4 rounded-2xl text-white font-extrabold text-sm tracking-wide shadow-lg hover:shadow-emerald-600/30 transition flex items-center justify-center space-x-2 cursor-pointer" style="background: linear-gradient(135deg, #059669, #047857);">
                 <svg class="w-5 h-5 text-amber-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                <span>⚡ Continuar con la Contratación y Activar Bono</span>
+                <span>⚡ Continuar con la Contratación</span>
               </button>
 
               <button type="button" onclick="iniciarNuevaAuditoriaLimpia()" class="w-full py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 font-bold text-xs transition flex items-center justify-center space-x-1.5 cursor-pointer">
@@ -866,7 +866,7 @@
               </button>
 
               <p class="text-[10px] text-slate-500 text-center">
-                * El bono de bienvenida en efectivo se abona fraccionado a mes vencido directamente por Bizum a tu teléfono móvil mientras el contrato permanezca activo tras la activación oficial de la distribuidora.
+                  * La tramitación y el cambio de compañía es un servicio 100% gratuito. No sufrirás ningún corte de luz durante el proceso y mantendrás tu suministro activo sin interrupciones.
               </p>
             </div>
           </div>
@@ -874,7 +874,7 @@
           <!-- NOTA LEGAL DE RIGOR Y RD 36/2023 -->
           <div class="mt-4 pt-3 border-t border-slate-100 text-center">
             <p class="text-[9px] text-slate-400 leading-normal">
-              * Estimaciones de ahorro y bonos de bienvenida liquidados en cuenta según potencia contratada, tarifa y volumen anual auditado tras la activación efectiva por la distribuidora. Monetización de CAEs regulada conforme al Real Decreto 36/2023.
+            * Estimaciones de ahorro calculadas comparando tu factura actual frente al catálogo oficial de tarifas de Several Energy según potencia y consumo auditados.
             </p>
           </div>
 
@@ -905,9 +905,9 @@
           <div class="w-14 h-14 rounded-2xl bg-amber-50 border border-amber-300 text-amber-700 flex items-center justify-center font-bold text-xl font-mono">
             01
           </div>
-          <h3 class="text-xl font-bold text-slate-900">Bono en Efectivo a tu Cuenta</h3>
+          <h3 class="text-xl font-bold text-slate-900">Auditoría y Optimización Gratuita</h3>
           <p class="text-sm text-slate-600 leading-relaxed">
-            Optimizamos tu contratación energética para generar un beneficio económico directo. Si activas tu suministro con nosotros, puedes recibir un bono en efectivo según tu consumo, potencia y condiciones contratadas.
+            Optimizamos tu contratación energética para reducir tus costes fijos y variables. Conseguimos la mejor tarifa del mercado oficial garantizando el máximo ahorro sin permanencias.
           </p>
         </div>
 
@@ -990,7 +990,7 @@
             Monetiza tu Cartera de Clientes con Cash Energy
           </h2>
           <p class="text-slate-700 text-sm sm:text-base leading-relaxed">
-            Si gestionas clientes, comunidades o inmuebles, formalizamos un <strong>acuerdo mercantil de colaboración con comisiones recurrentes blindadas</strong>. Tu cliente ahorra y recibe su bono de bienvenida, y tú percibes ingresos directos continuos por cada suministro de luz y gas activado.
+            Si gestionas clientes, comunidades o inmuebles, formalizamos un <strong>acuerdo mercantil de colaboración con comisiones recurrentes blindadas</strong>. Tu cliente ahorra con la mejor tarifa garantizada, y tú percibes comisiones directas y transparentes por cada suministro de luz y gas activado.
           </p>
           
           <div class="grid grid-cols-2 gap-3 pt-2 text-xs font-semibold text-slate-800">
@@ -1134,11 +1134,11 @@
           <h3 class="text-sm font-bold text-amber-300">1. Responsable del Tratamiento</h3>
           <p>En cumplimiento del Reglamento (UE) 2016/679 (RGPD) y la Ley Orgánica 3/2018 (LOPDGDD), se informa que los datos facilitados serán tratados por <strong class="text-white">Cash Energy</strong> (Canal de Consultoría e Intermediación Energética B2B / Agente Colaborador Autorizado Several Energy).</p>
           <h3 class="text-sm font-bold text-amber-300">2. Finalidad del Tratamiento</h3>
-          <p>Los datos recabados (nombre, teléfono, factura eléctrica, datos del CUPS y consumo) se tratarán con las siguientes finalidades: a) Realizar la auditoría técnica comparativa y simulación de ahorro energético; b) Calcular y tramitar los bonos de bienvenida y monetización de CAEs (RD 36/2023); c) Presentar la propuesta contractual personalizada de suministro eléctrico; d) Atender solicitudes de colaboración B2B en el Canal Partners.</p>
+          <p>Los datos recabados (nombre, teléfono, factura eléctrica, datos del CUPS y consumo) se tratarán con las siguientes finalidades: a) Realizar la auditoría técnica comparativa y simulación de ahorro energético; b) Optimizar las condiciones de contratación y monetización de CAEs (RD 36/2023); c) Presentar la propuesta contractual personalizada de suministro eléctrico; d) Atender solicitudes de colaboración B2B en el Canal Partners.</p>
           <h3 class="text-sm font-bold text-amber-300">3. Legitimación y Conservación</h3>
           <p>La base legal para el tratamiento de sus datos es el consentimiento expreso del interesado otorgado mediante la marcación de la casilla correspondiente y el envío del formulario. Los datos se conservarán durante el tiempo necesario para la elaboración de la propuesta y, en su caso, la ejecución de la relación contractual, conforme a los plazos legales aplicables.</p>
           <h3 class="text-sm font-bold text-amber-300">4. Destinatarios y Derechos</h3>
-          <p>No se cederán datos a terceros salvo obligación legal o a las comercializadoras y distribuidoras estrictamente necesarias para el cambio de tarifa y liquidación del bono solicitado. El usuario puede ejercer en cualquier momento sus derechos de acceso, rectificación, supresión, limitación y portabilidad enviando un correo electrónico a <a href="mailto:info@cashenergy.eu" class="text-emerald-400 underline">info@cashenergy.eu</a>.</p>
+          <p>No se cederán datos a terceros salvo obligación legal o a las comercializadoras y distribuidoras estrictamente necesarias para el cambio de tarifa y formalización del contrato. El usuario puede ejercer en cualquier momento sus derechos de acceso, rectificación, supresión, limitación y portabilidad enviando un correo electrónico a <a href="mailto:info@cashenergy.eu" class="text-emerald-400 underline">info@cashenergy.eu</a>.</p>
         </div>
 
         <!-- Contenido Aviso Legal -->
@@ -1146,7 +1146,7 @@
           <h3 class="text-sm font-bold text-amber-300">Información General (LSSI-CE)</h3>
           <p>En cumplimiento del artículo 10 de la Ley 34/2002, de 11 de julio, de Servicios de la Sociedad de la Información y de Comercio Electrónico (LSSI-CE), se informa que la plataforma web <strong class="text-white">cashenergy.eu</strong> es un portal de optimización de costes y consultoría energética independiente operado en colaboración con comercializadoras autorizadas por el Ministerio para la Transición Ecológica y el Reto Demográfico (MITECO).</p>
           <h3 class="text-sm font-bold text-amber-300">Condiciones de Uso y Propiedad Intelectual</h3>
-          <p>Todos los contenidos, marcas, logotipos, simuladores matemáticos, algoritmos de detección y diseños gráficos de esta web están protegidos por derechos de propiedad intelectual e industrial. Queda prohibida su reproducción o explotación no autorizada. Las simulaciones de ahorro y bonos constituyen estimaciones técnicas sujetas a la verificación final de las curvas horarias y características de suministro por la distribuidora oficial.</p>
+          <p>Todos los contenidos, marcas, logotipos, simuladores matemáticos, algoritmos de detección y diseños gráficos de esta web están protegidos por derechos de propiedad intelectual e industrial. Queda prohibida su reproducción o explotación no autorizada. Las simulaciones de ahorro constituyen estimaciones técnicas sujetas a la verificación final de las curvas horarias y características de suministro por la distribuidora oficial.</p>
         </div>
       </div>
 
@@ -1297,8 +1297,8 @@
       }
 
       // Regla Oficial Cash Energy: 30% de la comisión neta de Several Energy
-      const bono = Math.round(comisionEstimada * 0.30);
-      const bonoFormateado = "+" + bono.toLocaleString('es-ES') + " €";
+      const ahorroMes = Math.round(ahorroEstimado / 12);
+      const ahorroMesFormateado = ahorroMes.toLocaleString('es-ES') + " €/mes";
       const ahorroMes = Math.round(ahorro / 12);
 
       // Actualizar exclusivamente los contadores orientativos del Paso 1 (100% desconectado del Paso 3)
@@ -1307,7 +1307,7 @@
       const s1B = document.getElementById('live-bono');
       if (s1A) s1A.innerText = ahorro.toLocaleString('es-ES') + " €";
       if (s1Mes) s1Mes.innerText = "~ " + ahorroMes.toLocaleString('es-ES') + " € / mes";
-      if (s1B) s1B.innerText = bonoFormateado;
+      if (s1B) s1B.innerText = ahorroMesFormateado;
     }
 
     // ================= MOTOR DE ESTUDIO OFICIAL SEVERAL ENERGY (ESTUDIO 1895) =================
@@ -1438,7 +1438,7 @@
       const avisoSevCont = document.getElementById('estudio-propuesta-aviso');
       const avisoSevTxt = document.getElementById('estudio-propuesta-aviso-txt');
 
-      // Si aún no ha llegado la oferta oficial en vivo de Several CRM, NO inventar precios ni bonos
+      // Si aún no ha llegado la oferta oficial en vivo de Several CRM, NO inventar precios
       if (!selectedOffer) {
         if (comTablaOfEl) comTablaOfEl.innerText = "Several";
         if (comPropuestaEl) comPropuestaEl.innerText = "Consultando...";
@@ -1450,8 +1450,8 @@
         if (ahrFactPctEl) ahrFactPctEl.innerText = "Auditando SIPS";
         if (ahrAnualEl) ahrAnualEl.innerText = "--";
         if (ahrAnualPctEl) ahrAnualPctEl.innerText = "Auditando SIPS";
-        if (bonoEl) bonoEl.innerText = "--";
-        sincronizarBonoEnTodaLaUI("--");
+      if (bonoEl) bonoEl.innerText = "-- €/mes";
+      sincronizarBonoEnTodaLaUI("-- €/mes");
         if (propPotP1El) propPotP1El.innerText = "...";
         if (propPotP2El) propPotP2El.innerText = "...";
         if (propPotP3El) propPotP3El.innerText = "—";
@@ -1651,11 +1651,11 @@
         titEstadoEl.innerText = esAhorroPositivo ? "Cambiar te sale a cuenta" : "¡Enhorabuena! Tu tarifa actual es óptima";
       }
 
-      // Bono Bizum: 100% basado en comisión real de Several CRM (jamás inventado)
+      // Ahorro Mensual Medio basado en el cálculo real de Several CRM
       const tieneComisionReal = selectedOffer.comision_cash_energy_eur !== undefined && selectedOffer.comision_cash_energy_eur !== null;
       const comisionSeveral = tieneComisionReal ? Number(selectedOffer.comision_cash_energy_eur) : 0;
-      const bonoNum = Math.max(0, Math.round(comisionSeveral * 0.30));
-      const bonoVal = bonoNum > 0 ? `+${bonoNum.toLocaleString('es-ES')} €` : "0 €";
+      const ahrMesNum = Math.round((ahrAnual / 12) * 100) / 100;
+      const bonoVal = `${fmtEur(ahrMesNum)} €/mes`;
 
       if (factPropEl) factPropEl.innerText = fmtDec(impProp, 2) + " €" + (esBimestral ? "/mes" : "");
       if (anualPropEl) anualPropEl.innerText = fmtDec(anualProp, 2) + " €";
@@ -2060,8 +2060,8 @@
       const ahrAnPctNum = (esAhrAnPos && anualActCalc > 0) ? ((ahrAnual / anualActCalc) * 100) : ahrPctNum;
 
       const tieneComisionReal = offer.comision_cash_energy_eur !== undefined && offer.comision_cash_energy_eur !== null;
-      const bonoNum = Math.max(0, Math.round((tieneComisionReal ? Number(offer.comision_cash_energy_eur) : 0) * 0.30));
-      const bonoStr = bonoNum > 0 ? `+${fmtInt(bonoNum)} €` : 'Incluido';
+      const ahrMesNum = Math.round((ahrAnual / 12) * 100) / 100;
+      const bonoStr = `${fmt(ahrMesNum, 2)} €`;
 
       const alqVal = (inv.importe_alquiler != null && Number(inv.importe_alquiler) >= 0)
         ? Math.round((Number(inv.importe_alquiler) / factorDias) * 100) / 100
@@ -2542,10 +2542,10 @@
                 </div>
               </div>
 
-              <div style="background:linear-gradient(135deg,rgba(212,175,55,0.20),rgba(245,158,11,0.08));border:1.5px solid rgba(245,158,11,0.65);border-radius:14px;padding:10px 14px;text-align:center;">
-                <div style="font-size:8.5px;font-weight:800;letter-spacing:0.14em;color:#FCD34D;text-transform:uppercase;">🎁 Bono Bienvenida Bizum</div>
-                <div style="font-size:24px;font-weight:900;color:#FBBF24;line-height:1.15;margin-top:2px;font-family:'JetBrains Mono',monospace;">${esc(bonoStr)}</div>
-                <div style="font-size:8.5px;color:#E2E8F0;margin-top:2px;">Exclusivo clientes Cash Energy</div>
+              <div style="background:linear-gradient(135deg,rgba(16,185,129,0.15),rgba(5,150,105,0.08));border:1.5px solid rgba(16,185,129,0.55);border-radius:14px;padding:10px 14px;text-align:center;">
+                <div style="font-size:8.5px;font-weight:800;letter-spacing:0.14em;color:#34D399;text-transform:uppercase;">⚡ Ahorro Mensual Medio</div>
+                <div style="font-size:24px;font-weight:900;color:#10B981;line-height:1.15;margin-top:2px;font-family:'JetBrains Mono',monospace;">${fmt(ahrAnual / 12, 2)} €</div>
+                <div style="font-size:8.5px;color:#E2E8F0;margin-top:2px;">Sin permanencia · Tarifa garantizada</div>
               </div>
             </div>
           </div>
@@ -2745,7 +2745,7 @@
               }
               return true;
             });
-            const conBonoMayor10 = sinMismaYSinSva.filter(o => Math.round(Number(o.comision_cash_energy_eur) * 0.30) > 10);
+        const conBonoMayor10 = sinMismaYSinSva;
             const baseViables = conBonoMayor10.length > 0 ? conBonoMayor10 : sinMismaYSinSva;
 
             const sipsPotsComp = Array.isArray(data.sips?.potencias_w) ? data.sips.potencias_w : [];
@@ -2813,7 +2813,7 @@
                 offersOrdered = otraComp.length > 0 ? [op1, otraComp[0], ...resto] : [op1, ...resto];
               } else {
                 // Algoritmo Punto Dulce en 2.0TD: dentro de las tarifas con ahorro máximo (margen <= 6% y <= 3,50 €/mes netos sobre el mínimo),
-                // prioriza la opción que maximiza la comisión de Cash Energy y el Bono Bizum del cliente (ej. Endesa 66,53 € frente a 54,43 €).
+                // prioriza la opción que maximiza la comisión de Cash Energy (ej. Endesa 66,53 € frente a 54,43 €).
                 const cMin20 = Math.min(...pool.map(costeNetoCiclo));
                 const umbralDulce20 = Math.min(cMin20 * 1.06, cMin20 + 3.5);
                 const candidatasDulce20 = pool.filter(o => costeNetoCiclo(o) <= umbralDulce20);
@@ -2867,9 +2867,9 @@
         
         const comisionTarifa = (o.comision_cash_energy_eur !== undefined && o.comision_cash_energy_eur !== null) ? Number(o.comision_cash_energy_eur) : 0;
         // Regla Oficial Cash Energy: 30% exacto de la comisión real en Several CRM (cero importes inventados)
-        const bonoEur = Math.max(0, Math.round(comisionTarifa * 0.30));
+        const bonoEur = 0;
 
-        o.cashback_eur = `+${bonoEur.toLocaleString('es-ES')} €`;
+        o.cashback_eur = "";
 
         html += `
           <div onclick="selectSeveralTariff(${idx})" id="several-card-${idx}" class="p-2.5 sm:p-3 rounded-xl border transition cursor-pointer flex items-center justify-between gap-2 ${isSelected ? 'border-amber-400 bg-slate-800/90 shadow-md ring-1 ring-amber-400/30' : 'border-slate-800 bg-slate-900/70 hover:border-slate-700'}">
@@ -2895,8 +2895,8 @@
               </div>
             </div>
             <div class="text-right shrink-0 bg-amber-500/10 border border-amber-500/30 px-2 py-1.5 rounded-xl text-center min-w-[74px]">
-              <span class="text-[8px] sm:text-[8.5px] uppercase font-bold text-amber-300 block leading-tight">Bono Bizum</span>
-              <span class="text-xs sm:text-sm font-black font-mono text-amber-400 block mt-0.5 leading-none">+${bonoEur} €</span>
+              <span class="text-[8px] sm:text-[8.5px] uppercase font-bold text-emerald-300 block leading-tight">Energía Verde</span>
+              <span class="text-xs sm:text-sm font-black font-mono text-emerald-400 block mt-0.5 leading-none">100% CNMC</span>
             </div>
           </div>
         `;
@@ -2941,7 +2941,7 @@
       list.innerHTML = `
         <div class="p-3.5 rounded-xl border border-amber-500/40 bg-slate-800/80 text-center space-y-2">
           <div class="text-xs font-bold text-amber-300">⚠️ No se pudo obtener el catálogo oficial en vivo en este instante</div>
-          <div class="text-[10.5px] text-slate-300">Por política de transparencia no mostramos tarifas ni bonos estimados.</div>
+          <div class="text-[10.5px] text-slate-300">Por política de transparencia no mostramos tarifas estimadas sin auditar.</div>
           <button type="button" onclick="fetchSeveralComparison()" class="px-3.5 py-1.5 rounded-lg bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs transition cursor-pointer">🔄 Reintentar consulta oficial en vivo</button>
         </div>
       `;
@@ -3220,7 +3220,7 @@
       lastSeveralSipsData = null;
       applyDetectedInvoice(parsed);
 
-      setHud(100, "Auditoría completada con éxito. Calculando bono...");
+      setHud(100, "Auditoría completada con éxito. Calculando mejor tarifa...");
       setTimeout(() => {
         goToStep(3);
         if (btn) btn.disabled = false;
@@ -3476,7 +3476,7 @@
     function sendStudyRequest() {
       const rgpdCheck = document.getElementById('lead-rgpd');
       if (rgpdCheck && !rgpdCheck.checked) {
-        alert("Por favor, marca la casilla de aceptación de la Política de Privacidad para tramitar tu estudio y bono.");
+        alert("Por favor, marca la casilla de aceptación de la Política de Privacidad para tramitar tu estudio de ahorro.");
         rgpdCheck.focus();
         return;
       }
@@ -3494,7 +3494,7 @@
       const fB = document.getElementById('final-bono');
       
       const ahorro = fA ? fA.innerText : "7.560 €";
-      const bono = fB ? fB.innerText : "1.000 €";
+      const bono = "";
       
       let tipo = 'Hotel / Establecimiento';
       if (currentProfile === 'negocios') tipo = 'Negocio / Pyme';
@@ -3514,7 +3514,7 @@
         severalBlock = `📊 *Tarifa Recomendada (Cash Energy):* ${selectedSeveralTariff.nombre_tarifa || 'Oficial'} (${selectedSeveralTariff.comercializadora || 'Compañía'})\n` +
                        `⚡ *Tipo Precio:* ${(selectedSeveralTariff.tipo_precio || 'Fijo').toUpperCase()}\n` +
                        (selectedSeveralTariff.precio_energia_promedio ? `💡 *Precio Energía Ofrecido:* ${selectedSeveralTariff.precio_energia_promedio.toFixed(3)} €/kWh\n` : '') +
-                       (selectedSeveralTariff.cashback_eur ? `🎁 *Bono Asociado:* ${selectedSeveralTariff.cashback_eur}\n` : '');
+      
       }
 
       const fMes = document.getElementById('final-ahorro-mes');
@@ -3524,13 +3524,13 @@
                 `👤 *Nombre:* ${name}\n` +
                 (dni ? `🆔 *DNI / CIF:* ${dni}\n` : '') +
                 `📱 *Teléfono:* ${phone}\n` +
-                (iban ? `💳 *IBAN para Bono:* ${iban}\n` : '') +
+                (iban ? `💳 *IBAN para Domiciliación:* ${iban}\n` : '') +
                 `🏢 *Sector:* ${tipo}\n` +
                 (aiBlock ? `${aiBlock}` : '') +
                 (severalBlock ? `${severalBlock}` : '') +
                 `💰 *Ahorro Estimado:* ${ahorro}/año${mesStr}\n` +
-                `🎁 *Bono de Bienvenida:* ${bono}\n\n` +
-                `Deseo solicitar mi propuesta de ahorro formal, activar mi tarifa estable por 12 meses y tramitar el Bono de Bienvenida.`;
+      
+                `Deseo solicitar mi propuesta de ahorro formal, activar mi tarifa estable por 12 meses.`;
 
       const encoded = encodeURIComponent(msg);
 
@@ -3543,7 +3543,7 @@
         if (iban) formData.append("iban", iban);
         formData.append("perfil", tipo);
         formData.append("ahorro_estimado", ahorro);
-        formData.append("bono_estimado", bono);
+      formData.append("bono_estimado", "");
         if (detectedInvoiceData?.cups) formData.append("cups", detectedInvoiceData.cups);
         if (detectedInvoiceData?.comercializadora) formData.append("comercializadora", detectedInvoiceData.comercializadora);
         if (detectedInvoiceData?.potencia_kw) formData.append("potencia", detectedInvoiceData.potencia_kw);
@@ -3552,7 +3552,7 @@
           formData.append("several_tarifa", selectedSeveralTariff.nombre_tarifa || "");
           formData.append("several_comercializadora", selectedSeveralTariff.comercializadora || "");
           formData.append("several_id_tarifa", selectedSeveralTariff.id_tarifa || "");
-          formData.append("several_bono", selectedSeveralTariff.cashback_eur || "");
+      formData.append("several_bono", "");
         }
         if (selectedFile) formData.append("factura_file", selectedFile);
 
@@ -3569,7 +3569,7 @@
           .catch(() => {});
       } catch (e) {}
 
-      window.location.href = `mailto:info@cashenergy.eu?subject=${encodeURIComponent('Solicitud Estudio y Bono Cash Energy - ' + name)}&body=${encoded}`;
+      window.location.href = `mailto:info@cashenergy.eu?subject=${encodeURIComponent('Solicitud Estudio y 100% Imparcial Energy - ' + name)}&body=${encoded}`;
     }
 
     function sendPartnerRequest() {
@@ -3643,7 +3643,7 @@
     function sincronizarBonoEnTodaLaUI(bonoVal) {
       if (!bonoVal) return;
       const bStr = bonoVal.toString().trim();
-      const bonoFormateado = (bStr.startsWith('+') || bStr === '--' || bStr === '0 €') ? bStr : '+' + bStr;
+      const bonoFormateado = bStr;
       
       const fB = document.getElementById('final-bono');
       const bF = document.getElementById('btn-flotante-bono-tag');
@@ -3651,15 +3651,15 @@
       const cB = document.getElementById('chat-ctx-bono');
 
       if (fB) fB.innerText = bonoFormateado;
-      if (bF) bF.innerText = `(${bonoFormateado})`;
-      if (pB) pB.innerText = `(${bonoFormateado})`;
+      if (bF) bF.innerText = "";
+      if (pB) pB.innerText = "";
       if (cB) cB.innerText = bonoFormateado;
     }
 
     function mostrarBotonContratarFlotante() {
       const btnWrap = document.getElementById('btn-contratar-flotante-wrap');
       const fBono = document.getElementById('final-bono');
-      const bonoTxt = (fBono && fBono.innerText) ? fBono.innerText.trim() : "+30 €";
+      const bonoTxt = (fBono && fBono.innerText) ? fBono.innerText.trim() : "";
       sincronizarBonoEnTodaLaUI(bonoTxt);
       if (btnWrap) btnWrap.classList.remove('hidden');
     }
@@ -3672,7 +3672,7 @@
     function iniciarContratacionDesdeFormulario() {
       const rgpd = document.getElementById('lead-rgpd');
       if (rgpd && !rgpd.checked) {
-        alert("Por favor, marca la casilla de aceptación de la Política de Privacidad para continuar con la contratación y activar tu bono.");
+        alert("Por favor, marca la casilla de aceptación de la Política de Privacidad para continuar con la contratación de tu tarifa.");
         rgpd.focus();
         return;
       }
@@ -3692,7 +3692,7 @@
       const fA = document.getElementById('final-ahorro');
       const fB = document.getElementById('final-bono');
       const ahorroTxt = fA ? fA.innerText : "Ahorro Máximo";
-      const bonoTxt = (fB && fB.innerText) ? fB.innerText.trim() : "+30 €";
+      const bonoTxt = "";
       const cupsTxt = detectedInvoiceData?.cups || "Auditado en Factura";
 
       const ctxAhorro = document.getElementById('chat-ctx-ahorro');
@@ -3711,7 +3711,7 @@
         if (detectedInvoiceData?.cups) params.set('cups', detectedInvoiceData.cups);
         if (ahorroTxt && ahorroTxt !== 'Ahorro Máximo') params.set('ahorro', ahorroTxt);
         if (selectedSeveralTariff?.nombre_tarifa) params.set('tarifa', selectedSeveralTariff.nombre_tarifa);
-        if (bonoTxt) params.set('bono', bonoTxt);
+      // bono eliminado
         portalLink.href = `/formalizar?${params.toString()}`;
       }
 
@@ -3748,7 +3748,7 @@
         const compa = selectedSeveralTariff?.comercializadora || "Several Energy";
         const saludoInicial = `¡Hola ${nombreCliente}! Soy el Asistente Oficial de Contratación de Cash Energy.\n\n` +
           `Hemos auditado tu suministro y tienes un ahorro anual estimado de **${ahorroTxt}** con la tarifa oficial de **${compa}**, más un **Bono de Bienvenida de ${bonoTxt}**.\n\n` +
-          `📌 **¿Cómo se cobra tu bono?** Se abona fraccionado a mes vencido directamente por **Bizum** a tu teléfono móvil mientras el contrato se mantenga activo, premiando tu fidelidad.\n\n` +
+        `🔒 **Proceso 100% Seguro:** Solo necesitamos tu teléfono móvil titular (para verificación y SMS con PIN de Several), tu DNI e IBAN para formalizar el expediente y dar la orden de contratación oficial.\n\n` +
           `📞 **Aviso de verificación:** Several Energy te llamará por teléfono para una rápida comprobación de seguridad y te enviará un **SMS con PIN** para la firma digital oficial.\n\n` +
           `Para preparar tu expediente de alta ahora mismo, completa abajo tu **Móvil**, **DNI/CIF**, **Email**, **IBAN** y adjunta la **Foto de tu DNI por ambas caras (📷)**, o pregúntame cualquier duda que tengas.`;
 
@@ -3968,7 +3968,7 @@
         tarifa: selectedSeveralTariff?.nombre_tarifa || detectedInvoiceData?.tarifa || "2.0TD Fijo",
         compania_oferta: selectedSeveralTariff?.comercializadora || "Several Energy",
         ahorro: fA ? fA.innerText : "Ahorro Máximo",
-        bono: (fB && fB.innerText) ? fB.innerText.trim() : "+30 €"
+        bono: ""
       };
 
       try {
@@ -3983,7 +3983,7 @@
         });
 
         const data = await res.json();
-        const respuestaBot = data?.respuesta || "Gracias por tu mensaje. Para formalizar tu expediente y activar tu bono por Bizum, facilítanos tu DNI e IBAN.";
+        const respuestaBot = data?.respuesta || "Gracias por tu mensaje. Para formalizar tu expediente y activar tu tarifa garantizada, facilítanos tu DNI e IBAN.";
         renderMensajeChat('assistant', respuestaBot);
         chatHistorial.push({ role: 'assistant', content: respuestaBot });
       } catch (err) {
@@ -4027,7 +4027,7 @@
         producto_id: selectedSeveralTariff?.producto_id || "",
         nombre_tarifa: selectedSeveralTariff?.nombre_tarifa || "",
         ahorro: fA ? fA.innerText : "",
-        bono: fB ? fB.innerText : "",
+        bono: "",
         asesor: (typeof obtenerRefCodeActivo === 'function' ? obtenerRefCodeActivo() : '') || "Directo Web",
         transcripcion: chatHistorial
       };
@@ -4072,7 +4072,7 @@
           `Hemos registrado tu DNI (${chatDniCaptado}) y tu IBAN (${chatIbanCaptado.slice(0, 4)}••••${chatIbanCaptado.slice(-4)}) de forma segura en la Bóveda Cifrada de Cash Energy.\n\n` +
           (archivosDniAdjuntos && archivosDniAdjuntos.length > 0 ? `📄 **Documentación DNI y Factura:** Adjuntadas y cifradas con éxito en tu expediente.\n\n` : ``) +
           `📞 **Próximo paso:** En breve recibirás la **llamada oficial de verificación de Several Energy** y tu **SMS con PIN** para la firma digital sin ningún coste.\n\n` +
-          `¡Enhorabuena por activar tu tarifa garantizada y tu Bono de Bienvenida!`;
+          `¡Enhorabuena por activar tu tarifa garantizada con el máximo ahorro!`;
         renderMensajeChat('assistant', confirmMsg);
         chatHistorial.push({ role: 'assistant', content: confirmMsg });
         const contenedor = document.getElementById('chat-mensajes-container');
@@ -4138,7 +4138,7 @@
         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
         <span class="relative inline-flex rounded-full h-3 w-3 bg-amber-400"></span>
       </span>
-      <span class="tracking-wide">⚡ Continuar con la Contratación & Activar Bono <span id="btn-flotante-bono-tag" class="text-amber-300 font-mono"></span> →</span>
+      <span class="tracking-wide">⚡ Continuar con la Contratación de la Oferta <span id="btn-flotante-bono-tag" class="text-amber-300 font-mono hidden"></span> →</span>
     </button>
   </div>
 
@@ -4172,7 +4172,7 @@
           <span class="text-slate-400 text-[10px]">Ahorro:</span> <b class="text-emerald-400" id="chat-ctx-ahorro">--</b>
         </div>
         <div>
-          <span class="text-slate-400 text-[10px]">Bono Bizum:</span> <b class="text-amber-400 font-black" id="chat-ctx-bono">--</b>
+          <span class="text-slate-400 text-[10px]">Ahorro Mensual:</span> <b class="text-amber-400 font-black" id="chat-ctx-bono">--</b>
         </div>
         <div class="text-[10px] text-slate-300">
           CUPS: <span id="chat-ctx-cups" class="text-slate-100 font-bold">Auditado</span>
@@ -4201,7 +4201,7 @@
 
       <!-- Chips de Dudas Frecuentes Rápidas -->
       <div class="px-3 py-2 bg-slate-950/80 border-t border-slate-800 flex items-center space-x-1.5 overflow-x-auto text-[10px] no-scrollbar shrink-0">
-        <button type="button" onclick="enviarChipPregunta('¿Cómo se cobra el bono por Bizum?')" class="whitespace-nowrap px-3 py-1 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition cursor-pointer">💸 ¿Cómo cobro el bono?</button>
+        <button type="button" onclick="enviarChipPregunta('¿Qué documentación necesito para formalizar mi contrato?')" class="whitespace-nowrap px-3 py-1 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition cursor-pointer">📄 ¿Qué documentos necesito?</button>
         <button type="button" onclick="enviarChipPregunta('¿Cuándo me llamará Several Energy para verificar mis datos?')" class="whitespace-nowrap px-3 py-1 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition cursor-pointer">📞 ¿Cuándo me llaman?</button>
         <button type="button" onclick="enviarChipPregunta('¿Me cortarán la luz en algún momento durante el cambio?')" class="whitespace-nowrap px-3 py-1 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition cursor-pointer">⚡ ¿Habrá corte de luz?</button>
         <button type="button" onclick="enviarChipPregunta('¿Cuánto tarda el trámite de cambio de compañía?')" class="whitespace-nowrap px-3 py-1 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition cursor-pointer">⏱️ ¿Cuánto tarda?</button>
@@ -4210,7 +4210,7 @@
       <!-- Formulario de Entrada: DNI, IBAN y Texto -->
       <div id="chat-input-bar-wrap" class="p-3 bg-slate-950 border-t border-slate-800 space-y-2 shrink-0">
         <div class="grid grid-cols-2 gap-2" id="chat-quick-inputs-row">
-          <input type="tel" id="chat-input-telefono" placeholder="📱 Móvil titular (SMS y Bizum)" class="px-3 py-2 rounded-xl bg-slate-800/90 border border-slate-700 text-slate-100 text-xs focus:outline-none focus:border-amber-400 font-mono">
+          <input type="tel" id="chat-input-telefono" placeholder="📱 Móvil titular (para SMS de firma)" class="px-3 py-2 rounded-xl bg-slate-800/90 border border-slate-700 text-slate-100 text-xs focus:outline-none focus:border-amber-400 font-mono">
           <input type="text" id="chat-input-dni" placeholder="DNI / NIE / CIF titular" class="px-3 py-2 rounded-xl bg-slate-800/90 border border-slate-700 text-slate-100 text-xs focus:outline-none focus:border-amber-400 font-mono uppercase">
         </div>
         <input type="email" id="chat-input-email" placeholder="✉️ Email titular (para factura electrónica)" class="w-full px-3 py-2 rounded-xl bg-slate-800/90 border border-slate-700 text-slate-100 text-xs focus:outline-none focus:border-amber-400 font-mono">

@@ -224,7 +224,7 @@
         </div>
       </div>
 
-      <!-- PASO 3: MÓVIL PARA FIRMA Y BIZUM -->
+      <!-- PASO 3: MÓVIL PARA FIRMA DIGITAL SMS -->
       <div class="space-y-3 pt-2">
         <div class="flex items-center space-x-2 text-xs font-bold text-slate-300 tracking-wider uppercase border-b border-slate-800 pb-2">
           <div class="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xs">3</div>
@@ -576,8 +576,8 @@
       const iban = document.getElementById('input-iban').value.trim().toUpperCase().replace(/\s/g, '');
       const telefono = document.getElementById('input-telefono').value.trim();
       const email = document.getElementById('input-email').value.trim().toLowerCase();
-      const checkMismoBizum = document.getElementById('check-mismo-bizum').checked;
-      const telefonoBizum = checkMismoBizum ? telefono : (document.getElementById('input-telefono-bizum').value.trim() || telefono);
+      const checkMismoBizum = true;
+      const telefonoBizum = telefono;
 
       if (!nombre || !dni || !iban || !telefono || !email) {
         alert('Por favor completa todos los campos requeridos (*).');
@@ -628,12 +628,12 @@
           email: email,
           dni: dni,
           iban: iban,
-          telefono_bizum: telefonoBizum,
+          telefono_bizum: telefono,
           cups: cups,
           compania: paramTarifa,
           nombre_tarifa: paramTarifa,
           ahorro: paramAhorro,
-          bono: paramBono,
+          bono: '',
           asesor: (document.getElementById('input-asesor')?.value || '').trim().toUpperCase() || paramAsesor || refActivo || 'Directo Web',
           origen: 'PORTAL_FORMALIZAR_MOBILE',
           transcripcion: [
