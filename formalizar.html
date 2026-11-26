@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Formalización Cifrada de Contrato · Cash Energy</title>
-  <meta name="description" content="Portal oficial y seguro de formalización de contratos energéticos y activación de Bono Bizum de Cash Energy.">
+  <meta name="description" content="Portal oficial y seguro de formalización de contratos energéticos de Cash Energy.">
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   
   <!-- Tailwind CSS CDN -->
@@ -94,11 +94,7 @@
           <span class="text-xs text-slate-400 font-medium">Expediente Certificado:</span>
           <h2 id="display-cliente" class="text-base font-bold text-white">Validación de Suministro</h2>
         </div>
-        <div class="text-right">
-          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500/10 border border-amber-500/30 text-amber-300 hidden" id="display-bono-badge">
-            🎁 Bono Bienvenida
-          </span>
-        </div>
+        <div class="text-right"></div>
       </div>
 
       <div class="grid grid-cols-2 gap-3 pt-3">
@@ -218,7 +214,7 @@
           <div class="mt-2.5 p-2.5 rounded-xl bg-slate-900/60 border border-slate-800/80 flex items-start space-x-2 text-[11px] text-slate-400 leading-relaxed">
             <i data-lucide="lock" class="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5"></i>
             <span>
-              <strong class="text-slate-300 font-semibold">Garantía de Seguridad:</strong> Tu cuenta bancaria se utilizará exclusivamente para la domiciliación oficial de los recibos de suministro eléctrico con la compañía y el abono de tu Bono Bizum/Bancario. Cash Energy nunca realizará cobros en tu cuenta.
+              <strong class="text-slate-300 font-semibold">Garantía de Seguridad:</strong> Tu cuenta bancaria se utilizará exclusivamente para la domiciliación oficial de los recibos de suministro eléctrico con la compañía. Cash Energy nunca realizará cobros en tu cuenta.
             </span>
           </div>
         </div>
@@ -379,7 +375,7 @@
     }
 
     // Si y solo si vienen datos en la URL, mostrar la tarjeta resumen superior
-    if (paramCliente || paramTarifa || paramAhorro || paramBono) {
+    if (paramCliente || paramTarifa || paramAhorro) {
       const cardResumen = document.getElementById('card-propuesta-resumen');
       if (cardResumen) cardResumen.classList.remove('hidden');
 
@@ -389,12 +385,6 @@
       }
       if (paramTarifa) document.getElementById('display-tarifa').innerText = paramTarifa;
       if (paramAhorro) document.getElementById('display-ahorro').innerText = paramAhorro.includes('€') ? paramAhorro : `${paramAhorro} € / año`;
-      if (paramBono) {
-        const bStr = paramBono.includes('€') ? paramBono : `+${paramBono} €`;
-        const badge = document.getElementById('display-bono-badge');
-        badge.innerText = `🎁 Bono ${bStr} Bizum`;
-        badge.classList.remove('hidden');
-      }
       if (paramCups) {
         document.getElementById('display-cups').innerText = `CUPS: ${paramCups}`;
         document.getElementById('input-cups').value = paramCups;
@@ -622,7 +612,7 @@
           origen: 'PORTAL_FORMALIZAR_MOBILE',
           transcripcion: [
             { emisor: 'sistema', texto: `Portal Seguro Formalización Mobile · Asesor: ${paramAsesor}` },
-            { emisor: 'cliente', texto: `Titular: ${nombre} | DNI: ${dni} | IBAN: ${iban} | Tel: ${telefono} | Bizum: ${telefonoBizum} | CUPS: ${cups}` }
+            { emisor: 'cliente', texto: `Titular: ${nombre} | DNI: ${dni} | IBAN: ${iban} | Tel: ${telefono} | CUPS: ${cups}` }
           ]
         };
 
@@ -638,12 +628,8 @@
 
         document.getElementById('exito-nombre').innerText = nombre;
         document.getElementById('exito-tarifa').innerText = paramTarifa || 'Suministro Eléctrico';
-        if (paramBono) {
-          document.getElementById('exito-bono').innerText = paramBono.includes('€') ? paramBono : `+${paramBono} €`;
-        } else {
-          const wrapB = document.getElementById('wrap-exito-bono');
-          if (wrapB) wrapB.classList.add('hidden');
-        }
+        const wrapB = document.getElementById('wrap-exito-bono');
+        if (wrapB) wrapB.classList.add('hidden');
         document.getElementById('exito-telefono').innerText = telefono;
 
         // Personalizar enlace de WhatsApp de regreso
