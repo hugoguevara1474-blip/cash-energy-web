@@ -1297,9 +1297,8 @@
       }
 
       // Regla Oficial Cash Energy: 30% de la comisión neta de Several Energy
-      const ahorroMes = Math.round(ahorroEstimado / 12);
-      const ahorroMesFormateado = ahorroMes.toLocaleString('es-ES') + " €/mes";
       const ahorroMes = Math.round(ahorro / 12);
+      const ahorroMesFormateado = ahorroMes.toLocaleString('es-ES') + " €/mes";
 
       // Actualizar exclusivamente los contadores orientativos del Paso 1 (100% desconectado del Paso 3)
       const s1A = document.getElementById('live-ahorro');
@@ -3513,8 +3512,7 @@
       if (selectedSeveralTariff) {
         severalBlock = `📊 *Tarifa Recomendada (Cash Energy):* ${selectedSeveralTariff.nombre_tarifa || 'Oficial'} (${selectedSeveralTariff.comercializadora || 'Compañía'})\n` +
                        `⚡ *Tipo Precio:* ${(selectedSeveralTariff.tipo_precio || 'Fijo').toUpperCase()}\n` +
-                       (selectedSeveralTariff.precio_energia_promedio ? `💡 *Precio Energía Ofrecido:* ${selectedSeveralTariff.precio_energia_promedio.toFixed(3)} €/kWh\n` : '') +
-      
+                       (selectedSeveralTariff.precio_energia_promedio ? `💡 *Precio Energía Ofrecido:* ${selectedSeveralTariff.precio_energia_promedio.toFixed(3)} €/kWh\n` : '');
       }
 
       const fMes = document.getElementById('final-ahorro-mes');
