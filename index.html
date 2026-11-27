@@ -295,7 +295,7 @@
           </div>
           <div>
             <div class="text-2xl font-extrabold text-amber-600 font-mono">100% Imparcial</div>
-            <div class="text-[11px] text-slate-600 uppercase font-semibold mt-0.5">Ingreso en Cuenta</div>
+            <div class="text-[11px] text-slate-600 uppercase font-semibold mt-0.5">Auditoría Independiente</div>
           </div>
           <div>
             <div class="text-2xl font-extrabold text-slate-900 font-mono">IA B2B</div>
@@ -381,7 +381,7 @@
                 <div class="p-3 rounded-xl bg-amber-50/60 border border-amber-100">
                   <div class="text-[10px] text-amber-800 uppercase font-bold tracking-wide">Ahorro Mensual Medio</div>
                   <div class="text-lg sm:text-xl font-extrabold font-mono text-amber-600 mt-0.5" id="live-bono">120 €/mes</div>
-                  <div class="text-[10px] text-amber-700 font-semibold">En cuenta bancaria</div>
+                  <div class="text-[10px] text-amber-700 font-semibold">Sin permanencia</div>
                 </div>
               </div>
 
@@ -1653,8 +1653,8 @@
       // Ahorro Mensual Medio basado en el cálculo real de Several CRM
       const tieneComisionReal = selectedOffer.comision_cash_energy_eur !== undefined && selectedOffer.comision_cash_energy_eur !== null;
       const comisionSeveral = tieneComisionReal ? Number(selectedOffer.comision_cash_energy_eur) : 0;
-      const ahrMesNum = Math.round((ahrAnual / 12) * 100) / 100;
-      const bonoVal = `${fmtEur(ahrMesNum)} €/mes`;
+      const ahrMesNum = esAhorroAnualPos ? Math.round((ahrAnual / 12) * 100) / 100 : 0;
+      const bonoVal = `${fmtDec(ahrMesNum, 2)} €/mes`;
 
       if (factPropEl) factPropEl.innerText = fmtDec(impProp, 2) + " €" + (esBimestral ? "/mes" : "");
       if (anualPropEl) anualPropEl.innerText = fmtDec(anualProp, 2) + " €";
@@ -2059,7 +2059,7 @@
       const ahrAnPctNum = (esAhrAnPos && anualActCalc > 0) ? ((ahrAnual / anualActCalc) * 100) : ahrPctNum;
 
       const tieneComisionReal = offer.comision_cash_energy_eur !== undefined && offer.comision_cash_energy_eur !== null;
-      const ahrMesNum = Math.round((ahrAnual / 12) * 100) / 100;
+      const ahrMesNum = esAhrAnPos ? Math.round((ahrAnual / 12) * 100) / 100 : 0;
       const bonoStr = `${fmt(ahrMesNum, 2)} €`;
 
       const alqVal = (inv.importe_alquiler != null && Number(inv.importe_alquiler) >= 0)
@@ -2543,7 +2543,7 @@
 
               <div style="background:linear-gradient(135deg,rgba(16,185,129,0.15),rgba(5,150,105,0.08));border:1.5px solid rgba(16,185,129,0.55);border-radius:14px;padding:10px 14px;text-align:center;">
                 <div style="font-size:8.5px;font-weight:800;letter-spacing:0.14em;color:#34D399;text-transform:uppercase;">⚡ Ahorro Mensual Medio</div>
-                <div style="font-size:24px;font-weight:900;color:#10B981;line-height:1.15;margin-top:2px;font-family:'JetBrains Mono',monospace;">${fmt(ahrAnual / 12, 2)} €</div>
+                <div style="font-size:24px;font-weight:900;color:#10B981;line-height:1.15;margin-top:2px;font-family:'JetBrains Mono',monospace;">${esAhrAnPos ? fmt(ahrAnual / 12, 2) : '0,00'} €</div>
                 <div style="font-size:8.5px;color:#E2E8F0;margin-top:2px;">Sin permanencia · Tarifa garantizada</div>
               </div>
             </div>
@@ -3567,7 +3567,7 @@
           .catch(() => {});
       } catch (e) {}
 
-      window.location.href = `mailto:info@cashenergy.eu?subject=${encodeURIComponent('Solicitud Estudio y 100% Imparcial Energy - ' + name)}&body=${encoded}`;
+      window.location.href = `mailto:info@cashenergy.eu?subject=${encodeURIComponent('Solicitud Estudio Cash Energy - ' + name)}&body=${encoded}`;
     }
 
     function sendPartnerRequest() {
