@@ -1853,13 +1853,14 @@
         }
       }
 
-      // Actualizar botón de descarga con el nombre del cliente auditado
+      // Actualizar botón de descarga con la compañía activa y el cliente auditado
       const btnTexto = document.getElementById('btn-descargar-estudio-texto');
       if (btnTexto) {
+        const compTag = selectedOffer?.comercializadora ? ` · ${selectedOffer.comercializadora}` : '';
         if (titular && titular !== "ZELMAR CAO") {
-          btnTexto.innerText = "Descargar Estudio Oficial Cash Energy (" + titular.split(' ')[0] + ")";
+          btnTexto.innerText = `Descargar Estudio${compTag} (${titular.split(' ')[0]})`;
         } else {
-          btnTexto.innerText = "Descargar Estudio Oficial Cash Energy (PDF)";
+          btnTexto.innerText = `Descargar Estudio Oficial${compTag} (PDF)`;
         }
       }
     }
@@ -2550,12 +2551,13 @@
           </div>
         </div>
 
-        <div style="padding-top:8px;border-top:1px solid #E2E8F0;display:flex;align-items:flex-end;justify-content:space-between;font-size:9px;color:#64748B;">
-          <div>
+        <div style="padding-top:8px;border-top:1px solid #E2E8F0;display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:9px;color:#64748B;">
+          <div style="min-width:0;flex:1;">
             <div style="color:#0F172A;font-weight:700;">Tu consultora energética: <strong>CASH ENERGY</strong> · Web: <strong>cashenergy.eu</strong> · Contacto: <strong>info@cashenergy.eu</strong> · WhatsApp: <strong>+34 694 55 62 04</strong>${refAsesorPdf ? ` · Asesor Asignado: <span style="color:#D97706;font-weight:900;">${esc(refAsesorPdf)}</span>` : ''}</div>
             <div style="margin-top:2px;">Propuesta válida 7 días desde el ${esc(fechaHoy)} · Documentación: (1) DNI firmante · (2) Copia facturas · (3) IBAN bancario · (4) CIF empresa</div>
           </div>
-          <strong style="color:#0F172A;font-family:'JetBrains Mono',monospace;">02 / 02</strong>
+          <div id="pdf-btn-volver-web" style="flex-shrink:0;background:linear-gradient(135deg,#059669,#047857);color:#FFFFFF;font-size:9.2px;font-weight:800;padding:6px 10px;border-radius:8px;white-space:nowrap;border:1px solid #10B981;">← Volver a mis opciones · cashenergy.eu</div>
+          <strong style="color:#0F172A;font-family:'JetBrains Mono',monospace;flex-shrink:0;">02 / 02</strong>
         </div>
       `;
 
@@ -2564,7 +2566,12 @@
       return { wrapEl, page1El, page2El };
     }
 
-    async function descargarEstudioPDF() {
+    async function descargarEstudioPDF(offerIdx = null) {
+      if (offerIdx !== null && Array.isArray(currentSeveralOffers) && currentSeveralOffers[offerIdx]) {
+        selectSeveralTariff(offerIdx);
+      }
+      guardarAuditoriaEnCache();
+
       const btn = document.getElementById('btn-descargar-estudio');
       const btnTxt = document.getElementById('btn-descargar-estudio-texto');
       const originalText = btnTxt ? btnTxt.innerText : "Descargar Estudio Oficial en PDF";
@@ -2576,12 +2583,35 @@
       try {
         const titular = detectedInvoiceData?.titular || "CLIENTE_CASH_ENERGY";
         const safeTitular = titular.trim().replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ]/g, '_').replace(/__+/g, '_');
-        const finalFilename = `Estudio_Energetico_CashEnergy_${safeTitular}.pdf`;
 
         const activeOffer = selectedSeveralTariff || (Array.isArray(currentSeveralOffers) && currentSeveralOffers[0]) || null;
+        const optIdx = Array.isArray(currentSeveralOffers) ? currentSeveralOffers.indexOf(activeOffer) : -1;
+        const optTag = optIdx >= 0 ? `_Opcion${optIdx + 1}` : '';
+        const safeComp = activeOffer?.comercializadora
+          ? '_' + String(activeOffer.comercializadora).trim().replace(/[^a-zA-Z0-9]/g, '_').replace(/__+/g, '_').slice(0, 20)
+          : '';
+        const finalFilename = `Estudio_Energetico_CashEnergy_${safeTitular}${optTag}${safeComp}.pdf`;
+
         const built = construirPaginasPDFEjecutivoCashEnergy(detectedInvoiceData, activeOffer, lastSeveralSipsData);
+        wrapEl = built.wrapEl;
         const imgs = built.wrapEl.querySelectorAll ? built.wrapEl.querySelectorAll('img') : [];
         await Promise.all(Array.from(imgs).map(im => (im.decode ? im.decode().catch(() => {}) : Promise.resolve())));
+
+        // Medir coordenadas exactas del botón "Volver a mis opciones" en Página 2 (en mm A4)
+        let linkBoxMm = { x: 118, y: 279, w: 76, h: 12 };
+        try {
+          const p2Rect = built.page2El.getBoundingClientRect();
+          const btnVolverEl = built.page2El.querySelector('#pdf-btn-volver-web');
+          if (p2Rect && p2Rect.width > 0 && p2Rect.height > 0 && btnVolverEl) {
+            const bRect = btnVolverEl.getBoundingClientRect();
+            linkBoxMm = {
+              x: Math.max(0, ((bRect.left - p2Rect.left) / p2Rect.width) * 210),
+              y: Math.max(0, ((bRect.top - p2Rect.top) / p2Rect.height) * 297),
+              w: Math.max(20, (bRect.width / p2Rect.width) * 210),
+              h: Math.max(8, (bRect.height / p2Rect.height) * 297)
+            };
+          }
+        } catch (e) {}
 
         const savedScrollX = window.scrollX || window.pageXOffset || 0;
         const savedScrollY = window.scrollY || window.pageYOffset || 0;
@@ -2616,6 +2646,9 @@
           pdf.addImage(canvas1.toDataURL('image/jpeg', 0.98), 'JPEG', 0, 0, 210, 297);
           pdf.addPage('a4', 'portrait');
           pdf.addImage(canvas2.toDataURL('image/jpeg', 0.98), 'JPEG', 0, 0, 210, 297);
+          if (typeof pdf.link === 'function') {
+            pdf.link(linkBoxMm.x, linkBoxMm.y, linkBoxMm.w, linkBoxMm.h, { url: 'https://cashenergy.eu/#estudio' });
+          }
           pdf.save(finalFilename);
         } else {
           if (typeof window.scrollTo === 'function') window.scrollTo(savedScrollX, savedScrollY);
@@ -2893,9 +2926,14 @@
                 ` : ''}
               </div>
             </div>
-            <div class="text-right shrink-0 bg-amber-500/10 border border-amber-500/30 px-2 py-1.5 rounded-xl text-center min-w-[74px]">
-              <span class="text-[8px] sm:text-[8.5px] uppercase font-bold text-emerald-300 block leading-tight">Energía Verde</span>
-              <span class="text-xs sm:text-sm font-black font-mono text-emerald-400 block mt-0.5 leading-none">100% CNMC</span>
+            <div class="text-right shrink-0 flex flex-col items-end gap-1.5 min-w-[92px]">
+              <div class="w-full bg-amber-500/10 border border-amber-500/30 px-2 py-1 rounded-xl text-center">
+                <span class="text-[8px] sm:text-[8.5px] uppercase font-bold text-emerald-300 block leading-tight">Opción ${idx + 1} · CNMC</span>
+                <span class="text-[11px] sm:text-xs font-black font-mono text-emerald-400 block mt-0.5 leading-none">100% Verde</span>
+              </div>
+              <button type="button" onclick="event.stopPropagation(); descargarEstudioPDF(${idx});" class="w-full inline-flex items-center justify-center px-2 py-1 rounded-lg bg-slate-950 hover:bg-emerald-600 text-amber-300 hover:text-white border border-amber-400/50 text-[9.5px] font-bold font-mono transition cursor-pointer active:scale-95">
+                📄 PDF Opción ${idx + 1}
+              </button>
             </div>
           </div>
         `;
@@ -2903,6 +2941,7 @@
 
       list.innerHTML = html;
       updateEstudio1895View(detectedInvoiceData, selectedSeveralTariff);
+      guardarAuditoriaEnCache();
     }
 
     function selectSeveralTariff(idx) {
@@ -2922,6 +2961,7 @@
       });
 
       updateEstudio1895View(detectedInvoiceData, selectedSeveralTariff);
+      guardarAuditoriaEnCache();
 
       // Abrir el panel de desglose para que el usuario vea todos los detalles de esta opción seleccionada
       const panel = document.getElementById('desglose-tecnico-panel');
@@ -2977,7 +3017,9 @@
 
       if (step === 3) {
         updateEstudio1895View(detectedInvoiceData, selectedSeveralTariff);
-        fetchSeveralComparison();
+        if (!currentSeveralOffers || currentSeveralOffers.length === 0) {
+          fetchSeveralComparison();
+        }
         if (typeof mostrarBotonContratarFlotante === 'function') mostrarBotonContratarFlotante();
       } else {
         if (typeof ocultarBotonContratarFlotante === 'function') ocultarBotonContratarFlotante();
@@ -3239,7 +3281,7 @@
       });
     }
 
-    function applyDetectedInvoice(raw) {
+    function applyDetectedInvoice(raw, skipFetch = false) {
       if (!raw) return;
       
       // Desempaquetar si la IA devolvió un array [ { ... } ]
@@ -3421,9 +3463,10 @@
 
       // Actualizar vista del Estudio Oficial 1895 con los datos detectados
       updateEstudio1895View(detectedInvoiceData, selectedSeveralTariff);
+      guardarAuditoriaEnCache();
 
       // Precarga proactiva del comparador Several CRM con los parámetros detectados
-      fetchSeveralComparison();
+      if (!skipFetch) fetchSeveralComparison();
     }
 
     function openModalRGPD(tab) {
@@ -3597,6 +3640,69 @@
       window.location.href = `mailto:info@cashenergy.eu?subject=${encodeURIComponent('Solicitud Acuerdo Comercial Partner - ' + role + ' - ' + name)}&body=${encoded}`;
     }
 
+    // ================= PERSISTENCIA LOCAL DE AUDITORÍA (SOBREVIVE AL VISOR PDF EN MÓVIL) =================
+    const AUDIT_CACHE_KEY = 'cashenergy_last_audit_v1';
+    const AUDIT_CACHE_TTL_MS = 24 * 60 * 60 * 1000;
+
+    function guardarAuditoriaEnCache() {
+      try {
+        if (!detectedInvoiceData) return;
+        const selectedIdx = Array.isArray(currentSeveralOffers) && selectedSeveralTariff
+          ? Math.max(0, currentSeveralOffers.indexOf(selectedSeveralTariff))
+          : 0;
+        const payload = {
+          savedAt: Date.now(),
+          detectedInvoiceData: detectedInvoiceData,
+          currentSeveralOffers: Array.isArray(currentSeveralOffers) ? currentSeveralOffers.slice(0, 6) : [],
+          selectedIdx: selectedIdx,
+          lastSeveralSipsData: lastSeveralSipsData || null
+        };
+        localStorage.setItem(AUDIT_CACHE_KEY, JSON.stringify(payload));
+      } catch (e) {}
+    }
+
+    function limpiarAuditoriaCache() {
+      try { localStorage.removeItem(AUDIT_CACHE_KEY); } catch (e) {}
+    }
+
+    function restaurarAuditoriaDesdeCache() {
+      try {
+        const raw = localStorage.getItem(AUDIT_CACHE_KEY);
+        if (!raw) return false;
+        const saved = JSON.parse(raw);
+        if (!saved || !saved.detectedInvoiceData) return false;
+        if (saved.savedAt && (Date.now() - Number(saved.savedAt)) > AUDIT_CACHE_TTL_MS) {
+          limpiarAuditoriaCache();
+          return false;
+        }
+        lastSeveralSipsData = saved.lastSeveralSipsData || null;
+        currentSeveralOffers = Array.isArray(saved.currentSeveralOffers) ? saved.currentSeveralOffers : [];
+        const selIdx = (typeof saved.selectedIdx === 'number' && currentSeveralOffers[saved.selectedIdx]) ? saved.selectedIdx : 0;
+        selectedSeveralTariff = currentSeveralOffers[selIdx] || null;
+
+        applyDetectedInvoice(saved.detectedInvoiceData, currentSeveralOffers.length > 0);
+        if (currentSeveralOffers.length > 0) {
+          const badge = document.getElementById('several-rates-badge');
+          if (badge) badge.innerText = "Estudio Restaurado · 2 Opciones";
+          renderSeveralOffers(currentSeveralOffers);
+          if (selIdx > 0 && currentSeveralOffers[selIdx]) {
+            selectSeveralTariff(selIdx);
+          }
+        }
+        goToStep(3);
+        const h = (window.location.hash || '').toLowerCase();
+        if (h === '#estudio') {
+          const sec = document.getElementById('several-rates-section') || document.getElementById('step-3');
+          if (sec && typeof sec.scrollIntoView === 'function') {
+            setTimeout(() => sec.scrollIntoView({ behavior: 'smooth', block: 'start' }), 250);
+          }
+        }
+        return true;
+      } catch (e) {
+        return false;
+      }
+    }
+
     // Inicializar cálculo automático y enrutamiento inteligente
     document.addEventListener('DOMContentLoaded', () => {
       const path = window.location.pathname.toLowerCase();
@@ -3624,6 +3730,7 @@
         setProfile('hoteles');
       }
       actualizarBadgeAsesorHeader();
+      restaurarAuditoriaDesdeCache();
     });
 
     // =========================================================================
@@ -4097,6 +4204,7 @@
     }
 
     function iniciarNuevaAuditoriaLimpia() {
+      limpiarAuditoriaCache();
       cerrarModalContratacionChat();
       selectedFiles = [];
       selectedFile = null;
